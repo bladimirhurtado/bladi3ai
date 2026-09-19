@@ -1,0 +1,35 @@
+name: Validate Bladi 3AI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Validate required files
+        run: |
+          test -f index.html
+          test -f manifest.webmanifest
+          test -f sw.js
+          test -f README.md
+          grep -q "Bladi 3AI" index.html
+          grep -q "Programación Básica con Python" index.html
+          grep -q "Desarrollo Web HTML, CSS y JavaScript" index.html
+          grep -q "Desarrollo de Apps Android con Kotlin" index.html
+          grep -q "IA y Machine Learning Práctico" index.html
+      - name: Validate course count
+        run: |
+          test "$(grep -o "id:'python'" index.html | wc -l)" -eq 1
+          test "$(grep -o "id:'web'" index.html | wc -l)" -eq 1
+          test "$(grep -o "id:'android'" index.html | wc -l)" -eq 1
+          test "$(grep -o "id:'ia'" index.html | wc -l)" -eq 1
