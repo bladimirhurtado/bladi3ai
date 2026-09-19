@@ -14,7 +14,7 @@ Plataforma educativa web, móvil y offline-first para aprender programación, de
 - 🧩 Mini retos dentro de las lecciones.
 - 💾 Guardado automático en el dispositivo.
 - 📡 Funcionamiento offline mediante Service Worker.
-- ☁️ Sincronización con Buildy cuando existe conexión.
+- 💾 Exportación e importación del progreso en JSON para conservarlo o trasladarlo entre dispositivos.
 - 📱 Diseño responsive y preparado para instalarse como PWA.
 - 🎨 Icono propio de Bladi 3AI.
 
@@ -31,10 +31,10 @@ La aplicación no necesita dependencias externas. Abre `index.html` desde un ser
 
 ## Datos
 
-El progreso local se guarda en `localStorage` con la clave `bladi3ai_2026`. La sincronización remota no sustituye el progreso local: si no hay conexión, el aprendizaje continúa y los datos locales permanecen.
+El progreso se guarda localmente en `localStorage` con la clave `bladi3ai_2026`. También puede exportarse e importarse como JSON. No depende de una cuenta ni de un servicio remoto para funcionar.
 
 ## Estado del proyecto
 
-Versión de trabajo consolidada: **2026-09-10**.
+Versión consolidada: **2026-09-19**. Proyecto centralizado en este repositorio; no se crean versiones paralelas.
 
 El proyecto se mantiene centralizado en este repositorio para evitar duplicar versiones innecesariamente.
