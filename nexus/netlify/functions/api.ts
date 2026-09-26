@@ -63,7 +63,7 @@ export const handler:Handler=async(event)=>{
   const b=event.body?JSON.parse(event.body):{};
   const provider=b.provider==='core'?'openai':b.provider||'openai';
 
-  if(event.httpMethod==='GET'&&p==='/status')return{statusCode:200,body:JSON.stringify({status:'ready',providers:{core:!!env('NEXUS_OPENAI_API_KEY'),openai:!!env('NEXUS_OPENAI_API_KEY'),groq:!!env('NEXUS_GROQ_API_KEY'),mistral:!!env('NEXUS_MISTRAL_API_KEY'),kimi:!!env('NEXUS_KIMI_API_KEY'),gemini:!!env('NEXUS_GEMINI_API_KEY'),tavily:!!env('TAVILY_API_KEY'),firecrawl:!!env('FIRECRAWL_API_KEY')}})};
+  if(event.httpMethod==='GET'&&p==='/status')return{statusCode:200,body:JSON.stringify({status:'ready',providers:{core:!!env('NEXUS_OPENAI_API_KEY'),openai:!!env('NEXUS_OPENAI_API_KEY'),groq:!!env('NEXUS_GROQ_API_KEY'),mistral:!!env('NEXUS_MISTRAL_API_KEY'),kimi:!!env('NEXUS_KIMI_API_KEY'),gemini:!!env('NEXUS_GEMINI_API_KEY'),tavily:!!env('TAVILY_API_KEY'),firecrawl:true,firecrawlKeyConfigured:!!env('FIRECRAWL_API_KEY')}})};
   if(event.httpMethod==='GET'&&p==='/_healthcheck')return{statusCode:200,body:JSON.stringify({ok:true,service:'nexus'})};
   if(event.httpMethod==='GET'&&p==='/mcp/servers'){const q=event.queryStringParameters?.search||'';const r=await fetch('https://registry.modelcontextprotocol.io/v0.1/servers?limit=20&version=latest'+(q?'&search='+encodeURIComponent(q):''));return{statusCode:r.ok?200:502,body:await r.text()}};
   if(event.httpMethod==='POST'&&p==='/chat'){const prompt=String(b.prompt||'').trim();if(!prompt)return{statusCode:400,body:JSON.stringify({error:'prompt is required'})};return{statusCode:200,body:JSON.stringify({text:await llm(provider,b.model||'gpt-5',roles[b.role||'general'],prompt),provider:b.provider||'core',model:b.model||'gpt-5'})}};
