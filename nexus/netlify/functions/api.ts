@@ -45,17 +45,7 @@ async function firecrawlScrape(url:string){
  const data=d.data||d;return{title:data.metadata?.title||url,text:data.markdown||data.html||'',status:200,engine:'firecrawl'};
 }
 
-async function scrapeFallback(url:string){
- const r=await fetch(url,{headers:{'user-agent':'Nexus/1.0'}});
- const t=await r.text();
- const title=(t.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]||url).replace(/<[^>]+>/g,'').trim();
- const text=t.replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();
- return{title,text:text.slice(0,30000),status:r.status,engine:'native-fallback'};
-}
-
-async function scrape(url:string){
- try{return await firecrawlScrape(url)}catch{return await scrapeFallback(url)}
-}
+async function scrape(url:string){return await firecrawlScrape(url)}
 
 export const handler:Handler=async(event)=>{
  try{
