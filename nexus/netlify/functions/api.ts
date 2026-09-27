@@ -7,7 +7,10 @@ const firecrawlHeaders=()=>{const h:Record<string,string>={'Content-Type':'appli
 async function llm(provider:string,model:string,system:string,prompt:string){
  const key=env(provider==='openrouter'?'OPENROUTER_API_KEY':provider==='gemini'?'NEXUS_GEMINI_API_KEY':provider==='groq'?'NEXUS_GROQ_API_KEY':provider==='mistral'?'NEXUS_MISTRAL_API_KEY':provider==='kimi'?'NEXUS_KIMI_API_KEY':'NEXUS_OPENAI_API_KEY');
  if(!key) throw Error('Falta la clave de '+provider+'.');
- if(provider==='openrouter'){\n  const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{Authorization:'Bearer '+key,'Content-Type':'application/json','HTTP-Referer':'https://nexus-ai-hub-wfrk.netlify.app','X-Title':'Nexus AI Hub'},body:JSON.stringify({model,temperature:0.2,messages:[{role:'system',content:system},{role:'user',content:prompt}]})});\n  const d=JSON.parse(await r.text());if(!r.ok)throw Error('OpenRouter HTTP '+r.status);return d.choices?.[0]?.message?.content||'';\n }\n if(provider==='gemini'){
+ if(provider==='openrouter'){
+  const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{Authorization:'Bearer '+key,'Content-Type':'application/json','HTTP-Referer':'https://nexus-ai-hub-wfrk.netlify.app','X-Title':'Nexus AI Hub'},body:JSON.stringify({model,temperature:0.2,messages:[{role:'system',content:system},{role:'user',content:prompt}]})});
+  const d=JSON.parse(await r.text());if(!r.ok)throw Error('OpenRouter HTTP '+r.status);return d.choices?.[0]?.message?.content||'';
+ }\n if(provider==='gemini'){
   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents:[{role:'user',parts:[{text:prompt}]}]})});
   const d=JSON.parse(await r.text());if(!r.ok)throw Error('Gemini HTTP '+r.status);return d.candidates?.[0]?.content?.parts?.map((x:any)=>x.text||'').join('')||'';
  }
