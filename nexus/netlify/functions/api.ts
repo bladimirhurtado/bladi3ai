@@ -10,7 +10,8 @@ async function llm(provider:string,model:string,system:string,prompt:string){
  if(provider==='openrouter'){
   const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{Authorization:'Bearer '+key,'Content-Type':'application/json','HTTP-Referer':'https://nexus-ai-hub-wfrk.netlify.app','X-Title':'Nexus AI Hub'},body:JSON.stringify({model,temperature:0.2,messages:[{role:'system',content:system},{role:'user',content:prompt}]})});
   const d=JSON.parse(await r.text());if(!r.ok)throw Error('OpenRouter HTTP '+r.status);return d.choices?.[0]?.message?.content||'';
- }\n if(provider==='gemini'){
+ }
+ if(provider==='gemini'){
   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents:[{role:'user',parts:[{text:prompt}]}]})});
   const d=JSON.parse(await r.text());if(!r.ok)throw Error('Gemini HTTP '+r.status);return d.candidates?.[0]?.content?.parts?.map((x:any)=>x.text||'').join('')||'';
  }
