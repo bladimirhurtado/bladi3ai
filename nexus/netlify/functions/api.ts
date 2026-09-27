@@ -5,9 +5,9 @@ const env=(k:string)=>process.env[k]||'';
 const firecrawlHeaders=()=>{const h:Record<string,string>={'Content-Type':'application/json'};const k=env('FIRECRAWL_API_KEY');if(k)h.Authorization='Bearer '+k;return h};
 
 async function llm(provider:string,model:string,system:string,prompt:string){
- const key=env(provider==='gemini'?'NEXUS_GEMINI_API_KEY':provider==='groq'?'NEXUS_GROQ_API_KEY':provider==='mistral'?'NEXUS_MISTRAL_API_KEY':provider==='kimi'?'NEXUS_KIMI_API_KEY':'NEXUS_OPENAI_API_KEY');
+ const key=env(provider==='openrouter'?'OPENROUTER_API_KEY':provider==='gemini'?'NEXUS_GEMINI_API_KEY':provider==='groq'?'NEXUS_GROQ_API_KEY':provider==='mistral'?'NEXUS_MISTRAL_API_KEY':provider==='kimi'?'NEXUS_KIMI_API_KEY':'NEXUS_OPENAI_API_KEY');
  if(!key) throw Error('Falta la clave de '+provider+'.');
- if(provider==='gemini'){
+ if(provider==='openrouter'){\n  const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{Authorization:'Bearer '+key,'Content-Type':'application/json','HTTP-Referer':'https://nexus-ai-hub-wfrk.netlify.app','X-Title':'Nexus AI Hub'},body:JSON.stringify({model,temperature:0.2,messages:[{role:'system',content:system},{role:'user',content:prompt}]})});\n  const d=JSON.parse(await r.text());if(!r.ok)throw Error('OpenRouter HTTP '+r.status);return d.choices?.[0]?.message?.content||'';\n }\n if(provider==='gemini'){
   const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/'+encodeURIComponent(model)+':generateContent',{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify({systemInstruction:{parts:[{text:system}]},contents:[{role:'user',parts:[{text:prompt}]}]})});
   const d=JSON.parse(await r.text());if(!r.ok)throw Error('Gemini HTTP '+r.status);return d.candidates?.[0]?.content?.parts?.map((x:any)=>x.text||'').join('')||'';
  }
@@ -51,15 +51,15 @@ export const handler:Handler=async(event)=>{
  try{
   const p=event.path.replace(/^\/.netlify\/functions\/api/,'')||'/';
   const b=event.body?JSON.parse(event.body):{};
-  const provider=b.provider==='core'?'openai':b.provider||'openai';
+  const provider=b.provider==='core'?'openrouter':b.provider||'openrouter';
 
-  if(event.httpMethod==='GET'&&p==='/status')return{statusCode:200,body:JSON.stringify({status:'ready',providers:{core:!!env('NEXUS_OPENAI_API_KEY'),openai:!!env('NEXUS_OPENAI_API_KEY'),groq:!!env('NEXUS_GROQ_API_KEY'),mistral:!!env('NEXUS_MISTRAL_API_KEY'),kimi:!!env('NEXUS_KIMI_API_KEY'),gemini:!!env('NEXUS_GEMINI_API_KEY'),tavily:!!env('TAVILY_API_KEY'),firecrawl:true,firecrawlKeyConfigured:!!env('FIRECRAWL_API_KEY')}})};
+  if(event.httpMethod==='GET'&&p==='/status')return{statusCode:200,body:JSON.stringify({status:'ready',providers:{core:!!env('OPENROUTER_API_KEY'),openrouter:!!env('OPENROUTER_API_KEY'),openai:!!env('NEXUS_OPENAI_API_KEY'),groq:!!env('NEXUS_GROQ_API_KEY'),mistral:!!env('NEXUS_MISTRAL_API_KEY'),kimi:!!env('NEXUS_KIMI_API_KEY'),gemini:!!env('NEXUS_GEMINI_API_KEY'),tavily:!!env('TAVILY_API_KEY'),firecrawl:true,firecrawlKeyConfigured:!!env('FIRECRAWL_API_KEY')}})};
   if(event.httpMethod==='GET'&&p==='/_healthcheck')return{statusCode:200,body:JSON.stringify({ok:true,service:'nexus'})};
   if(event.httpMethod==='GET'&&p==='/mcp/servers'){const q=event.queryStringParameters?.search||'';const r=await fetch('https://registry.modelcontextprotocol.io/v0.1/servers?limit=20&version=latest'+(q?'&search='+encodeURIComponent(q):''));return{statusCode:r.ok?200:502,body:await r.text()}};
   if(event.httpMethod==='POST'&&p==='/chat'){const prompt=String(b.prompt||'').trim();if(!prompt)return{statusCode:400,body:JSON.stringify({error:'prompt is required'})};return{statusCode:200,body:JSON.stringify({text:await llm(provider,b.model||'gpt-5',roles[b.role||'general'],prompt),provider:b.provider||'core',model:b.model||'gpt-5'})}};
   if(event.httpMethod==='POST'&&p==='/web-search'){const q=String(b.query||'').trim();if(!q)return{statusCode:400,body:JSON.stringify({error:'query is required'})};return{statusCode:200,body:JSON.stringify(await webSearch(q))}};
   if(event.httpMethod==='POST'&&p==='/scrape'){const url=String(b.url||'').trim();if(!/^https?:\/\//i.test(url))return{statusCode:400,body:JSON.stringify({error:'URL inválida'})};return{statusCode:200,body:JSON.stringify(await scrape(url))}};
-  if(event.httpMethod==='POST'&&p==='/team'){const prompt=String(b.prompt||'').trim(),ctx=String(b.webContext||'').slice(0,16000);const[architect,researcher,critic]=await Promise.all([llm('openai','gpt-5',roles.architect,prompt+'\n'+ctx),llm('openai','gpt-5',roles.analyst,prompt+'\n'+ctx),llm('openai','gpt-5',roles.critic,prompt+'\n'+ctx)]);const final=await llm('openai','gpt-5','Eres el coordinador final de Nexus. No ocultes contradicciones ni inventes datos.','Integra estos informes y responde de forma práctica.\nARQUITECTO:\n'+architect+'\nINVESTIGADOR:\n'+researcher+'\nCRÍTICO:\n'+critic+'\nPREGUNTA:\n'+prompt);return{statusCode:200,body:JSON.stringify({architect,researcher,critic,final})}};
+  if(event.httpMethod==='POST'&&p==='/team'){const prompt=String(b.prompt||'').trim(),ctx=String(b.webContext||'').slice(0,16000);const[architect,researcher,critic]=await Promise.all([llm('openrouter','openai/gpt-5',roles.architect,prompt+'\n'+ctx),llm('openrouter','openai/gpt-5',roles.analyst,prompt+'\n'+ctx),llm('openrouter','openai/gpt-5',roles.critic,prompt+'\n'+ctx)]);const final=await llm('openrouter','openai/gpt-5','Eres el coordinador final de Nexus. No ocultes contradicciones ni inventes datos.','Integra estos informes y responde de forma práctica.\nARQUITECTO:\n'+architect+'\nINVESTIGADOR:\n'+researcher+'\nCRÍTICO:\n'+critic+'\nPREGUNTA:\n'+prompt);return{statusCode:200,body:JSON.stringify({architect,researcher,critic,final})}};
   return{statusCode:404,body:JSON.stringify({error:'Not found'})};
  }catch(e){return{statusCode:500,body:JSON.stringify({error:e instanceof Error?e.message:'Server error'})}}
 };
