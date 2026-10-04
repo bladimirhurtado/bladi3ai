@@ -34,9 +34,10 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         engine = new AssistantEngine(this);
         tts = new TextToSpeech(this, this);
         buildUi();
-        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.CAMERA}, REQ_AUDIO);
-        }
+        ArrayList<String> needed = new ArrayList<>();
+        if (checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) needed.add(Manifest.permission.RECORD_AUDIO);
+        if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) needed.add(Manifest.permission.CAMERA);
+        if (!needed.isEmpty()) requestPermissions(needed.toArray(new String[0]), REQ_AUDIO);
     }
 
     private void buildUi() {
