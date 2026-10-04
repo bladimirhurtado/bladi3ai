@@ -43,18 +43,19 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
     private void buildUi() {
         LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(24, 24, 24, 28);
+        root.setPadding(16, 12, 16, 12);
         root.setBackgroundColor(Color.rgb(5, 8, 18));
 
         nexusView = new NexusView(this);
         root.addView(nexusView, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 0, 1f));
+        nexusView.setOnClickListener(v -> startListening());
 
         status = new TextView(this);
         status.setText("Nexus listo · habla naturalmente");
         status.setTextColor(Color.rgb(190, 240, 255));
         status.setGravity(Gravity.CENTER);
         status.setTextSize(16f);
-        root.addView(status, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 58));
+        root.addView(status, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, 44));
 
         LinearLayout row = new LinearLayout(this);
         row.setOrientation(LinearLayout.HORIZONTAL);
@@ -64,17 +65,23 @@ public class MainActivity extends Activity implements TextToSpeech.OnInitListene
         input.setHintTextColor(Color.rgb(120, 150, 165));
         input.setTextColor(Color.WHITE);
         input.setSingleLine(false);
-        row.addView(input, new LinearLayout.LayoutParams(0, 60, 1f));
+        input.setPadding(12, 0, 12, 0);
+        row.addView(input, new LinearLayout.LayoutParams(0, 56, 1f));
 
         Button mic = new Button(this);
-        mic.setText("🎙");
+        mic.setText("🎙️");
+        mic.setTextSize(20f);
+        mic.setTextColor(Color.WHITE);
+        mic.setBackgroundColor(Color.rgb(15, 39, 58));
         mic.setOnClickListener(v -> startListening());
-        row.addView(mic, new LinearLayout.LayoutParams(72, 60));
+        row.addView(mic, new LinearLayout.LayoutParams(68, 56));
 
         Button send = new Button(this);
         send.setText("ENVIAR");
+        send.setTextColor(Color.WHITE);
+        send.setBackgroundColor(Color.rgb(15, 39, 58));
         send.setOnClickListener(v -> runRequest(input.getText().toString()));
-        row.addView(send, new LinearLayout.LayoutParams(100, 60));
+        row.addView(send, new LinearLayout.LayoutParams(96, 56));
 
         root.addView(row);
         setContentView(root);
