@@ -1,0 +1,10 @@
+{
+  "name":"AEGIS Competition Lab",
+  "version":"0.1.0",
+  "scope":"synthetic-local-only",
+  "lookahead_plies":4,
+  "agents":["AEGIS","HYDRA","JUDGE"],
+  "properties":["bounded-search","adaptive-adversary","deception","cycle-detection","recovery","independent-verification"],
+  "prohibited":["network-scanning","exploit-delivery","credential-attacks","persistence","third-party-targeting"],
+  "promotion_gate":{"min_score":80,"must_pass_integrity":true,"must_reproduce":true}
+}
