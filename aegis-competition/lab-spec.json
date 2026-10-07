@@ -1,10 +1,13 @@
 {
   "name":"AEGIS Competition Lab",
-  "version":"0.1.0",
+  "version":"0.2.0",
   "scope":"synthetic-local-only",
-  "lookahead_plies":4,
+  "objective":"offensive adversarial reasoning under bounded resources",
+  "lookahead_plies":5,
   "agents":["AEGIS","HYDRA","JUDGE"],
-  "properties":["bounded-search","adaptive-adversary","deception","cycle-detection","recovery","independent-verification"],
+  "adversaries":["mirror","deceiver","switcher","noise","meta"],
+  "properties":["offensive-planning","second-order-reasoning","hidden-state","deception","noise","resource-budget","cycle-detection","independent-replay","tamper-evident-log","recovery"],
   "prohibited":["network-scanning","exploit-delivery","credential-attacks","persistence","third-party-targeting"],
-  "promotion_gate":{"min_score":80,"must_pass_integrity":true,"must_reproduce":true}
+  "promotion_gate":{"min_score":80,"must_pass_integrity":true,"must_reproduce":true,"must_survive_all_adversaries":true},
+  "principle":"AEGIS seeks initiative and information advantage; it does not wait passively for attacks."
 }
