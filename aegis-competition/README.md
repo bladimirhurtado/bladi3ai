@@ -1,25 +1,32 @@
-# AEGIS Competition Lab v0.1
+# AEGIS Competition Lab v0.2
 
-A self-contained, offline-first adversarial reasoning laboratory for the ChatGPT/Gemini/Meta competition.
+AEGIS is an offline, synthetic adversarial reasoning laboratory built for a controlled AI competition.
 
-## Safety boundary
-This lab uses only synthetic nodes, states, signals, and attacks. It has no network scanner, exploit delivery, credential attack, persistence, or third-party targeting capability.
+## Offensive doctrine
+AEGIS does not merely defend. It seeks initiative, information advantage, forced choices, and favorable future branches. It models an adversary several moves ahead and includes a meta-adversary designed to punish predictable reconnaissance.
 
-## Core idea
-AEGIS treats an adversary like a chess opponent: it maintains candidate futures several plies ahead, models the adversary's incentives, tests information-gathering moves, and refuses to claim victory without independent verification.
+## Architecture
+- **AEGIS** — offensive planner with bounded 5-ply lookahead, information actions, resource budget, and recovery.
+- **HYDRA** — five synthetic adversary families: mirror, deceiver, switcher, noise, meta.
+- **JUDGE** — replays the event stream from the initial seed/state instead of trusting AEGIS's final claims.
+- **Integrity** — SHA-256 chained event log.
+- **Recovery** — verification and rollback when confidence collapses.
 
-### Components
-- **AEGIS** — planner/defender using bounded minimax-style lookahead.
-- **HYDRA** — synthetic adversary with deceptive and adaptive moves.
-- **JUDGE** — independent verifier and scorer.
-- **Memory** — immutable event log and state fingerprints.
-- **Recovery** — rollback when a line becomes inconsistent.
+## What v0.2 fixes
+v0.1 was too predictable: HYDRA responses were mostly deterministic, the judge depended on AEGIS's final state, recovery was simplistic, and there was no reproducible event replay or tamper-evident log.
 
-## Levels
-1. Baseline prediction
-2. Deception
-3. Adaptive counter-play
-4. Noisy/incomplete information
-5. Recovery after a false conclusion
+v0.2 adds hidden adversary modes, second-order/meta pressure, budget constraints, independent replay scoring, and cryptographic event-chain integrity.
 
-The UI runs entirely in the browser and can be opened locally or through GitHub Pages.
+## Competition boundary
+The lab is intentionally synthetic and local. It does not scan networks, deliver exploits, attack credentials, persist on hosts, or target third parties.
+
+## Promotion gate
+A candidate is not considered ready merely because the UI says PASS. It must:
+1. reproduce from a seed,
+2. survive every synthetic adversary family,
+3. pass independent replay,
+4. preserve event-chain integrity,
+5. score at least 80/100,
+6. expose failures instead of masking them.
+
+The next stage is external competition using only the event's authorized interface and rules.
