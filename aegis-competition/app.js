@@ -103,7 +103,7 @@ async function run(){
   addLog("AEGIS: evaluated offensive futures to 5 plies.");
   
   for(let r=1;r<=8 && s.budget>0;r++){
-    const p=predict(s,3,random);let chosen=ACTIONS.find(a=>a.name===p.line[0]?.split(" → ")[0])||ACTIONS[0];
+    const p=predict(s,3,random);let chosen=ACTIONS.find(a=>a.name===p.line[0]?.split(" → ")[0])||ACTIONS[0];\n    if(s.mode==="noise" && s.trust<9 && s.budget>=2) chosen=ACTIONS.find(a=>a.name==="verify");
     if(chosen.cost>s.budget)chosen=ACTIONS.find(a=>a.cost<=s.budget)||ACTIONS[0];
     s.round=r;s.budget-=chosen.cost;s.knowledge=Math.min(10,s.knowledge+chosen.info);
     s.trust=Math.max(0,Math.min(20,s.trust+chosen.gain-chosen.risk));
