@@ -30,7 +30,7 @@ for(let seed=1;seed<=200;seed++)for(const mode of MODES){
  const random=rng(seed),s={seed,round:0,trust:12,knowledge:1,hiddenThreat:7,budget:22,signal:"unknown",mode};
  const events=[];let verified=0,recovered=0;
  for(let r=1;r<=8&&s.budget>0;r++){
-  const p=predict(s,3,random);let chosen=ACTIONS.find(a=>a.name===p.line[0]?.split(" → ")[0])||ACTIONS[0];
+  const p=predict(s,3,random);let chosen=ACTIONS.find(a=>a.name===p.line[0]?.split(" → ")[0])||ACTIONS[0];if(s.mode==="noise"&&s.trust<9&&s.budget>=2)chosen=ACTIONS.find(a=>a.name==="verify");
   if(chosen.cost>s.budget)break;
   s.round=r;s.budget-=chosen.cost;s.knowledge=Math.min(10,s.knowledge+chosen.info);s.trust=Math.max(0,Math.min(20,s.trust+chosen.gain-chosen.risk));
   events.push({type:"A",r,action:chosen.name});
