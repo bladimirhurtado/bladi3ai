@@ -3,8 +3,8 @@
 Status: SYNTHETIC CI GATE PASSED. EXTERNAL COMPETITION GATE NOT PASSED.
 
 ## Latest confirmed CI result
-- Tested revision: `f4d5952861bf3bd35b470f24edab1404df03287a`
-- GitHub Actions run: https://github.com/bladimirhurtado/bladi3ai/actions/runs/37971019074
+- Tested revision: `77ca2b6459bb3908836fedecc00a1eaf882e3b0c`
+- GitHub Actions run: https://github.com/bladimirhurtado/bladi3ai/actions/runs/37971144889
 - Node.js: 22.23.3
 - Result: PASS
 - 1,000 synthetic matches across five HYDRA modes.
