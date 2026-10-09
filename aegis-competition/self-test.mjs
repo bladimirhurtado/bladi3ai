@@ -81,8 +81,8 @@ assert(invalidModeRejected, "unknown HYDRA mode must be rejected");
 let invalidSeedRejected = false;
 try { initial(-1, "mirror"); } catch { invalidSeedRejected = true; }
 assert(invalidSeedRejected, "invalid seed must be rejected");
-assert(!judge([], null).valid, "null initial state must fail");
-assert(!judge([], { ...initial(1, "mirror"), trust: 13 }).valid, "altered initial baseline must fail");
+assert(!judge(original, null).valid, "null initial state must fail");
+assert(!judge(original, { ...initial(1, "mirror"), trust: 13 }).valid, "altered initial baseline must fail");
 assert(!judge(null, initial(1, "mirror")).valid, "null event stream must fail");
 assert(!judge([], initial(1, "mirror")).valid, "empty event stream must fail");
 
