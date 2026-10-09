@@ -63,14 +63,16 @@ export function predict(state, depth = 3, path = new Set()) {
 }
 
 export function applyAction(state, action, random, events) {
-  if (!ACTIONS.some(a => a.name === action.name)) throw new Error("Unknown action");
-  if (action.cost > state.budget) throw new Error("Action exceeds remaining budget");
+  // Never trust caller-supplied action attributes; resolve the canonical action by name.
+  const canonicalAction = ACTIONS.find(a => a.name === action?.name);
+  if (!canonicalAction) throw new Error("Unknown action");
+  if (canonicalAction.cost > state.budget) throw new Error("Action exceeds remaining budget");
   state.round += 1;
-  state.budget -= action.cost;
-  state.knowledge = Math.min(10, state.knowledge + action.info);
-  state.trust = Math.max(0, Math.min(20, state.trust + action.gain - action.risk));
-  events.push({ type: "AEGIS", round: state.round, action: action.name, cost: action.cost, info: action.info, gain: action.gain, risk: action.risk });
-  const response = hydraResponse(state, action, random);
+  state.budget -= canonicalAction.cost;
+  state.knowledge = Math.min(10, state.knowledge + canonicalAction.info);
+  state.trust = Math.max(0, Math.min(20, state.trust + canonicalAction.gain - canonicalAction.risk));
+  events.push({ type: "AEGIS", round: state.round, action: canonicalAction.name, cost: canonicalAction.cost, info: canonicalAction.info, gain: canonicalAction.gain, risk: canonicalAction.risk });
+  const response = hydraResponse(state, canonicalAction, random);
   state.trust = Math.max(0, state.trust - response.impact);
   state.hiddenThreat = Math.max(0, state.hiddenThreat + (response.deception ? 1 : 0) - Math.floor(state.knowledge / 5));
   state.signal = response.move;
