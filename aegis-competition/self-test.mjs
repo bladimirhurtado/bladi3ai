@@ -153,6 +153,7 @@ console.log(JSON.stringify({
   minScore,
   maxScore,
   averageScore: Number((scoreTotal / runs).toFixed(2)),
-  actionIntegrityChecks: 1,\n  adversarialJudgeChecks: 11,
+  actionIntegrityChecks: 1,
+  adversarialJudgeChecks: 11,
   hashChainChecks: 2
 }, null, 2));
