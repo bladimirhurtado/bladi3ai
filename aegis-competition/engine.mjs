@@ -124,7 +124,7 @@ export function judge(events, initialState) {
 
     if (e.type === "AEGIS") {
       const a = ACTIONS.find(x => x.name === e.action);
-      if (!a || awaitingHydra || awaitingVerify || e.round !== lastRound + 1 ||
+      if (!a || awaitingHydra || awaitingVerify || e.round !== lastRound + 1 || e.round > 8 ||
           e.cost !== a.cost || e.info !== a.info || e.gain !== a.gain ||
           e.risk !== a.risk || a.cost > s.budget) { valid = false; break; }
 
