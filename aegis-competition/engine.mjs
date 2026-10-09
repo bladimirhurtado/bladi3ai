@@ -105,7 +105,9 @@ export function judge(events, initialState) {
       verified++;
       if (e.recovered) recoveredCount++;
       // Recovery is replayed as a recorded state transition, not a score-only bonus.
-      if (e.trustAfterRecovery !== s.trust || e.signalAfterRecovery !== (e.recovered ? "rollback-verified" : s.signal)) { valid = false; break; }
+      const expectedTrust = e.recovered ? 8 : s.trust;
+      const expectedSignal = e.recovered ? "rollback-verified" : s.signal;
+      if (e.trustAfterRecovery !== expectedTrust || e.signalAfterRecovery !== expectedSignal || (e.recovered && s.trust >= 5) || (!e.recovered && s.trust < 5)) { valid = false; break; }
       if (e.recovered) { s.trust = 8; s.signal = "rollback-verified"; }
     } else { valid = false; break; }
   }
