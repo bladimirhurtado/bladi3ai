@@ -113,11 +113,21 @@ const extraField = structuredClone(original);
 extraField[0].unrecognized = "injected";
 assert(!judge(extraField, initial(1, "mirror")).valid, "unknown event field must fail");
 
-const falseRecovery = structuredClone(original);
+let recoverySource = null;
+for (let seed = 1; seed <= 200 && !recoverySource; seed++) {
+  for (const mode of MODES) {
+    const candidate = match(seed, mode);
+    if (candidate.events.some(event => event.type === "VERIFY" && event.recovered)) {
+      recoverySource = candidate;
+      break;
+    }
+  }
+}
+assert(recoverySource, "test corpus must contain at least one recovery event");
+const falseRecovery = structuredClone(recoverySource.events);
 const recoveryEvent = falseRecovery.find(event => event.type === "VERIFY" && event.recovered);
-assert(recoveryEvent, "test fixture must contain a recovery event");
 recoveryEvent.trustAfterRecovery = 19;
-assert(!judge(falseRecovery, initial(1, "mirror")).valid, "forged recovery state must fail");
+assert(!judge(falseRecovery, initial(recoverySource.seed, recoverySource.mode)).valid, "forged recovery state must fail");
 
 const recordedChain = chain(original);
 assert(verifyChain(original, recordedChain), "untampered hash chain must verify");
