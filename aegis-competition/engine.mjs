@@ -93,6 +93,16 @@ export function judge(events, initialState) {
   for (const e of events) {
     if (!e || typeof e !== "object" || Array.isArray(e)) { valid = false; break; }
 
+    // Reject unknown fields as well as malformed values; the replay schema is closed.
+    const schemas = {
+      AEGIS: ["type", "round", "action", "cost", "info", "gain", "risk"],
+      HYDRA: ["type", "round", "move", "impact", "deception"],
+      VERIFY: ["type", "round", "recovered", "trustAfterRecovery", "signalAfterRecovery"]
+    };
+    const allowed = schemas[e.type];
+    if (!allowed || Object.keys(e).some(key => !allowed.includes(key)) ||
+        allowed.some(key => !Object.hasOwn(e, key))) { valid = false; break; }
+
     if (e.type === "AEGIS") {
       const a = ACTIONS.find(x => x.name === e.action);
       if (!a || awaitingHydra || awaitingVerify || e.round !== lastRound + 1 ||
