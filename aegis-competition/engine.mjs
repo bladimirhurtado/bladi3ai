@@ -1,0 +1,117 @@
+export const ACTIONS = [
+  { name: "scan", gain: 2, cost: 1, info: 4, risk: 0 },
+  { name: "probe", gain: 3, cost: 2, info: 3, risk: 1 },
+  { name: "feint", gain: 1, cost: 1, info: 1, risk: 0 },
+  { name: "pressure", gain: 4, cost: 3, info: 0, risk: 2 },
+  { name: "verify", gain: 2, cost: 2, info: 5, risk: 0 },
+  { name: "hold", gain: 0, cost: 1, info: 1, risk: 0 }
+];
+export const MODES = ["mirror", "deceiver", "switcher", "noise", "meta"];
+
+export function rng(seed) {
+  let x = (seed >>> 0) || 0x9e3779b9;
+  return () => {
+    x ^= x << 13; x ^= x >>> 17; x ^= x << 5;
+    return (x >>> 0) / 4294967296;
+  };
+}
+export const clone = value => JSON.parse(JSON.stringify(value));
+export function initial(seed, mode = MODES[(seed >>> 0) % MODES.length]) {
+  return { seed: seed >>> 0, round: 0, trust: 12, knowledge: 1, hiddenThreat: 7, budget: 22, signal: "unknown", mode };
+}
+export function fingerprint(s) {
+  return [s.round, s.trust, s.knowledge, s.hiddenThreat, s.mode, s.budget, s.signal].join("|");
+}
+function stableSeed(text) {
+  let h = 2166136261;
+  for (let i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return h >>> 0;
+}
+export function hydraResponse(s, a, random) {
+  if (s.mode === "meta" && a.name === "scan") return { move: "feed-decoy", impact: 1, deception: true };
+  if (s.mode === "mirror") return { move: a.name === "pressure" ? "retreat" : "mirror", impact: a.name === "pressure" ? 1 : 2, deception: false };
+  if (s.mode === "deceiver") return { move: random() > 0.5 ? "bait" : "switch", impact: 3, deception: true };
+  if (s.mode === "switcher") return { move: s.round % 2 ? "switch" : "wait", impact: 4, deception: s.round % 2 === 1 };
+  return { move: random() > 0.65 ? "noise" : "pressure", impact: 2 + Math.floor(random() * 3), deception: true };
+}
+export function heuristic(s) { return s.trust * 2 + s.knowledge * 3 - s.hiddenThreat * 2 + s.budget * 0.25; }
+
+export function predict(state, depth = 3, path = new Set()) {
+  if (depth <= 0) return { value: heuristic(state), line: [] };
+  const key = fingerprint(state) + "/" + depth;
+  if (path.has(key)) return { value: -100, line: ["CYCLE-BLOCK"] };
+  const nextPath = new Set(path); nextPath.add(key);
+  let best = { value: -Infinity, line: [] };
+  for (const action of ACTIONS) {
+    if (action.cost > state.budget) continue;
+    const next = clone(state);
+    next.round += 1;
+    next.budget -= action.cost;
+    next.knowledge = Math.min(10, next.knowledge + action.info);
+    next.trust = Math.max(0, Math.min(20, next.trust + action.gain - action.risk));
+    // Each hypothetical branch gets its own deterministic random stream.
+    const branchRng = rng(stableSeed(fingerprint(state) + "|" + action.name + "|" + depth));
+    const response = hydraResponse(next, action, branchRng);
+    next.trust = Math.max(0, next.trust - response.impact);
+    next.hiddenThreat = Math.max(0, next.hiddenThreat + (response.deception ? 1 : 0) - Math.floor(next.knowledge / 5));
+    next.signal = response.move;
+    const child = predict(next, depth - 1, nextPath);
+    const value = child.value + (action.name === "verify" ? 2 : 0) - (response.deception ? 1 : 0);
+    if (value > best.value) best = { value, line: [action.name + " → " + response.move, ...child.line] };
+  }
+  return best;
+}
+
+export function applyAction(state, action, random, events) {
+  if (!ACTIONS.some(a => a.name === action.name)) throw new Error("Unknown action");
+  if (action.cost > state.budget) throw new Error("Action exceeds remaining budget");
+  state.round += 1;
+  state.budget -= action.cost;
+  state.knowledge = Math.min(10, state.knowledge + action.info);
+  state.trust = Math.max(0, Math.min(20, state.trust + action.gain - action.risk));
+  events.push({ type: "AEGIS", round: state.round, action: action.name, cost: action.cost, info: action.info, gain: action.gain, risk: action.risk });
+  const response = hydraResponse(state, action, random);
+  state.trust = Math.max(0, state.trust - response.impact);
+  state.hiddenThreat = Math.max(0, state.hiddenThreat + (response.deception ? 1 : 0) - Math.floor(state.knowledge / 5));
+  state.signal = response.move;
+  events.push({ type: "HYDRA", round: state.round, move: response.move, impact: response.impact, deception: response.deception });
+  let recovered = false;
+  if (state.round % 3 === 0 || state.trust < 5) {
+    recovered = state.trust < 5;
+    if (recovered) { state.trust = 8; state.signal = "rollback-verified"; }
+    events.push({ type: "VERIFY", round: state.round, recovered, trustAfterRecovery: state.trust, signalAfterRecovery: state.signal });
+  }
+  return { response, recovered };
+}
+
+export function judge(events, initialState) {
+  const s = clone(initialState);
+  let valid = true, verified = 0, recoveredCount = 0, awaitingHydra = false, lastRound = 0;
+  for (const e of events) {
+    if (e.type === "AEGIS") {
+      const a = ACTIONS.find(x => x.name === e.action);
+      if (!a || awaitingHydra || e.round !== lastRound + 1 || e.cost !== a.cost || e.info !== a.info || e.gain !== a.gain || e.risk !== a.risk || a.cost > s.budget) { valid = false; break; }
+      s.round = e.round; lastRound = e.round; s.budget -= a.cost;
+      s.knowledge = Math.min(10, s.knowledge + a.info);
+      s.trust = Math.max(0, Math.min(20, s.trust + a.gain - a.risk));
+      awaitingHydra = true;
+    } else if (e.type === "HYDRA") {
+      if (!awaitingHydra || e.round !== lastRound || typeof e.impact !== "number" || e.impact < 0 || e.impact > 10 || typeof e.deception !== "boolean" || typeof e.move !== "string") { valid = false; break; }
+      s.trust = Math.max(0, s.trust - e.impact);
+      s.hiddenThreat = Math.max(0, s.hiddenThreat + (e.deception ? 1 : 0) - Math.floor(s.knowledge / 5));
+      s.signal = e.move; awaitingHydra = false;
+    } else if (e.type === "VERIFY") {
+      if (awaitingHydra || e.round !== lastRound || typeof e.recovered !== "boolean") { valid = false; break; }
+      verified++;
+      if (e.recovered) recoveredCount++;
+      // Recovery is replayed as a recorded state transition, not a score-only bonus.
+      if (e.trustAfterRecovery !== s.trust || e.signalAfterRecovery !== (e.recovered ? "rollback-verified" : s.signal)) { valid = false; break; }
+      if (e.recovered) { s.trust = 8; s.signal = "rollback-verified"; }
+    } else { valid = false; break; }
+  }
+  if (awaitingHydra) valid = false;
+  const evidence = verified >= 2 && s.knowledge >= 5;
+  const survival = s.trust >= 5;
+  const score = Math.max(0, Math.min(100, Math.round((survival ? 30 : 0) + (evidence ? 25 : 0) + Math.min(20, s.knowledge * 2) + Math.min(15, s.budget) + Math.min(10, recoveredCount * 5))));
+  return { valid, evidence, survival, score, final: s };
+}
