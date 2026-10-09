@@ -62,6 +62,15 @@ assert(invalidReplays === 0, "valid match replay failures: " + invalidReplays);
 assert(nondeterministic === 0, "same-seed deterministic mismatches: " + nondeterministic);
 assert(lowScores === 0, "matches below promotion gate: " + lowScores);
 
+// Engine must ignore forged caller-supplied action attributes and use the canonical definition.
+const forgedState = initial(7, "mirror");
+const forgedActionEvents = [];
+applyAction(forgedState, { name: "scan", cost: 0, info: 0, gain: 99, risk: 0 }, rng(7), forgedActionEvents);
+assert(forgedActionEvents[0].cost === 1 && forgedActionEvents[0].info === 4 &&
+  forgedActionEvents[0].gain === 2 && forgedActionEvents[0].risk === 0,
+  "forged action attributes must be ignored");
+assert(forgedState.budget === 21, "canonical action cost must be charged");
+
 // Adversarial JUDGE checks: tampering, event reordering, duplication and omission.
 const original = firstMatch.events;
 assert(judge(original, initial(1, "mirror")).valid, "baseline replay must pass");
@@ -144,6 +153,6 @@ console.log(JSON.stringify({
   minScore,
   maxScore,
   averageScore: Number((scoreTotal / runs).toFixed(2)),
-  adversarialJudgeChecks: 11,
+  actionIntegrityChecks: 1,\n  adversarialJudgeChecks: 11,
   hashChainChecks: 2
 }, null, 2));
