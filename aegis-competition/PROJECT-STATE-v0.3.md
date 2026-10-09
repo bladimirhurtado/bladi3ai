@@ -1,71 +1,52 @@
 # AEGIS Competition Project — Saved State
-Last updated: 2026-10-08
-Current working branch: aegis-competition-v0.3
-Repository: bladimirhurtado/bladi3ai
+Last updated: 2026-10-09
+Current working branch: `aegis-competition-v0.3`
+Repository: `bladimirhurtado/bladi3ai`
 
-## User's competition goal
-A controlled, authorized cybersecurity competition. AEGIS is the offensive AI agent attempting to penetrate a security system specifically prepared for the event; Gemini acts as the detector/defender. Event duration depends on preparation and performance. Meta AI may also participate in the wider competition. The target is not an unauthorized third-party system. Do not claim that real-system penetration or evasion has been demonstrated before it has actually been tested.
+## Goal and boundaries
+AEGIS is being prepared for an authorized, controlled cybersecurity competition. It is intended to take initiative and reason several moves ahead; a competition defender such as Gemini may detect and stop it. Meta AI may participate in the wider competition. The external target, allowed techniques, rules, time limit, detector interface, and exact success condition must be supplied by the organizer before external testing. Synthetic results must never be presented as real-system penetration or detector evasion.
 
-## User's strategic direction
-- AEGIS must be offensive and take initiative, not merely defend.
-- Think several moves ahead, like chess: anticipate likely adversary responses, consider second- and third-order reactions, gather information strategically, and change plans when evidence contradicts a hypothesis.
-- Use tools deliberately and verify work; do not just discuss plans.
-- Preserve versions and rollback points. Do not overwrite the original main branch or merge without an explicit decision.
-- Be creative and ambitious, but honest about untested capabilities and tool limitations.
+## Version preservation
+- `main` remains the protected original and must not be merged or overwritten casually.
+- `aegis-competition-v0.1` and `aegis-competition-v0.2` remain preserved.
+- Current work is on `aegis-competition-v0.3`.
+- Continue with commits and rollback points. Do not claim that older branches or main were modified.
 
-## GitHub version history
-- Repository main remains untouched.
-- v0.1 branch: aegis-competition-v0.1 (preserved).
-- v0.2 branch: aegis-competition-v0.2 (preserved).
-- v0.3 branch: aegis-competition-v0.3 (current working branch).
-- v0.3 is ahead of v0.2 by 7 commits, behind by 0 at the last comparison.
-- Branch URL: https://github.com/bladimirhurtado/bladi3ai/tree/aegis-competition-v0.3
+Branch: https://github.com/bladimirhurtado/bladi3ai/tree/aegis-competition-v0.3
 
-## AEGIS v0.3 changes made
-- Added aegis-competition/engine.mjs as shared strategic/simulation/replay engine.
-- Updated aegis-competition/app.js to use the shared module, render logs via text nodes, display errors, and gate the verdict on score plus replay/evidence/survival.
-- Updated index.html to load app.js as an ES module and show v0.3.
-- Updated README.md with changes and limitations.
-- Added TEST-RESULTS-v0.3.md.
-- Added GATE-STATUS-v0.3.md.
-- The attempt to update self-test.mjs, INTERNAL-GATE.md, and lab-spec.json on this branch was blocked by tool safety controls; do not claim those updates were completed. The older self-test.mjs still needs migration to import the shared engine.
+## Current architecture
+- AEGIS: bounded search with five-ply preview, three-ply turn planning, budgeted actions, and deterministic per-branch random streams.
+- HYDRA: five synthetic modes: mirror, deceiver, switcher, noise, meta.
+- JUDGE: reconstructs state from events, validates strict event schemas and ordering, checks canonical action attributes, recomputes HYDRA responses from the seeded model, and validates verification/recovery transitions.
+- Integrity: SHA-256 chained event log. This is not a digital signature and needs a separately preserved trusted head or external witness.
+- Lab scope remains synthetic/offline. The configuration prohibits network scanning, exploit delivery, credential attacks, persistence, and third-party targeting.
 
-## Current engine architecture
-- AEGIS: bounded search with a five-ply preview, budgeted actions, deterministic per-branch random streams.
-- HYDRA: five synthetic adversary modes: mirror, deceiver, switcher, noise, meta.
-- JUDGE: reconstructs state from the event stream and checks action ordering, action cost/attributes, event shape, and recovery transitions.
-- SHA-256 event chain is generated for the match, but persistent signed audit records and independent post-generation chain verification are not yet implemented.
-- Recovery is represented as a state transition and replayed by the judge.
-- Lab remains synthetic/offline only; no general-purpose real-world intrusion capability should be claimed.
+## Latest confirmed CI test
+- GitHub Actions run: https://github.com/bladimirhurtado/bladi3ai/actions/runs/37970354750
+- Tested revision: `902d5174f257a2c1212d527bfcf86034c12e310e`
+- Node.js 22.23.3; status PASS.
+- 1,000 synthetic matches across five HYDRA modes.
+- Invalid replays: 0; nondeterministic repeats: 0; low scores: 0.
+- Score range: 80–92; average: 86.29.
+- Action-integrity checks: 1; adversarial JUDGE checks: 11; hash-chain checks: 2.
 
-## Tests run in the session
-The source of engine.mjs was fetched from the v0.3 branch, syntax-checked, then executed in an isolated JavaScript runtime with a test harness: 200 seeds × 5 HYDRA modes = 1,000 synthetic matches. Each seed/mode combination was run twice.
-Results:
-- 1,000 matches
-- 0 invalid event replays
-- 0 non-reproducible repeated runs
-- score minimum 80, maximum 92, average 86.28
-- mirror: 200 runs, scores 81–81
-- deceiver: 200 runs, scores 86–86
-- switcher: 200 runs, scores 91–91
-- noise: 200 runs, scores 80–92
-- meta: 200 runs, scores 88–88
-These were in-session JavaScript runtime tests, NOT an independent Node.js/CI run. They demonstrate reproducibility and internal replay consistency under the tested synthetic conditions only, not real-world penetration, evasion, or superiority over Gemini/Meta.
+Latest test report: https://github.com/bladimirhurtado/bladi3ai/blob/aegis-competition-v0.3/aegis-competition/TEST-RESULTS-v0.3.md
+Latest gate status: https://github.com/bladimirhurtado/bladi3ai/blob/aegis-competition-v0.3/aegis-competition/GATE-STATUS-v0.3.md
 
-## Current readiness status
-INTERNAL SYNTHETIC ENGINE CHECK: initial pass for the tested harness.
-EXTERNAL COMPETITION GATE: NOT PASSED.
-Remaining work:
-1. Migrate the repository self-test to import and test the shared engine instead of duplicating logic.
-2. Run independently using Node.js or CI and record the exact output.
-3. Add independent event-chain verification and a persisted/signed audit record.
-4. Adversarially test the judge with malformed, reordered, duplicated, missing, and tampered events; verify all edge cases.
-5. Establish the organizer-authorized target, scope, permitted techniques, time limit, success condition, and Gemini detector interface.
-6. Only then run the external event and report observed evidence, without extrapolating from simulation scores.
-7. Keep v0.1, v0.2, and main unchanged; continue work in a new branch or the current v0.3 branch with commits/rollback points.
+## Latest hardening
+- Migrated the self-test to import the shared engine and run independently under Node.js CI.
+- Added closed event schemas to reject unknown/missing event fields.
+- Hardened action execution so a caller cannot spoof an action's cost, information, gain, or risk by supplying altered properties.
+- Added adversarial checks for tampering, reordering, duplicates, missing events, malformed values, injected fields, and forged recovery state.
+- CI caught two test-fixture/test-source mistakes during development; these were corrected, and revision `902d5174f257a2c1212d527bfcf86034c12e310e` passed.
 
-## Deployment/tool limits
-- Vercel deployment failed: HTTP 402 for unavailable failover regions, then HTTP 400 because GitHub login is not linked to Vercel. No deployment exists.
-- MicroFn validation was unavailable due to an invalid access token.
-- SentinelX had no enrolled/online host.
-- Do not claim external browser, Node/CI, Gemini, or Meta tests occurred unless they actually do.
+## Remaining work — priority order
+1. Continue adversarial audit of engine and UI; ensure UI integrity labels accurately reflect tested guarantees.
+2. Expand property/mutation tests, including invalid initial states, malformed input, and varied event sequences.
+3. Broaden HYDRA policies and test for overfitting to the five current synthetic modes.
+4. Implement persistent signed audit records or an external witness for the chain head.
+5. Obtain the competition organizer's written scope, permitted techniques, target/interface, time limit, detector interface, and measurable success condition.
+6. Run only authorized external evaluation after the interface and rules are available, then report evidence without extrapolating from synthetic scores.
+
+## Important limit
+The synthetic CI gate is passing; the external competition gate is NOT PASSED. No real-system penetration, detector evasion, or superiority over Gemini/Meta has been demonstrated. Do not merge to main or claim the project is externally competition-ready until that separate gate is completed.
