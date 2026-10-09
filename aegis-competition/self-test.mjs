@@ -85,6 +85,40 @@ const omitted = structuredClone(original);
 omitted.splice(verifyIndex, 1);
 assert(!judge(omitted, initial(1, "mirror")).valid, "omitted required verification must fail");
 
+// Additional malformed-input and state-transition adversarial checks.
+const malformed = structuredClone(original);
+malformed[0] = null;
+assert(!judge(malformed, initial(1, "mirror")).valid, "null event must fail");
+
+const missingHydra = structuredClone(original);
+const missingHydraIndex = missingHydra.findIndex(event => event.type === "HYDRA");
+missingHydra.splice(missingHydraIndex, 1);
+assert(!judge(missingHydra, initial(1, "mirror")).valid, "missing HYDRA event must fail");
+
+const duplicateVerify = structuredClone(original);
+const duplicateVerifyIndex = duplicateVerify.findIndex(event => event.type === "VERIFY");
+assert(duplicateVerifyIndex >= 0, "test fixture must contain VERIFY event");
+duplicateVerify.splice(duplicateVerifyIndex + 1, 0, structuredClone(duplicateVerify[duplicateVerifyIndex]));
+assert(!judge(duplicateVerify, initial(1, "mirror")).valid, "duplicate VERIFY must fail");
+
+const nonFiniteImpact = structuredClone(original);
+nonFiniteImpact.find(event => event.type === "HYDRA").impact = Number.NaN;
+assert(!judge(nonFiniteImpact, initial(1, "mirror")).valid, "non-finite impact must fail");
+
+const invalidDeception = structuredClone(original);
+invalidDeception.find(event => event.type === "HYDRA").deception = "true";
+assert(!judge(invalidDeception, initial(1, "mirror")).valid, "non-boolean deception must fail");
+
+const extraField = structuredClone(original);
+extraField[0].unrecognized = "injected";
+assert(!judge(extraField, initial(1, "mirror")).valid, "unknown event field must fail");
+
+const falseRecovery = structuredClone(original);
+const recoveryEvent = falseRecovery.find(event => event.type === "VERIFY" && event.recovered);
+assert(recoveryEvent, "test fixture must contain a recovery event");
+recoveryEvent.trustAfterRecovery = 19;
+assert(!judge(falseRecovery, initial(1, "mirror")).valid, "forged recovery state must fail");
+
 const recordedChain = chain(original);
 assert(verifyChain(original, recordedChain), "untampered hash chain must verify");
 const chainTamper = structuredClone(original);
@@ -100,6 +134,6 @@ console.log(JSON.stringify({
   minScore,
   maxScore,
   averageScore: Number((scoreTotal / runs).toFixed(2)),
-  adversarialJudgeChecks: 4,
+  adversarialJudgeChecks: 11,
   hashChainChecks: 2
 }, null, 2));
