@@ -86,34 +86,73 @@ export function applyAction(state, action, random, events) {
 
 export function judge(events, initialState) {
   const s = clone(initialState);
-  let valid = true, verified = 0, recoveredCount = 0, awaitingHydra = false, lastRound = 0;
+  const random = rng(s.seed);
+  let valid = true, verified = 0, recoveredCount = 0;
+  let awaitingHydra = false, awaitingVerify = false, lastRound = 0, pendingAction = null;
+
   for (const e of events) {
+    if (!e || typeof e !== "object" || Array.isArray(e)) { valid = false; break; }
+
     if (e.type === "AEGIS") {
       const a = ACTIONS.find(x => x.name === e.action);
-      if (!a || awaitingHydra || e.round !== lastRound + 1 || e.cost !== a.cost || e.info !== a.info || e.gain !== a.gain || e.risk !== a.risk || a.cost > s.budget) { valid = false; break; }
-      s.round = e.round; lastRound = e.round; s.budget -= a.cost;
+      if (!a || awaitingHydra || awaitingVerify || e.round !== lastRound + 1 ||
+          e.cost !== a.cost || e.info !== a.info || e.gain !== a.gain ||
+          e.risk !== a.risk || a.cost > s.budget) { valid = false; break; }
+
+      s.round = e.round;
+      lastRound = e.round;
+      s.budget -= a.cost;
       s.knowledge = Math.min(10, s.knowledge + a.info);
       s.trust = Math.max(0, Math.min(20, s.trust + a.gain - a.risk));
+      pendingAction = a;
       awaitingHydra = true;
     } else if (e.type === "HYDRA") {
-      if (!awaitingHydra || e.round !== lastRound || typeof e.impact !== "number" || e.impact < 0 || e.impact > 10 || typeof e.deception !== "boolean" || typeof e.move !== "string") { valid = false; break; }
-      s.trust = Math.max(0, s.trust - e.impact);
-      s.hiddenThreat = Math.max(0, s.hiddenThreat + (e.deception ? 1 : 0) - Math.floor(s.knowledge / 5));
-      s.signal = e.move; awaitingHydra = false;
+      if (!awaitingHydra || e.round !== lastRound ||
+          typeof e.impact !== "number" || !Number.isFinite(e.impact) ||
+          typeof e.deception !== "boolean" || typeof e.move !== "string") {
+        valid = false; break;
+      }
+
+      // Recompute HYDRA's move from the original seed; recorded claims alone are not trusted.
+      const expected = hydraResponse(s, pendingAction, random);
+      if (e.move !== expected.move || e.impact !== expected.impact ||
+          e.deception !== expected.deception) { valid = false; break; }
+
+      s.trust = Math.max(0, s.trust - expected.impact);
+      s.hiddenThreat = Math.max(0, s.hiddenThreat + (expected.deception ? 1 : 0) - Math.floor(s.knowledge / 5));
+      s.signal = expected.move;
+      awaitingHydra = false;
+      pendingAction = null;
+      awaitingVerify = s.round % 3 === 0 || s.trust < 5;
     } else if (e.type === "VERIFY") {
-      if (awaitingHydra || e.round !== lastRound || typeof e.recovered !== "boolean") { valid = false; break; }
+      if (awaitingHydra || !awaitingVerify || e.round !== lastRound ||
+          typeof e.recovered !== "boolean") { valid = false; break; }
+
+      const shouldRecover = s.trust < 5;
+      const expectedTrust = shouldRecover ? 8 : s.trust;
+      const expectedSignal = shouldRecover ? "rollback-verified" : s.signal;
+      if (e.recovered !== shouldRecover || e.trustAfterRecovery !== expectedTrust ||
+          e.signalAfterRecovery !== expectedSignal) { valid = false; break; }
+
       verified++;
-      if (e.recovered) recoveredCount++;
-      // Recovery is replayed as a recorded state transition, not a score-only bonus.
-      const expectedTrust = e.recovered ? 8 : s.trust;
-      const expectedSignal = e.recovered ? "rollback-verified" : s.signal;
-      if (e.trustAfterRecovery !== expectedTrust || e.signalAfterRecovery !== expectedSignal || (e.recovered && s.trust >= 5) || (!e.recovered && s.trust < 5)) { valid = false; break; }
-      if (e.recovered) { s.trust = 8; s.signal = "rollback-verified"; }
-    } else { valid = false; break; }
+      if (shouldRecover) {
+        recoveredCount++;
+        s.trust = 8;
+        s.signal = "rollback-verified";
+      }
+      awaitingVerify = false;
+    } else {
+      valid = false; break;
+    }
   }
-  if (awaitingHydra) valid = false;
+
+  if (awaitingHydra || awaitingVerify) valid = false;
   const evidence = verified >= 2 && s.knowledge >= 5;
   const survival = s.trust >= 5;
-  const score = Math.max(0, Math.min(100, Math.round((survival ? 30 : 0) + (evidence ? 25 : 0) + Math.min(20, s.knowledge * 2) + Math.min(15, s.budget) + Math.min(10, recoveredCount * 5))));
+  const score = Math.max(0, Math.min(100, Math.round(
+    (survival ? 30 : 0) + (evidence ? 25 : 0) +
+    Math.min(20, s.knowledge * 2) + Math.min(15, s.budget) +
+    Math.min(10, recoveredCount * 5)
+  )));
   return { valid, evidence, survival, score, final: s };
 }
