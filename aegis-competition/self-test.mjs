@@ -83,6 +83,8 @@ try { initial(-1, "mirror"); } catch { invalidSeedRejected = true; }
 assert(invalidSeedRejected, "invalid seed must be rejected");
 assert(!judge([], null).valid, "null initial state must fail");
 assert(!judge([], { ...initial(1, "mirror"), trust: 13 }).valid, "altered initial baseline must fail");
+assert(!judge(null, initial(1, "mirror")).valid, "null event stream must fail");
+assert(!judge([], initial(1, "mirror")).valid, "empty event stream must fail");
 
 assert(judge(original, initial(1, "mirror")).valid, "baseline replay must pass");
 const tampered = structuredClone(original);
@@ -180,6 +182,7 @@ console.log(JSON.stringify({
   minScore,
   maxScore,
   averageScore: Number((scoreTotal / runs).toFixed(2)),
+  malformedInputChecks: 2,
   initialStateChecks: 4,
   actionIntegrityChecks: 1,
   adversarialJudgeChecks: 11,
