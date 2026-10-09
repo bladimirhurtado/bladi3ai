@@ -1,0 +1,22 @@
+name: AEGIS synthetic self-test
+
+on:
+  push:
+    branches:
+      - aegis-competition-v0.3
+  pull_request:
+    branches:
+      - aegis-competition-v0.3
+
+jobs:
+  synthetic-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run shared-engine synthetic and adversarial tests
+        run: node aegis-competition/self-test.mjs
