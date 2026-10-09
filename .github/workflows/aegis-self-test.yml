@@ -18,5 +18,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Validate JavaScript modules and lab specification
+        run: |
+          node --check aegis-competition/engine.mjs
+          node --check aegis-competition/audit-record.mjs
+          node --check aegis-competition/self-test.mjs
+          node --input-type=module --check < aegis-competition/app.js
+          node -e "JSON.parse(require('node:fs').readFileSync('aegis-competition/lab-spec.json', 'utf8'))"
       - name: Run shared-engine synthetic and adversarial tests
         run: node aegis-competition/self-test.mjs
