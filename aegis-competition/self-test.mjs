@@ -86,6 +86,13 @@ assert(!judge(original, { ...initial(1, "mirror"), trust: 13 }).valid, "altered 
 assert(!judge(null, initial(1, "mirror")).valid, "null event stream must fail");
 assert(!judge([], initial(1, "mirror")).valid, "empty event stream must fail");
 
+const longState = initial(22, "mirror");
+const longEvents = [];
+const longRandom = rng(22);
+const holdAction = ACTIONS.find(action => action.name === "hold");
+for (let round = 0; round < 9; round++) applyAction(longState, holdAction, longRandom, longEvents);
+assert(!judge(longEvents, initial(22, "mirror")).valid, "rounds beyond the eight-round limit must fail");
+
 assert(judge(original, initial(1, "mirror")).valid, "baseline replay must pass");
 const tampered = structuredClone(original);
 const hydra = tampered.find(event => event.type === "HYDRA");
@@ -183,6 +190,7 @@ console.log(JSON.stringify({
   maxScore,
   averageScore: Number((scoreTotal / runs).toFixed(2)),
   malformedInputChecks: 2,
+  maxRoundChecks: 1,
   initialStateChecks: 4,
   actionIntegrityChecks: 1,
   adversarialJudgeChecks: 11,
