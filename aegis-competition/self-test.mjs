@@ -1,44 +1,105 @@
-const ACTIONS=[
- {name:"scan",gain:2,cost:1,info:4,risk:0},{name:"probe",gain:3,cost:2,info:3,risk:1},
- {name:"feint",gain:1,cost:1,info:1,risk:0},{name:"pressure",gain:4,cost:3,info:0,risk:2},
- {name:"verify",gain:2,cost:2,info:5,risk:0},{name:"hold",gain:0,cost:1,info:1,risk:0}];
-const MODES=["mirror","deceiver","switcher","noise","meta"];
-function rng(seed){let x=seed>>>0;return()=>{x^=x<<13;x^=x>>>17;x^=x<<5;return(x>>>0)/4294967296}}
-function clone(x){return JSON.parse(JSON.stringify(x))}
-function fp(s){return [s.round,s.trust,s.knowledge,s.hiddenThreat,s.mode,s.budget,s.signal].join("|")}
-function hydraResponse(s,a,random){
- if(s.mode==="meta"&&a.name==="scan")return{move:"feed-decoy",impact:1,deception:true};
- if(s.mode==="mirror")return{move:a.name==="pressure"?"retreat":"mirror",impact:a.name==="pressure"?1:2,deception:false};
- if(s.mode==="deceiver")return{move:random()>0.5?"bait":"switch",impact:3,deception:true};
- if(s.mode==="switcher")return{move:s.round%2?"switch":"wait",impact:4,deception:s.round%2===1};
- return{move:random()>0.65?"noise":"pressure",impact:2+Math.floor(random()*3),deception:true};
+import { createHash } from "node:crypto";
+import { ACTIONS, MODES, rng, initial, predict, applyAction, judge } from "./engine.mjs";
+
+function match(seed, mode) {
+  const state = initial(seed, mode);
+  const start = initial(seed, mode);
+  const random = rng(seed);
+  const events = [];
+  for (let round = 0; round < 8 && state.budget > 0; round++) {
+    const plan = predict(state, 3);
+    let action = ACTIONS.find(item => item.name === plan.line[0]?.split(" → ")[0]) || ACTIONS[0];
+    if (state.mode === "noise" && state.trust < 9 && state.budget >= 2) {
+      action = ACTIONS.find(item => item.name === "verify");
+    }
+    if (action.cost > state.budget) action = [...ACTIONS].reverse().find(item => item.cost <= state.budget);
+    if (!action) break;
+    applyAction(state, action, random, events);
+  }
+  return { seed, mode, events, result: judge(events, start) };
 }
-function heuristic(s){return s.trust*2+s.knowledge*3-s.hiddenThreat*2+s.budget*.25}
-function predict(state,depth,random,seen=new Set()){
- if(depth===0)return{value:heuristic(state),line:[]};
- const key=fp(state)+"/"+depth;if(seen.has(key))return{value:-100,line:["CYCLE-BLOCK"]};
- const next=new Set(seen);next.add(key);let best={value:-Infinity,line:[]};
- for(const a of ACTIONS){if(a.cost>state.budget)continue;
-  const ns=clone(state);ns.round++;ns.budget-=a.cost;ns.knowledge=Math.min(10,ns.knowledge+a.info+(a.name==="verify"?2:0));ns.trust=Math.max(0,Math.min(20,ns.trust+a.gain-a.risk));
-  const h=hydraResponse(ns,a,random);ns.trust=Math.max(0,ns.trust-h.impact);ns.hiddenThreat=Math.max(0,ns.hiddenThreat+(h.deception?1:0)-Math.floor(ns.knowledge/5));ns.signal=h.move;
-  const child=predict(ns,depth-1,random,next);const value=child.value+(a.name==="verify"?2:0)-(h.deception?1:0);
-  if(value>best.value)best={value,line:[a.name+" → "+h.move,...child.line]};
- } return best;
+
+function chain(events) {
+  let previous = "GENESIS";
+  const hashes = [];
+  for (const event of events) {
+    previous = createHash("sha256").update(previous + "|" + JSON.stringify(event)).digest("hex");
+    hashes.push(previous);
+  }
+  return { head: previous, hashes };
 }
-let runs=0,fail=0,minScore=101,maxScore=-1;
-for(let seed=1;seed<=200;seed++)for(const mode of MODES){
- const random=rng(seed),s={seed,round:0,trust:12,knowledge:1,hiddenThreat:7,budget:22,signal:"unknown",mode};
- const events=[];let verified=0,recovered=0;
- for(let r=1;r<=8&&s.budget>0;r++){
-  const p=predict(s,3,random);let chosen=ACTIONS.find(a=>a.name===p.line[0]?.split(" → ")[0])||ACTIONS[0];if(s.mode==="noise"&&s.trust<9&&s.budget>=2)chosen=ACTIONS.find(a=>a.name==="verify");
-  if(chosen.cost>s.budget)break;
-  s.round=r;s.budget-=chosen.cost;s.knowledge=Math.min(10,s.knowledge+chosen.info);s.trust=Math.max(0,Math.min(20,s.trust+chosen.gain-chosen.risk));
-  events.push({type:"A",r,action:chosen.name});
-  const h=hydraResponse(s,chosen,random);s.trust=Math.max(0,s.trust-h.impact);s.hiddenThreat=Math.max(0,s.hiddenThreat+(h.deception?1:0)-Math.floor(s.knowledge/5));
-  events.push({type:"H",r,impact:h.impact});
-  if(r%3===0||s.trust<5){verified++;if(s.trust<5){s.trust=8;recovered++}}
- }
- const score=Math.max(0,Math.min(100,Math.round((s.trust>=5?30:0)+(verified>=2&&s.knowledge>=5?25:0)+Math.min(20,s.knowledge*2)+Math.min(15,s.budget)+Math.min(10,recovered*5))));
- runs++;minScore=Math.min(minScore,score);maxScore=Math.max(maxScore,score);if(score<80)fail++;
+function verifyChain(events, recorded) {
+  const actual = chain(events);
+  return actual.head === recorded.head &&
+    actual.hashes.length === recorded.hashes.length &&
+    actual.hashes.every((value, index) => value === recorded.hashes[index]);
 }
-console.log(JSON.stringify({runs,fail,minScore,maxScore,passRate:(100*(runs-fail)/runs)}));
+function assert(condition, message) {
+  if (!condition) throw new Error("FAIL: " + message);
+}
+
+let runs = 0, invalidReplays = 0, nondeterministic = 0, lowScores = 0;
+let minScore = 101, maxScore = -1, scoreTotal = 0;
+const firstMatch = match(1, "mirror");
+
+for (let seed = 1; seed <= 200; seed++) {
+  for (const mode of MODES) {
+    const a = match(seed, mode);
+    const b = match(seed, mode);
+    runs++;
+    if (!a.result.valid) invalidReplays++;
+    if (JSON.stringify({ events: a.events, result: a.result }) !==
+        JSON.stringify({ events: b.events, result: b.result })) nondeterministic++;
+    if (a.result.score < 80 || !a.result.evidence || !a.result.survival) lowScores++;
+    minScore = Math.min(minScore, a.result.score);
+    maxScore = Math.max(maxScore, a.result.score);
+    scoreTotal += a.result.score;
+  }
+}
+
+assert(runs === 1000, "expected 1,000 synthetic matches");
+assert(invalidReplays === 0, "valid match replay failures: " + invalidReplays);
+assert(nondeterministic === 0, "same-seed deterministic mismatches: " + nondeterministic);
+assert(lowScores === 0, "matches below promotion gate: " + lowScores);
+
+// Adversarial JUDGE checks: tampering, event reordering, duplication and omission.
+const original = firstMatch.events;
+assert(judge(original, initial(1, "mirror")).valid, "baseline replay must pass");
+const tampered = structuredClone(original);
+const hydra = tampered.find(event => event.type === "HYDRA");
+assert(hydra, "test fixture must contain HYDRA event");
+hydra.impact = (hydra.impact + 1) % 10;
+assert(!judge(tampered, initial(1, "mirror")).valid, "forged HYDRA impact must fail");
+
+const reordered = structuredClone(original);
+[reordered[0], reordered[1]] = [reordered[1], reordered[0]];
+assert(!judge(reordered, initial(1, "mirror")).valid, "reordered events must fail");
+
+const duplicated = structuredClone(original);
+duplicated.splice(1, 0, structuredClone(duplicated[0]));
+assert(!judge(duplicated, initial(1, "mirror")).valid, "duplicated action event must fail");
+
+const verifyIndex = original.findIndex(event => event.type === "VERIFY");
+assert(verifyIndex >= 0, "test fixture must contain verification event");
+const omitted = structuredClone(original);
+omitted.splice(verifyIndex, 1);
+assert(!judge(omitted, initial(1, "mirror")).valid, "omitted required verification must fail");
+
+const recordedChain = chain(original);
+assert(verifyChain(original, recordedChain), "untampered hash chain must verify");
+const chainTamper = structuredClone(original);
+chainTamper[0].action = "pressure";
+assert(!verifyChain(chainTamper, recordedChain), "tampered event must fail hash-chain verification");
+
+console.log(JSON.stringify({
+  status: "PASS",
+  runs,
+  invalidReplays,
+  nondeterministic,
+  lowScores,
+  minScore,
+  maxScore,
+  averageScore: Number((scoreTotal / runs).toFixed(2)),
+  adversarialJudgeChecks: 4,
+  hashChainChecks: 2
+}, null, 2));
