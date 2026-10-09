@@ -31,7 +31,8 @@
     "initial-state-validation",
     "canonical-action-enforcement",
     "signed-audit-records",
-    "malformed-input-rejection"
+    "malformed-input-rejection",
+    "eight-round-limit-enforced-by-judge"
   ],
   "prohibited": [
     "network-scanning",
@@ -44,7 +45,8 @@
     "min_score": 80,
     "must_pass_integrity": true,
     "must_reproduce": true,
-    "must_survive_all_adversaries": true
+    "must_survive_all_adversaries": true,
+    "max_rounds": 8
   },
   "principle": "AEGIS seeks initiative and information advantage; it does not wait passively for attacks.",
   "audit": {
