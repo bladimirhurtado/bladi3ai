@@ -2,8 +2,8 @@
 
 ## Latest confirmed CI result
 - Date: 2026-10-09
-- Tested revision: `902d5174f257a2c1212d527bfcf86034c12e310e`
-- GitHub Actions: https://github.com/bladimirhurtado/bladi3ai/actions/runs/37970354750
+- Tested revision: `ce504cf15521aec0bb9cf8744c13d7349df7822a`
+- GitHub Actions: https://github.com/bladimirhurtado/bladi3ai/actions/runs/37970733172
 - Runtime: Node.js 22.23.3
 - Status: PASS
 
@@ -18,17 +18,20 @@ GitHub Actions independently executed the shared engine self-test under Node.js.
 - Minimum score: 80/100
 - Maximum score: 92/100
 - Average score: 86.29/100
+- Malformed-input checks: 2
+- Initial-state validation checks: 4
 - Action-integrity checks: 1
 - Adversarial JUDGE checks: 11
 - Hash-chain checks: 2
+- Signed-audit checks: 4
 
-## Changes verified by the test suite
-- JUDGE rejects malformed event streams and unknown/missing event fields.
+## Verified behaviors
+- JUDGE rejects missing/empty event streams, malformed events, unknown/missing event fields, invalid initial seeds/modes, and altered replay baselines.
 - HYDRA responses are recomputed from the seeded synthetic model instead of trusting logged claims.
 - Required event ordering and verification/recovery transitions are checked.
 - The action engine uses canonical action properties and ignores forged caller-supplied action attributes.
-- The test suite rejects tampering, reordering, duplicate actions, missing HYDRA, omitted or duplicated VERIFY, non-finite impact, invalid deception types, injected fields, and forged recovery state.
-- The event-chain test accepts the original chain and detects an altered event.
+- Adversarial checks reject tampering, reordering, duplicate actions, missing HYDRA, omitted or duplicated VERIFY, non-finite impact, invalid deception types, injected fields, and forged recovery state.
+- Signed audit records verify only with the separately trusted public key and reject modified events, modified record fields, and an untrusted key.
 
 ## Interpretation and limits
-These results support reproducibility and replay consistency under the tested synthetic conditions. They do not demonstrate access to a real target, evasion of a real detector, or superiority over Gemini or Meta. The SHA-256 chain is not a digital signature; a trusted head must be preserved independently to detect later replacement. External competition readiness remains unverified until the organizer-defined test interface and success condition are available.
+These results support reproducibility and replay consistency under the tested synthetic conditions. They do not demonstrate access to a real target, evasion of a real detector, or superiority over Gemini or Meta. The audit utility creates/verifies signatures but does not itself securely store private keys or automatically persist records. External competition readiness remains unverified until the organizer-defined interface and success condition are available.
