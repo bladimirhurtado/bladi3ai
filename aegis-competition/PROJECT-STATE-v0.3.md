@@ -24,8 +24,8 @@ Branch: https://github.com/bladimirhurtado/bladi3ai/tree/aegis-competition-v0.3
 - Lab scope remains synthetic/offline; network scanning, exploit delivery, credential attacks, persistence, and third-party targeting are prohibited.
 
 ## Latest confirmed CI test
-- GitHub Actions run: https://github.com/bladimirhurtado/bladi3ai/actions/runs/37971019074
-- Tested revision: `f4d5952861bf3bd35b470f24edab1404df03287a`
+- GitHub Actions run: https://github.com/bladimirhurtado/bladi3ai/actions/runs/37971144889
+- Tested revision: `77ca2b6459bb3908836fedecc00a1eaf882e3b0c`
 - Node.js 22.23.3; status PASS.
 - 1,000 synthetic matches across five HYDRA modes.
 - Invalid replays: 0; nondeterministic repeats: 0; low scores: 0.
@@ -41,7 +41,7 @@ Gate status: https://github.com/bladimirhurtado/bladi3ai/blob/aegis-competition-
 - Added closed event schemas, replay-baseline validation, rejection of missing/empty event streams, and the eight-round limit.
 - Added canonical action enforcement and adversarial event/recovery tests.
 - Added signed audit record creation and verification with Ed25519 and tests for tampering and untrusted keys.
-- CI caught test-source/test-fixture mistakes during development; they were corrected. The latest confirmed result is the successful run above. Documentation changes after that run still require a final CI confirmation.
+- CI caught test-source/test-fixture mistakes during development; they were corrected. The latest confirmed result is the successful run above. The saved state, gate report, and test report were refreshed and then passed CI on the revision linked above.
 
 ## Remaining work — priority order
 1. Verify CI on the latest documentation commit and preserve its exact passing SHA/output.
