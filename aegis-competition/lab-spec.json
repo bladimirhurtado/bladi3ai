@@ -1,13 +1,56 @@
 {
-  "name":"AEGIS Competition Lab",
-  "version":"0.2.0",
-  "scope":"synthetic-local-only",
-  "objective":"offensive adversarial reasoning under bounded resources",
-  "lookahead_plies":5,
-  "agents":["AEGIS","HYDRA","JUDGE"],
-  "adversaries":["mirror","deceiver","switcher","noise","meta"],
-  "properties":["offensive-planning","second-order-reasoning","hidden-state","deception","noise","resource-budget","cycle-detection","independent-replay","tamper-evident-log","recovery"],
-  "prohibited":["network-scanning","exploit-delivery","credential-attacks","persistence","third-party-targeting"],
-  "promotion_gate":{"min_score":80,"must_pass_integrity":true,"must_reproduce":true,"must_survive_all_adversaries":true},
-  "principle":"AEGIS seeks initiative and information advantage; it does not wait passively for attacks."
+  "name": "AEGIS Competition Lab",
+  "version": "0.3.0",
+  "scope": "synthetic-local-only",
+  "objective": "offensive adversarial reasoning under bounded resources",
+  "lookahead_plies": 5,
+  "agents": [
+    "AEGIS",
+    "HYDRA",
+    "JUDGE"
+  ],
+  "adversaries": [
+    "mirror",
+    "deceiver",
+    "switcher",
+    "noise",
+    "meta"
+  ],
+  "properties": [
+    "offensive-planning",
+    "second-order-reasoning",
+    "hidden-state",
+    "deception",
+    "noise",
+    "resource-budget",
+    "cycle-detection",
+    "independent-replay",
+    "tamper-evident-log",
+    "recovery",
+    "closed-event-schema",
+    "initial-state-validation",
+    "canonical-action-enforcement",
+    "signed-audit-records",
+    "malformed-input-rejection"
+  ],
+  "prohibited": [
+    "network-scanning",
+    "exploit-delivery",
+    "credential-attacks",
+    "persistence",
+    "third-party-targeting"
+  ],
+  "promotion_gate": {
+    "min_score": 80,
+    "must_pass_integrity": true,
+    "must_reproduce": true,
+    "must_survive_all_adversaries": true
+  },
+  "principle": "AEGIS seeks initiative and information advantage; it does not wait passively for attacks.",
+  "audit": {
+    "record_format": "Ed25519 signature over schemaVersion, createdAt, eventCount, chainHead, and publicKey",
+    "trusted_key_requirement": "trusted public key must be obtained separately; embedded key is not sufficient",
+    "private_key_storage": "outside repository; secure custody required",
+    "persistence": "caller-managed; audit utility does not automatically persist records"
+  }
 }
