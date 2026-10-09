@@ -89,6 +89,9 @@ export function applyAction(state, action, random, events) {
 }
 
 export function judge(events, initialState) {
+  if (!Array.isArray(events) || events.length === 0) {
+    return { valid: false, evidence: false, survival: false, score: 0, final: null };
+  }
   if (!initialState || typeof initialState !== "object" || Array.isArray(initialState)) {
     return { valid: false, evidence: false, survival: false, score: 0, final: null };
   }
