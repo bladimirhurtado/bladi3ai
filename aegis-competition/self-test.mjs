@@ -1,4 +1,5 @@
-import { createHash } from "node:crypto";
+import { createHash, generateKeyPairSync } from "node:crypto";
+import { createAuditRecord, verifyAuditRecord } from "./audit-record.mjs";
 import { ACTIONS, MODES, rng, initial, predict, applyAction, judge } from "./engine.mjs";
 
 function match(seed, mode) {
@@ -154,6 +155,22 @@ const chainTamper = structuredClone(original);
 chainTamper[0].action = "pressure";
 assert(!verifyChain(chainTamper, recordedChain), "tampered event must fail hash-chain verification");
 
+// Signed audit record: verify signature, event chain, and externally trusted public key.
+const { privateKey, publicKey } = generateKeyPairSync("ed25519");
+const auditRecord = createAuditRecord(original, privateKey, publicKey, "2026-10-09T00:00:00.000Z");
+assert(verifyAuditRecord(auditRecord, original, publicKey), "valid signed audit record must verify");
+
+const signedTamper = structuredClone(original);
+signedTamper[0].action = "pressure";
+assert(!verifyAuditRecord(auditRecord, signedTamper, publicKey), "tampered events must fail signed audit verification");
+
+const alteredRecord = structuredClone(auditRecord);
+alteredRecord.chainHead = "0".repeat(64);
+assert(!verifyAuditRecord(alteredRecord, original, publicKey), "altered audit record must fail signature verification");
+
+const otherKeys = generateKeyPairSync("ed25519");
+assert(!verifyAuditRecord(auditRecord, original, otherKeys.publicKey), "untrusted public key must fail audit verification");
+
 console.log(JSON.stringify({
   status: "PASS",
   runs,
@@ -166,5 +183,6 @@ console.log(JSON.stringify({
   initialStateChecks: 4,
   actionIntegrityChecks: 1,
   adversarialJudgeChecks: 11,
-  hashChainChecks: 2
+  hashChainChecks: 2,
+  signedAuditChecks: 4
 }, null, 2));
