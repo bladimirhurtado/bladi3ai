@@ -73,6 +73,16 @@ assert(forgedState.budget === 21, "canonical action cost must be charged");
 
 // Adversarial JUDGE checks: tampering, event reordering, duplication and omission.
 const original = firstMatch.events;
+// Initial state is a trusted replay boundary and must be validated.
+let invalidModeRejected = false;
+try { initial(1, "unknown-mode"); } catch { invalidModeRejected = true; }
+assert(invalidModeRejected, "unknown HYDRA mode must be rejected");
+let invalidSeedRejected = false;
+try { initial(-1, "mirror"); } catch { invalidSeedRejected = true; }
+assert(invalidSeedRejected, "invalid seed must be rejected");
+assert(!judge([], null).valid, "null initial state must fail");
+assert(!judge([], { ...initial(1, "mirror"), trust: 13 }).valid, "altered initial baseline must fail");
+
 assert(judge(original, initial(1, "mirror")).valid, "baseline replay must pass");
 const tampered = structuredClone(original);
 const hydra = tampered.find(event => event.type === "HYDRA");
@@ -153,6 +163,7 @@ console.log(JSON.stringify({
   minScore,
   maxScore,
   averageScore: Number((scoreTotal / runs).toFixed(2)),
+  initialStateChecks: 4,
   actionIntegrityChecks: 1,
   adversarialJudgeChecks: 11,
   hashChainChecks: 2
