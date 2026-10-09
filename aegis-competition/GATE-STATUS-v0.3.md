@@ -3,18 +3,19 @@
 Status: SYNTHETIC CI GATE PASSED. EXTERNAL COMPETITION GATE NOT PASSED.
 
 ## Latest confirmed CI result
-- Tested revision: `ce504cf15521aec0bb9cf8744c13d7349df7822a`
-- GitHub Actions run: https://github.com/bladimirhurtado/bladi3ai/actions/runs/37970733172
+- Tested revision: `f4d5952861bf3bd35b470f24edab1404df03287a`
+- GitHub Actions run: https://github.com/bladimirhurtado/bladi3ai/actions/runs/37971019074
 - Node.js: 22.23.3
 - Result: PASS
 - 1,000 synthetic matches across five HYDRA modes.
 - Invalid replays: 0; nondeterministic repeats: 0; low scores: 0.
 - Scores: minimum 80, maximum 92, average 86.29.
-- Malformed-input checks: 2; initial-state checks: 4; action-integrity checks: 1.
-- Adversarial JUDGE checks: 11; hash-chain checks: 2; signed-audit checks: 4.
+- Malformed-input checks: 2; max-round-limit checks: 1; initial-state checks: 4.
+- Action-integrity checks: 1; adversarial JUDGE checks: 11; hash-chain checks: 2; signed-audit checks: 4.
+- CI also checks JavaScript module syntax and the lab specification JSON.
 
 ## Hardening included
-- JUDGE rejects missing/empty event streams, malformed events, unknown/missing event fields, invalid initial seeds/modes, and altered replay baselines.
+- JUDGE rejects missing/empty event streams, malformed events, unknown/missing event fields, invalid initial seeds/modes, altered replay baselines, and rounds beyond the eight-round match limit.
 - Replay recomputes HYDRA responses and validates event ordering, action costs/attributes, and recovery transitions.
 - Engine action execution resolves canonical action definitions by name instead of trusting caller-supplied values.
 - Added Ed25519 signed audit-record creation and verification. The verifier requires a separately trusted public key; private-key storage and durable record persistence remain operational responsibilities.
