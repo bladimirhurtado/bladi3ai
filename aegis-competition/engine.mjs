@@ -17,6 +17,8 @@ export function rng(seed) {
 }
 export const clone = value => JSON.parse(JSON.stringify(value));
 export function initial(seed, mode = MODES[(seed >>> 0) % MODES.length]) {
+  if (!Number.isSafeInteger(seed) || seed < 0 || seed > 0xffffffff) throw new Error("Seed must be an unsigned 32-bit integer");
+  if (!MODES.includes(mode)) throw new Error("Unknown HYDRA mode");
   return { seed: seed >>> 0, round: 0, trust: 12, knowledge: 1, hiddenThreat: 7, budget: 22, signal: "unknown", mode };
 }
 export function fingerprint(s) {
@@ -87,7 +89,19 @@ export function applyAction(state, action, random, events) {
 }
 
 export function judge(events, initialState) {
+  if (!initialState || typeof initialState !== "object" || Array.isArray(initialState)) {
+    return { valid: false, evidence: false, survival: false, score: 0, final: null };
+  }
   const s = clone(initialState);
+  const initialKeys = ["seed", "round", "trust", "knowledge", "hiddenThreat", "budget", "signal", "mode"];
+  if (Object.keys(s).length !== initialKeys.length ||
+      Object.keys(s).some(key => !initialKeys.includes(key)) ||
+      !Number.isSafeInteger(s.seed) || s.seed < 0 || s.seed > 0xffffffff ||
+      !MODES.includes(s.mode) || s.round !== 0 || s.trust !== 12 ||
+      s.knowledge !== 1 || s.hiddenThreat !== 7 || s.budget !== 22 ||
+      s.signal !== "unknown") {
+    return { valid: false, evidence: false, survival: false, score: 0, final: s };
+  }
   const random = rng(s.seed);
   let valid = true, verified = 0, recoveredCount = 0;
   let awaitingHydra = false, awaitingVerify = false, lastRound = 0, pendingAction = null;
