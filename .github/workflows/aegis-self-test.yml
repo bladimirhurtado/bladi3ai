@@ -26,6 +26,7 @@ jobs:
           node --check aegis-competition/audit-record.mjs
           node --check aegis-competition/self-test.mjs
           node --check aegis-competition/scoped-runner.mjs
+          node --check aegis-competition/scoped-cli.mjs
           node --check aegis-competition/scoped-runner.test.mjs
           node --input-type=module --check < aegis-competition/app.js
           node -e "const fs=require('node:fs'); for (const p of ['aegis-competition/lab-spec.json','aegis-competition/engagement-scope.template.json']) JSON.parse(fs.readFileSync(p,'utf8'))"
@@ -33,3 +34,13 @@ jobs:
         run: node aegis-competition/self-test.mjs
       - name: Run fail-closed scope-gate tests with mocked transport
         run: node aegis-competition/scoped-runner.test.mjs
+      - name: Confirm CLI refuses to run without a scope file
+        shell: bash
+        run: |
+          set +e
+          output=$(env -u AEGIS_SCOPE_FILE node aegis-competition/scoped-cli.mjs --check health-status 2>&1)
+          result=$?
+          set -e
+          test "$result" -ne 0
+          echo "$output" | grep -q "AEGIS_SCOPE_FILE must be an absolute file path"
+          echo "CLI fail-closed preflight: PASS"
