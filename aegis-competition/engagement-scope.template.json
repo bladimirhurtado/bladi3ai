@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "1.0",
+  "engagement": {
+    "id": "REPLACE-WITH-ORGANIZER-CHALLENGE-ID",
+    "organizer": "REPLACE-WITH-ORGANIZER-NAME"
+  },
+  "authorization": {
+    "confirmed": false,
+    "writtenPermissionRef": "",
+    "approvedBy": "",
+    "startsAt": "2026-01-01T00:00:00.000Z",
+    "expiresAt": "2026-01-02T00:00:00.000Z"
+  },
+  "target": {
+    "exactTargetConfirmed": false,
+    "baseUrl": "https://challenge.example.invalid",
+    "allowPlainHttp": false,
+    "allowedHeaderNames": [],
+    "actions": []
+  },
+  "limits": {
+    "maxActions": 5,
+    "maxDurationMs": 60000,
+    "requestsPerMinute": 5,
+    "requestTimeoutMs": 5000,
+    "maxResponseBytes": 16384
+  },
+  "successCriteria": "REPLACE-WITH-A-MEASURABLE-ORGANIZER-DEFINED-ASSERTION",
+  "stopConditions": [
+    "Authorization expires or scope becomes unclear",
+    "Any redirect, authentication denial, or rate-limit response",
+    "Request, time, or response-size budget is exhausted",
+    "Unexpected service impact or organizer stop request"
+  ]
+}
