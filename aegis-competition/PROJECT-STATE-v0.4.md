@@ -19,6 +19,7 @@ Treat the competition as a real, rule-bound operational engagement—not as a ga
 ## Implemented on v0.4
 
 - New Node.js scoped HTTP runner with strict, exact-route allowlisting.
+- Operator CLI with validation-only `--check` mode and explicit `AEGIS_LIVE_EXECUTION=YES` guard for one-action execution.
 - Written-authorization window, organizer, engagement ID, success criteria, and stop conditions are mandatory.
 - Initial live action methods restricted to GET, HEAD, and OPTIONS; arbitrary URLs, request bodies, redirect following, automatic retries, scanning, exploit delivery, credential guessing, persistence, and monitoring-evasion behaviors are not implemented.
 - Total action, per-action, rate, session-duration, request-timeout, and response-size limits.
