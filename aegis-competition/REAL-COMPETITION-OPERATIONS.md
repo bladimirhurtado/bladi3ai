@@ -46,6 +46,27 @@ The runner obtains an exclusive lock next to the ledger, preventing two runner p
 
 These are explicit release boundaries, not temporary UI labels. If the organizer's task truly requires additional behavior, implement only the narrow operation permitted by the written rules, add its own tests, and require review before using it.
 
+## Running one explicitly approved action
+
+The CLI requires absolute paths and keeps the scope file, optional runtime header file, and audit ledger outside the repository. Start with a validation-only check:
+
+```sh
+export AEGIS_SCOPE_FILE="/secure/path/engagement-scope.json"
+node aegis-competition/scoped-cli.mjs --check health-status
+```
+
+Replace `health-status` with an action ID present in the approved scope. This check sends no network request. Only after reviewing the exact origin, route, authorization window, budgets, and stop conditions should an operator deliberately enable one live action:
+
+```sh
+export AEGIS_AUDIT_PATH="/secure/path/aegis-audit.jsonl"
+export AEGIS_LIVE_EXECUTION="YES"
+# Optional: JSON object of runtime header values, stored outside the repository with owner-only file permissions.
+export AEGIS_HEADERS_FILE="/secure/path/runtime-headers.json"
+node aegis-competition/scoped-cli.mjs health-status
+```
+
+The live command executes exactly one named, allow-listed read-only action. The CLI reports status, byte count, response hash, and elapsed time; it does not print the response body or automatically run a second action. The explicit opt-in variable is a guard against accidental execution, not a substitute for written authorization. Do not run this against any target until the scope has been approved under the actual competition rules.
+
 ## Local verification
 
 Run the tests with Node.js 22 or later:
