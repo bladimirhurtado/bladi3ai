@@ -152,6 +152,40 @@ try {
   assert.match(largeResult.stopReason, /response byte limit exceeded/);
   await largeRunner.close();
 
+  // The runner snapshots its scope; later caller mutation cannot broaden a route.
+  const mutableScope = scope({ engagement: { id: "snapshot-test", organizer: "Organizer" } });
+  const snapshotRunner = await createScopedRunner(mutableScope, {
+    auditPath: join(dir, "snapshot.jsonl"),
+    fetchImpl: async url => {
+      assert.equal(url.pathname, "/status");
+      return new Response("ok", { status: 200 });
+    }
+  });
+  mutableScope.target.actions[0].path = "/admin";
+  assert.equal((await snapshotRunner.runAction("health-status")).status, 200);
+  await snapshotRunner.close();
+
+  // Manual stop aborts an in-flight transport rather than only blocking later actions.
+  const stopScope = scope({ engagement: { id: "manual-stop-test", organizer: "Organizer" } });
+  let signalFetchStarted;
+  const fetchStarted = new Promise(resolve => { signalFetchStarted = resolve; });
+  let abortSeen = false;
+  const stopRunner = await createScopedRunner(stopScope, {
+    auditPath: join(dir, "manual-stop.jsonl"),
+    fetchImpl: async (_url, init) => new Promise((_resolve, reject) => {
+      const abort = () => { abortSeen = true; reject(new DOMException("aborted by operator", "AbortError")); };
+      if (init.signal.aborted) abort();
+      else init.signal.addEventListener("abort", abort, { once: true });
+      signalFetchStarted();
+    })
+  });
+  const pendingAction = stopRunner.runAction("health-status");
+  await fetchStarted;
+  await stopRunner.stop("operator stop requested");
+  await expectAsyncReject(() => pendingAction, /operator stop requested/);
+  assert.equal(abortSeen, true);
+  await stopRunner.close();
+
   // Runtime credentials must be explicitly header-allow-listed.
   const headerScope = scope({
     engagement: { id: "header-test", organizer: "Organizer" },
