@@ -84,6 +84,13 @@ try {
   await expectAsyncReject(() => createScopedRunner(scope(), { auditPath, fetchImpl: async () => new Response("must not run") }), /locked/);
   await runner.close();
 
+  // Reusing an engagement ledger with a modified route/scope is prohibited.
+  const changedScope = scope();
+  changedScope.target.actions[0].path = "/admin";
+  await expectAsyncReject(() => createScopedRunner(changedScope, {
+    auditPath, fetchImpl: async () => new Response("must not run")
+  }), /scope hash mismatch/);
+
   // Budget counters restore from the persisted chain after restart.
   const reopened = await createScopedRunner(scope(), {
     auditPath,
@@ -113,6 +120,37 @@ try {
   assert.equal(authResult.stopped, true);
   assert.match(authResult.stopReason, /status 403/);
   await authRunner.close();
+
+  // Rate limiting and response ceilings are enforced without retries.
+  const rateManifest = scope({
+    engagement: { id: "rate-test", organizer: "Organizer" },
+    target: {
+      exactTargetConfirmed: true, baseUrl: "http://127.0.0.1", allowedHeaderNames: [],
+      actions: [{ id: "health-status", method: "GET", path: "/status", maxExecutions: 2 }]
+    },
+    limits: { maxActions: 3, maxDurationMs: 60000, requestsPerMinute: 1, requestTimeoutMs: 2000, maxResponseBytes: 4096 }
+  });
+  let rateCalls = 0;
+  const rateRunner = await createScopedRunner(rateManifest, {
+    auditPath: join(dir, "rate.jsonl"),
+    fetchImpl: async () => { rateCalls++; return new Response("ok", { status: 200 }); }
+  });
+  assert.equal((await rateRunner.runAction("health-status")).status, 200);
+  await expectAsyncReject(() => rateRunner.runAction("health-status"), /request-rate limit reached/);
+  assert.equal(rateCalls, 1);
+  await rateRunner.close();
+
+  const largeRunner = await createScopedRunner(scope({
+    engagement: { id: "large-response-test", organizer: "Organizer" },
+    limits: { maxActions: 3, maxDurationMs: 60000, requestsPerMinute: 3, requestTimeoutMs: 2000, maxResponseBytes: 256 }
+  }), {
+    auditPath: join(dir, "large-response.jsonl"),
+    fetchImpl: async () => new Response("x".repeat(300), { status: 200 })
+  });
+  const largeResult = await largeRunner.runAction("health-status");
+  assert.equal(largeResult.stopped, true);
+  assert.match(largeResult.stopReason, /response byte limit exceeded/);
+  await largeRunner.close();
 
   // Runtime credentials must be explicitly header-allow-listed.
   const headerScope = scope({
