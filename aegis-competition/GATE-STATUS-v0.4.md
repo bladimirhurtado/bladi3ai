@@ -13,7 +13,7 @@
 2. An organizer-approved scope file identifies the engagement, written permission, exact origin, exact routes/actions, start/end time, limits, measurable success condition, and stop conditions.
 3. A second reviewer confirms that every route and permitted action corresponds to the written rules.
 4. The audit ledger location is private and writable; runtime credentials are supplied separately and only by allow-listed header names.
-5. The operator verifies no existing runner owns the ledger lock and starts one action at a time.
+5. The operator uses CLI `--check` first, verifies no existing runner owns the ledger lock, then deliberately enables one action via `AEGIS_LIVE_EXECUTION=YES`.
 6. Evidence is independently checked and exported to controlled storage during closeout.
 
 ## Stop conditions enforced by the initial live adapter
@@ -22,6 +22,7 @@
 - Unconfirmed exact target, route, or unsupported method.
 - An existing/stale ledger lock, changed scope fingerprint, invalid audit chain, or unresolved prior action.
 - Action budget, per-action budget, request-rate limit, session duration, request timeout, or response size exceeded.
+- A manual stop request, which aborts an in-flight HTTP request.
 - Redirect, any non-success HTTP status, request failure, or organizer stop request.
 
 ## Explicit limitations
