@@ -154,6 +154,9 @@ async function readLedger(auditPath, engagementId, scopeHash) {
  */
 export async function createScopedRunner(manifest, options = {}) {
   const now = options.clock ?? Date.now;
+  validateScopeManifest(manifest, now());
+  // Detach from caller-owned objects so later mutation cannot expand scope.
+  manifest = JSON.parse(JSON.stringify(manifest));
   const validated = validateScopeManifest(manifest, now());
   const scopeHash = hashObject(manifest);
   const auditPath = options.auditPath;
@@ -198,6 +201,9 @@ export async function createScopedRunner(manifest, options = {}) {
   let stopReason = null;
   let busy = false;
   let closed = false;
+  let activeController = null;
+  let auditQueue = Promise.resolve();
+  let auditBroken = false;
 
   for (const record of records) {
     if (record.type === "action_started") {
@@ -218,22 +224,33 @@ export async function createScopedRunner(manifest, options = {}) {
   }
 
   async function appendEvent(type, details = {}) {
-    const unsigned = {
-      schemaVersion: "1.0",
-      engagementId: manifest.engagement.id,
-      scopeHash,
-      timestamp: new Date(now()).toISOString(),
-      type,
-      previousHash,
-      ...details
-    };
-    const record = { ...unsigned, hash: hashObject(unsigned) };
-    // Persist before exposing the event or making any network request.
-    await appendFile(auditPath, JSON.stringify(record) + "\n", { encoding: "utf8", mode: 0o600 });
-    previousHash = record.hash;
-    auditRecordCount++;
-    try { onEvent(record); } catch { /* observers must not break durable auditing */ }
-    return record;
+    if (auditBroken) reject("audit ledger is unavailable; session remains halted");
+    const write = auditQueue.then(async () => {
+      if (auditBroken) reject("audit ledger is unavailable; session remains halted");
+      const unsigned = {
+        schemaVersion: "1.0",
+        engagementId: manifest.engagement.id,
+        scopeHash,
+        timestamp: new Date(now()).toISOString(),
+        type,
+        previousHash,
+        ...details
+      };
+      const record = { ...unsigned, hash: hashObject(unsigned) };
+      // Serialize concurrent stop/completion events to preserve one valid chain.
+      try {
+        await appendFile(auditPath, JSON.stringify(record) + "\n", { encoding: "utf8", mode: 0o600 });
+      } catch (error) {
+        auditBroken = true;
+        throw error;
+      }
+      previousHash = record.hash;
+      auditRecordCount++;
+      try { onEvent(record); } catch { /* observers must not break durable auditing */ }
+      return record;
+    });
+    auditQueue = write.catch(() => {});
+    return write;
   }
 
   async function stop(reason) {
@@ -241,7 +258,15 @@ export async function createScopedRunner(manifest, options = {}) {
     if (!stopped) {
       stopped = true;
       stopReason = String(reason || "manual stop").slice(0, 240);
-      await appendEvent("runner_stopped", { reason: stopReason });
+      // Stop must cancel an in-flight request, not merely block the next one.
+      if (activeController) activeController.abort();
+      try {
+        await appendEvent("runner_stopped", { reason: stopReason });
+      } catch {
+        auditBroken = true;
+        stopReason = "audit ledger write failure; session halted";
+        throw new Error("AEGIS_SCOPE_GATE: " + stopReason);
+      }
     }
     return { stopped, stopReason };
   }
@@ -282,6 +307,7 @@ export async function createScopedRunner(manifest, options = {}) {
       }
 
       const rawHeaders = await getHeaders();
+      if (stopped) reject("runner is stopped: " + stopReason);
       const headers = new Headers(rawHeaders ?? {});
       const permitted = new Set((manifest.target.allowedHeaderNames ?? []).map(name => name.toLowerCase()));
       for (const [name] of headers) {
@@ -291,25 +317,31 @@ export async function createScopedRunner(manifest, options = {}) {
       }
 
       const attemptId = `${current}-${totalActions + 1}-${actionId}`;
-      // Persist the intent before any network side effect. If this write fails,
-      // no request is issued. A crash after this point burns the budget and
-      // makes the unresolved attempt a manual-review stop on restart.
-      await appendEvent("action_started", {
-        attemptId,
-        actionId,
-        method: action.method,
-        route: action.path,
-        targetOrigin: fresh.baseUrl.origin
-      });
-      totalActions++;
-      perAction.set(actionId, (perAction.get(actionId) ?? 0) + 1);
-      recentActions.push(current);
-
       const controller = new AbortController();
-      const remainingSessionMs = manifest.limits.maxDurationMs - (now() - startedAt);
-      const effectiveTimeoutMs = Math.min(manifest.limits.requestTimeoutMs, Math.max(1, remainingSessionMs));
-      const timer = setTimeout(() => controller.abort(), effectiveTimeoutMs);
+      activeController = controller;
+      let timer = null;
+      let actionStarted = false;
       try {
+        // Persist the intent before any network side effect. If this write fails,
+        // no request is issued; an incomplete logged attempt fails closed at restart.
+        await appendEvent("action_started", {
+          attemptId,
+          actionId,
+          method: action.method,
+          route: action.path,
+          targetOrigin: fresh.baseUrl.origin
+        });
+        actionStarted = true;
+        totalActions++;
+        perAction.set(actionId, (perAction.get(actionId) ?? 0) + 1);
+        recentActions.push(current);
+
+        if (stopped || controller.signal.aborted) {
+          throw new DOMException("Stopped before request", "AbortError");
+        }
+        const remainingSessionMs = manifest.limits.maxDurationMs - (now() - startedAt);
+        const effectiveTimeoutMs = Math.min(manifest.limits.requestTimeoutMs, Math.max(1, remainingSessionMs));
+        timer = setTimeout(() => controller.abort(), effectiveTimeoutMs);
         const response = await fetchImpl(url, {
           method: action.method,
           headers,
@@ -319,6 +351,7 @@ export async function createScopedRunner(manifest, options = {}) {
         });
         if (response.status >= 300 && response.status < 400) {
           await appendEvent("action_failed", { attemptId, actionId, reason: "redirect blocked", status: response.status });
+          actionStarted = false;
           await stop("redirect blocked");
           return { ok: false, status: response.status, stopped, stopReason };
         }
@@ -334,6 +367,7 @@ export async function createScopedRunner(manifest, options = {}) {
             if (bytes > manifest.limits.maxResponseBytes) {
               await reader.cancel().catch(() => {});
               await appendEvent("action_failed", { attemptId, actionId, reason: "response byte limit exceeded", status: response.status, bytes });
+              actionStarted = false;
               await stop("response byte limit exceeded");
               return { ok: false, status: response.status, stopped, stopReason };
             }
@@ -343,14 +377,15 @@ export async function createScopedRunner(manifest, options = {}) {
         const body = Buffer.concat(chunks);
         const responseHash = createHash("sha256").update(body).digest("hex");
         const durationMs = Math.max(0, now() - current);
-        const severeStatus = !response.ok;
         await appendEvent("action_completed", {
           attemptId, actionId, status: response.status, bytes,
           responseSha256: responseHash, durationMs
         });
-        if (severeStatus) await stop("target returned non-success status " + response.status);
+        actionStarted = false;
+        const successful = response.status >= 200 && response.status < 300;
+        if (!successful) await stop("target returned non-success status " + response.status);
         return {
-          ok: response.ok && !severeStatus,
+          ok: successful,
           status: response.status,
           contentType: response.headers.get("content-type"),
           body: body.toString("utf8"),
@@ -361,22 +396,31 @@ export async function createScopedRunner(manifest, options = {}) {
           stopReason
         };
       } catch (error) {
-        const reason = error?.name === "AbortError" ? "request timed out" : "request failed; automatic retries are disabled";
+        const reason = stopped
+          ? stopReason
+          : error?.name === "AbortError"
+            ? "request timed out or was stopped"
+            : "request failed; automatic retries are disabled";
         try {
-          await appendEvent("action_failed", {
-            attemptId, actionId, reason,
-            errorName: String(error?.name ?? "Error").slice(0, 80)
-          });
+          if (actionStarted) {
+            await appendEvent("action_failed", {
+              attemptId, actionId, reason,
+              errorName: String(error?.name ?? "Error").slice(0, 80)
+            });
+            actionStarted = false;
+          }
           await stop(reason);
         } catch {
-          // If persistence fails after a possible network action, never permit
-          // another action in this process; ledger recovery will fail closed.
+          // A request may already have reached the target; never continue without
+          // a durable record of the outcome.
           stopped = true;
+          auditBroken = true;
           stopReason = "audit ledger write failure; session halted";
         }
-        throw new Error("AEGIS_SCOPE_GATE: " + (stopped ? stopReason : reason));
+        throw new Error("AEGIS_SCOPE_GATE: " + (stopReason ?? reason));
       } finally {
-        clearTimeout(timer);
+        if (timer) clearTimeout(timer);
+        if (activeController === controller) activeController = null;
       }
     } finally {
       busy = false;
