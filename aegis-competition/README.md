@@ -1,32 +1,49 @@
-# AEGIS Competition Lab v0.3
+# AEGIS Competition Lab v0.4
 
-AEGIS is an offline, synthetic-only adversarial reasoning laboratory for controlled AI competition research.
+AEGIS is a controlled competition-research project with a reproducible synthetic engine and a fail-closed adapter for explicitly authorized, narrowly scoped live HTTP checks.
 
-## What is implemented
-- Shared decision/replay logic in `engine.mjs`, used by the browser UI and Node.js self-tests.
-- Reproducible bounded planning: hypothetical branches use independent deterministic random streams.
-- JUDGE validates strict event schemas, event order, canonical action attributes, recomputed synthetic HYDRA responses, verification transitions, and recovery replay.
-- Action execution resolves canonical action definitions instead of trusting caller-supplied attributes.
-- UI event logs use DOM text nodes rather than unsafe HTML strings.
-- Error handling and the UI verdict require valid replay, evidence, survival, and the synthetic score threshold.
-- Node.js CI runs 1,000 synthetic matches and adversarial tests on each branch push.
-- `audit-record.mjs` creates and verifies signed audit records over an event-chain head.
+## Current components
 
-## Architecture
-- **AEGIS** — bounded 5-ply preview and 3-ply planning with budgeted actions.
-- **HYDRA** — five synthetic adversary families: mirror, deceiver, switcher, noise, and meta.
-- **JUDGE** — replays transitions and rejects malformed or inconsistent event streams.
-- **Integrity** — SHA-256 event chain, plus a Node.js signing/verifying utility for audit records.
-- **Recovery** — an explicit, replayed state transition rather than a score-only bonus.
+- `engine.mjs`: shared deterministic planning and synthetic match logic.
+- `app.js`: browser interface for synthetic matches.
+- `self-test.mjs`: repeatability, replay, and adversarial test harness.
+- `audit-record.mjs`: Ed25519 signed audit-record utilities.
+- `scoped-runner.mjs`: new controlled runner for organizer-approved, exact-route HTTP actions.
+- `scoped-cli.mjs`: validation-only preflight plus explicit opt-in to run one allow-listed read-only action.
+- `scoped-runner.test.mjs`: tests using mocked fetch responses; no external host is contacted.
+- `engagement-scope.template.json`: intentionally non-runnable scope-card template.
+- `REAL-COMPETITION-OPERATIONS.md`: authorization, execution, audit, and closeout procedure.
 
-## Signed audit record key handling
-The audit utility requires an Ed25519 private/public key pair. Keep the private key outside the repository and protect it with secure key custody. Distribute or pin the trusted public key through a separate trusted channel; the public key embedded in a record is not trusted by itself. The utility verifies records but does not itself provide secure key storage or automatically persist records.
+## Real actions, strictly scoped
+
+The live adapter can issue actual HTTP requests only after the written authorization window, exact origin, exact action route, rate/action/time/response budgets, success criteria, and stop conditions are explicitly configured. Its first release permits only `GET`, `HEAD`, and `OPTIONS`; callers cannot supply arbitrary URLs, methods, bodies, or redirect destinations. Redirects, authorization denials, rate-limit responses, server errors, timeouts, oversized responses, malformed/tampered audit logs, and unresolved prior attempts stop execution. A per-ledger exclusive lock prevents concurrent runner processes; close cleanly with `await runner.close()`, and review stale lock files after a crash.
+
+It intentionally does not provide network scanning, exploit delivery, credential guessing, persistence, stealth, or monitoring-evasion functions. Any future state-changing operation must be implemented narrowly against the competition's written rules and separately reviewed.
+
+## One-action operator interface
+
+The CLI requires a private scope file outside the repository. Validate without network access using `node aegis-competition/scoped-cli.mjs --check <action-id>`; a live request additionally requires `AEGIS_LIVE_EXECUTION=YES` and an absolute audit-ledger path. Optional runtime headers must be supplied from a separate owner-only file whose header names are allow-listed in the scope manifest. The CLI performs only one explicitly named GET/HEAD/OPTIONS action and does not print response bodies.
 
 ## Validation
-Latest passing CI results are recorded in [TEST-RESULTS-v0.3.md](TEST-RESULTS-v0.3.md), with readiness limits in [GATE-STATUS-v0.3.md](GATE-STATUS-v0.3.md).
 
-## Important limits
-This is a synthetic simulation, not a real penetration-testing agent. A passing simulation score does not establish real-world penetration capability or detector evasion. No external Gemini/Meta match has been performed by this repository. External competition readiness remains unverified until the organizer defines the authorized target/interface, allowed techniques, detector interface, time limit, and measurable success condition.
+Run using Node.js 22 or later:
 
-## Promotion gate
-Do not promote based on a UI label alone. Require reproducible seeds, valid independent replay, evidence-backed objectives, survival across synthetic adversary families, a score of at least 80/100, and a separate authorized event interface. Do not merge into `main` until the external gate is completed and explicitly reviewed.
+```sh
+node --check aegis-competition/engine.mjs
+node --check aegis-competition/audit-record.mjs
+node --check aegis-competition/self-test.mjs
+node --check aegis-competition/scoped-runner.mjs
+node --check aegis-competition/scoped-cli.mjs
+node aegis-competition/self-test.mjs
+node aegis-competition/scoped-runner.test.mjs
+```
+
+The synthetic suite's prior report recorded 1,000 matches across five synthetic HYDRA modes (minimum 80, maximum 92, average 86.29). Those results describe only the previously tested revision and synthetic conditions; the new v0.4 branch must pass its own CI before being considered verified.
+
+## Release gates
+
+1. Verify the latest branch commit through CI.
+2. Keep v0.1, v0.2, v0.3, and `main` unchanged as rollback/reference points.
+3. Validate the runner only with mocked transports and loopback tests before any live use.
+4. Do not enable a live scope unless written organizer authorization and the actual competition rules are on file.
+5. Do not claim success against Gemini, Meta, or any external system without an independent authorized evaluation and reproducible evidence.
