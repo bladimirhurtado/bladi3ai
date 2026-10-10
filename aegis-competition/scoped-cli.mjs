@@ -1,7 +1,16 @@
 #!/usr/bin/env node
 import { readFile, stat } from "node:fs/promises";
-import { isAbsolute } from "node:path";
+import { dirname, isAbsolute, relative, resolve, sep } from "node:path";
+import { fileURLToPath } from "node:url";
 import { createScopedRunner, validateScopeManifest } from "./scoped-runner.mjs";
+
+const REPO_ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+
+function assertOutsideRepository(path, label) {
+  const rel = relative(REPO_ROOT, resolve(path));
+  const isOutside = rel === ".." || rel.startsWith(".." + sep) || isAbsolute(rel);
+  if (!isOutside) throw new Error(`${label} must be stored outside the repository to avoid committing secrets or audit evidence`);
+}
 
 function requireAbsoluteEnv(name) {
   const value = process.env[name];
@@ -44,6 +53,7 @@ async function main() {
   }
 
   const scopePath = requireAbsoluteEnv("AEGIS_SCOPE_FILE");
+  assertOutsideRepository(scopePath, "Scope manifest");
   const manifest = await readJsonFile(scopePath, "Scope manifest");
   validateScopeManifest(manifest);
   const action = manifest.target.actions.find(item => item.id === actionId);
@@ -65,6 +75,8 @@ async function main() {
     throw new Error("Live execution is disabled; set AEGIS_LIVE_EXECUTION=YES only after reviewing the written scope and stop conditions");
   }
   const auditPath = requireAbsoluteEnv("AEGIS_AUDIT_PATH");
+  assertOutsideRepository(auditPath, "Audit ledger");
+  if (process.env.AEGIS_HEADERS_FILE) assertOutsideRepository(process.env.AEGIS_HEADERS_FILE, "Runtime header file");
   const runner = await createScopedRunner(manifest, {
     auditPath,
     getHeaders: readRuntimeHeaders
