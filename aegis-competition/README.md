@@ -15,7 +15,7 @@ AEGIS is a controlled competition-research project with a reproducible synthetic
 
 ## Real actions, strictly scoped
 
-The live adapter can issue actual HTTP requests only after the written authorization window, exact origin, exact action route, rate/action/time/response budgets, success criteria, and stop conditions are explicitly configured. Its first release permits only `GET`, `HEAD`, and `OPTIONS`; callers cannot supply arbitrary URLs, methods, bodies, or redirect destinations. Redirects, authorization denials, rate-limit responses, server errors, timeouts, oversized responses, malformed/tampered audit logs, and unresolved prior attempts stop execution.
+The live adapter can issue actual HTTP requests only after the written authorization window, exact origin, exact action route, rate/action/time/response budgets, success criteria, and stop conditions are explicitly configured. Its first release permits only `GET`, `HEAD`, and `OPTIONS`; callers cannot supply arbitrary URLs, methods, bodies, or redirect destinations. Redirects, authorization denials, rate-limit responses, server errors, timeouts, oversized responses, malformed/tampered audit logs, and unresolved prior attempts stop execution. A per-ledger exclusive lock prevents concurrent runner processes; close cleanly with `await runner.close()`, and review stale lock files after a crash.
 
 It intentionally does not provide network scanning, exploit delivery, credential guessing, persistence, stealth, or monitoring-evasion functions. Any future state-changing operation must be implemented narrowly against the competition's written rules and separately reviewed.
 
