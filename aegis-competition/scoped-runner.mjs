@@ -308,6 +308,10 @@ export async function createScopedRunner(manifest, options = {}) {
 
       const rawHeaders = await getHeaders();
       if (stopped) reject("runner is stopped: " + stopReason);
+      if (now() - startedAt >= manifest.limits.maxDurationMs) {
+        await stop("engagement runtime limit reached while preparing headers");
+        reject("engagement runtime limit reached");
+      }
       const headers = new Headers(rawHeaders ?? {});
       const permitted = new Set((manifest.target.allowedHeaderNames ?? []).map(name => name.toLowerCase()));
       for (const [name] of headers) {
