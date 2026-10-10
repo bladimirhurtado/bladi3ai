@@ -43,7 +43,10 @@
     "read-only-live-http-adapter",
     "redirect-blocking",
     "no-automatic-retries",
-    "fail-closed-on-auth-rate-limit-or-server-errors"
+    "fail-closed-on-auth-rate-limit-or-server-errors",
+    "immutable-scope-snapshot",
+    "active-request-abort-on-stop",
+    "serialized-audit-event-writes"
   ],
   "prohibited": [
     "network-scanning",
