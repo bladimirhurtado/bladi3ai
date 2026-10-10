@@ -70,6 +70,7 @@ export function validateScopeManifest(manifest, now = Date.now()) {
   let base;
   try { base = new URL(target.baseUrl); } catch { reject("target baseUrl is not a valid absolute URL"); }
   if (base.username || base.password || base.search || base.hash) reject("target URL must not contain credentials, query, or fragment");
+  if (base.pathname !== "/") reject("target baseUrl must be an origin; routes belong in the exact action list");
   if (base.protocol !== "https:" && !(base.protocol === "http:" && loopback(base.hostname)) &&
       !(base.protocol === "http:" && target.allowPlainHttp === true && nonEmptyString(authorization.writtenPermissionRef))) {
     reject("HTTPS is required except for loopback labs or explicitly authorized internal HTTP");
@@ -162,6 +163,7 @@ export async function createScopedRunner(manifest, options = {}) {
 
   const records = await readLedger(auditPath, manifest.engagement.id);
   let previousHash = records.at(-1)?.hash ?? GENESIS;
+  let auditRecordCount = records.length;
   let startedAt = records.length ? Date.parse(records[0].timestamp) : now();
   let totalActions = 0;
   const perAction = new Map();
@@ -202,6 +204,7 @@ export async function createScopedRunner(manifest, options = {}) {
     // Persist before exposing the event or making any network request.
     await appendFile(auditPath, JSON.stringify(record) + "\n", { encoding: "utf8", mode: 0o600 });
     previousHash = record.hash;
+    auditRecordCount++;
     onEvent(record);
     return record;
   }
@@ -217,120 +220,135 @@ export async function createScopedRunner(manifest, options = {}) {
 
   async function runAction(actionId) {
     if (busy) reject("concurrent actions are disabled");
-    if (stopped) reject("runner is stopped: " + stopReason);
-    const current = now();
-    const fresh = validateScopeManifest(manifest, current);
-    if (current - startedAt >= manifest.limits.maxDurationMs) {
-      await stop("engagement runtime limit reached");
-      reject("engagement runtime limit reached");
-    }
-    if (totalActions >= manifest.limits.maxActions) {
-      await stop("total action budget exhausted");
-      reject("total action budget exhausted");
-    }
-    const action = manifest.target.actions.find(item => item.id === actionId);
-    if (!action) reject("action id is not allow-listed");
-    if ((perAction.get(actionId) ?? 0) >= action.maxExecutions) {
-      await stop("per-action execution limit reached: " + actionId);
-      reject("per-action execution limit reached");
-    }
-    const cutoff = current - 60_000;
-    while (recentActions.length && recentActions[0] <= cutoff) recentActions.shift();
-    if (recentActions.length >= manifest.limits.requestsPerMinute) {
-      await stop("request-rate limit reached");
-      reject("request-rate limit reached");
-    }
-
-    const url = new URL(action.path, fresh.baseUrl.origin);
-    if (url.origin !== fresh.baseUrl.origin || url.pathname !== action.path || url.search || url.hash) {
-      await stop("route failed exact-scope check");
-      reject("route failed exact-scope check");
-    }
-
-    const rawHeaders = await getHeaders();
-    const headers = new Headers(rawHeaders ?? {});
-    const permitted = new Set((manifest.target.allowedHeaderNames ?? []).map(name => name.toLowerCase()));
-    for (const [name] of headers) {
-      if (!permitted.has(name.toLowerCase()) || FORBIDDEN_HEADERS.has(name.toLowerCase()) || name.toLowerCase().startsWith("proxy-")) {
-        reject("runtime header is not allow-listed: " + name);
-      }
-    }
-
     busy = true;
-    const attemptId = `${current}-${totalActions + 1}-${actionId}`;
-    totalActions++;
-    perAction.set(actionId, (perAction.get(actionId) ?? 0) + 1);
-    recentActions.push(current);
-    startedAt = Math.min(startedAt, current);
-    await appendEvent("action_started", {
-      attemptId,
-      actionId,
-      method: action.method,
-      route: action.path,
-      targetOrigin: fresh.baseUrl.origin
-    });
-
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), manifest.limits.requestTimeoutMs);
     try {
-      const response = await fetchImpl(url, {
-        method: action.method,
-        headers,
-        body: undefined,
-        redirect: "manual",
-        signal: controller.signal
-      });
-      if (response.status >= 300 && response.status < 400) {
-        await appendEvent("action_failed", { attemptId, actionId, reason: "redirect blocked", status: response.status });
-        await stop("redirect blocked");
-        return { ok: false, status: response.status, stopped, stopReason };
+      if (stopped) reject("runner is stopped: " + stopReason);
+      const current = now();
+      const fresh = validateScopeManifest(manifest, current);
+      if (current - startedAt >= manifest.limits.maxDurationMs) {
+        await stop("engagement runtime limit reached");
+        reject("engagement runtime limit reached");
+      }
+      if (totalActions >= manifest.limits.maxActions) {
+        await stop("total action budget exhausted");
+        reject("total action budget exhausted");
+      }
+      const action = manifest.target.actions.find(item => item.id === actionId);
+      if (!action) reject("action id is not allow-listed");
+      if ((perAction.get(actionId) ?? 0) >= action.maxExecutions) {
+        await stop("per-action execution limit reached: " + actionId);
+        reject("per-action execution limit reached");
+      }
+      const cutoff = current - 60_000;
+      while (recentActions.length && recentActions[0] <= cutoff) recentActions.shift();
+      if (recentActions.length >= manifest.limits.requestsPerMinute) {
+        await stop("request-rate limit reached");
+        reject("request-rate limit reached");
       }
 
-      const chunks = [];
-      let bytes = 0;
-      if (response.body) {
-        const reader = response.body.getReader();
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          bytes += value.byteLength;
-          if (bytes > manifest.limits.maxResponseBytes) {
-            await reader.cancel().catch(() => {});
-            await appendEvent("action_failed", { attemptId, actionId, reason: "response byte limit exceeded", status: response.status, bytes });
-            await stop("response byte limit exceeded");
-            return { ok: false, status: response.status, stopped, stopReason };
-          }
-          chunks.push(Buffer.from(value));
+      const url = new URL(action.path, fresh.baseUrl.origin);
+      if (url.origin !== fresh.baseUrl.origin || url.pathname !== action.path || url.search || url.hash) {
+        await stop("route failed exact-scope check");
+        reject("route failed exact-scope check");
+      }
+
+      const rawHeaders = await getHeaders();
+      const headers = new Headers(rawHeaders ?? {});
+      const permitted = new Set((manifest.target.allowedHeaderNames ?? []).map(name => name.toLowerCase()));
+      for (const [name] of headers) {
+        if (!permitted.has(name.toLowerCase()) || FORBIDDEN_HEADERS.has(name.toLowerCase()) || name.toLowerCase().startsWith("proxy-")) {
+          reject("runtime header is not allow-listed: " + name);
         }
       }
-      const body = Buffer.concat(chunks);
-      const responseHash = createHash("sha256").update(body).digest("hex");
-      const durationMs = Math.max(0, now() - current);
-      const severeStatus = response.status === 401 || response.status === 403 ||
-        response.status === 429 || response.status >= 500;
-      await appendEvent("action_completed", {
-        attemptId, actionId, status: response.status, bytes,
-        responseSha256: responseHash, durationMs
+
+      const attemptId = `${current}-${totalActions + 1}-${actionId}`;
+      // Persist the intent before any network side effect. If this write fails,
+      // no request is issued. A crash after this point burns the budget and
+      // makes the unresolved attempt a manual-review stop on restart.
+      await appendEvent("action_started", {
+        attemptId,
+        actionId,
+        method: action.method,
+        route: action.path,
+        targetOrigin: fresh.baseUrl.origin
       });
-      if (severeStatus) await stop("target returned status " + response.status);
-      return {
-        ok: response.ok && !severeStatus,
-        status: response.status,
-        contentType: response.headers.get("content-type"),
-        body: body.toString("utf8"),
-        bytes,
-        responseSha256: responseHash,
-        durationMs,
-        stopped,
-        stopReason
-      };
-    } catch (error) {
-      const reason = error?.name === "AbortError" ? "request timed out" : "request failed; automatic retries are disabled";
-      await appendEvent("action_failed", { attemptId, actionId, reason, errorName: String(error?.name ?? "Error").slice(0, 80) });
-      await stop(reason);
-      throw new Error("AEGIS_SCOPE_GATE: " + reason);
+      totalActions++;
+      perAction.set(actionId, (perAction.get(actionId) ?? 0) + 1);
+      recentActions.push(current);
+
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), manifest.limits.requestTimeoutMs);
+      try {
+        const response = await fetchImpl(url, {
+          method: action.method,
+          headers,
+          body: undefined,
+          redirect: "manual",
+          signal: controller.signal
+        });
+        if (response.status >= 300 && response.status < 400) {
+          await appendEvent("action_failed", { attemptId, actionId, reason: "redirect blocked", status: response.status });
+          await stop("redirect blocked");
+          return { ok: false, status: response.status, stopped, stopReason };
+        }
+
+        const chunks = [];
+        let bytes = 0;
+        if (response.body) {
+          const reader = response.body.getReader();
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            bytes += value.byteLength;
+            if (bytes > manifest.limits.maxResponseBytes) {
+              await reader.cancel().catch(() => {});
+              await appendEvent("action_failed", { attemptId, actionId, reason: "response byte limit exceeded", status: response.status, bytes });
+              await stop("response byte limit exceeded");
+              return { ok: false, status: response.status, stopped, stopReason };
+            }
+            chunks.push(Buffer.from(value));
+          }
+        }
+        const body = Buffer.concat(chunks);
+        const responseHash = createHash("sha256").update(body).digest("hex");
+        const durationMs = Math.max(0, now() - current);
+        const severeStatus = response.status === 401 || response.status === 403 ||
+          response.status === 429 || response.status >= 500;
+        await appendEvent("action_completed", {
+          attemptId, actionId, status: response.status, bytes,
+          responseSha256: responseHash, durationMs
+        });
+        if (severeStatus) await stop("target returned status " + response.status);
+        return {
+          ok: response.ok && !severeStatus,
+          status: response.status,
+          contentType: response.headers.get("content-type"),
+          body: body.toString("utf8"),
+          bytes,
+          responseSha256: responseHash,
+          durationMs,
+          stopped,
+          stopReason
+        };
+      } catch (error) {
+        const reason = error?.name === "AbortError" ? "request timed out" : "request failed; automatic retries are disabled";
+        try {
+          await appendEvent("action_failed", {
+            attemptId, actionId, reason,
+            errorName: String(error?.name ?? "Error").slice(0, 80)
+          });
+          await stop(reason);
+        } catch {
+          // If persistence fails after a possible network action, never permit
+          // another action in this process; ledger recovery will fail closed.
+          stopped = true;
+          stopReason = "audit ledger write failure; session halted";
+        }
+        throw new Error("AEGIS_SCOPE_GATE: " + (stopped ? stopReason : reason));
+      } finally {
+        clearTimeout(timer);
+      }
     } finally {
-      clearTimeout(timer);
       busy = false;
     }
   }
@@ -344,7 +362,7 @@ export async function createScopedRunner(manifest, options = {}) {
       stopReason,
       totalActions,
       remainingActions: Math.max(0, manifest.limits.maxActions - totalActions),
-      auditRecords: records.length,
+      auditRecords: auditRecordCount,
       lastAuditHash: previousHash
     })
   };
