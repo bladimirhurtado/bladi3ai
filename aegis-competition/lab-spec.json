@@ -1,13 +1,14 @@
 {
   "name": "AEGIS Competition Lab",
-  "version": "0.3.0",
-  "scope": "synthetic-local-only",
-  "objective": "offensive adversarial reasoning under bounded resources",
+  "version": "0.4.0",
+  "scope": "synthetic-local-plus-explicitly-authorized-read-only-http",
+  "objective": "controlled competitive decision-making under bounded resources with verifiable evidence and fail-closed scope enforcement",
   "lookahead_plies": 5,
   "agents": [
     "AEGIS",
     "HYDRA",
-    "JUDGE"
+    "JUDGE",
+    "SCOPE_GATE"
   ],
   "adversaries": [
     "mirror",
@@ -32,27 +33,48 @@
     "canonical-action-enforcement",
     "signed-audit-records",
     "malformed-input-rejection",
-    "eight-round-limit-enforced-by-judge"
+    "eight-round-limit-enforced-by-judge",
+    "exact-origin-and-route-allowlist",
+    "written-authorization-window",
+    "request-action-duration-and-response-budgets",
+    "durable-sha256-chained-action-ledger",
+    "ledger-replay-and-tamper-detection",
+    "single-session-lock",
+    "read-only-live-http-adapter",
+    "redirect-blocking",
+    "no-automatic-retries",
+    "fail-closed-on-auth-rate-limit-or-server-errors"
   ],
   "prohibited": [
     "network-scanning",
     "exploit-delivery",
     "credential-attacks",
     "persistence",
-    "third-party-targeting"
+    "third-party-targeting",
+    "stealth",
+    "monitoring-evasion",
+    "unapproved-state-changing-actions",
+    "arbitrary-targets",
+    "unbounded-requests"
   ],
   "promotion_gate": {
     "min_score": 80,
     "must_pass_integrity": true,
     "must_reproduce": true,
     "must_survive_all_adversaries": true,
-    "max_rounds": 8
+    "max_rounds": 8,
+    "latest_revision_ci_passed": true,
+    "exact_written_scope_required_for_live_run": true,
+    "audit_ledger_verified": true,
+    "external_competition_gate_passed": false
   },
   "principle": "AEGIS seeks initiative and information advantage; it does not wait passively for attacks.",
   "audit": {
     "record_format": "Ed25519 signature over schemaVersion, createdAt, eventCount, chainHead, and publicKey",
     "trusted_key_requirement": "trusted public key must be obtained separately; embedded key is not sufficient",
     "private_key_storage": "outside repository; secure custody required",
-    "persistence": "caller-managed; audit utility does not automatically persist records"
+    "persistence": "scoped action ledger is locally persisted; copy evidence to separately controlled storage after closeout",
+    "scoped_action_ledger": "SHA-256 chained JSONL; replayed and validated on startup",
+    "lock_policy": "single active runner per audit ledger; stale locks require operator review"
   }
 }
