@@ -80,6 +80,9 @@ try {
   assert.equal(result.body, '{"status":"ready"}');
   assert.equal(calls, 1);
   assert.equal(runner.status().totalActions, 1);
+  assert.equal(runner.status().auditRecords, 2);
+  await expectAsyncReject(() => createScopedRunner(scope(), { auditPath, fetchImpl: async () => new Response("must not run") }), /locked/);
+  await runner.close();
 
   // Budget counters restore from the persisted chain after restart.
   const reopened = await createScopedRunner(scope(), {
@@ -88,6 +91,7 @@ try {
   });
   assert.equal(reopened.status().totalActions, 1);
   assert.equal(reopened.status().stopped, false);
+  await reopened.close();
 
   // A redirect is never followed and stops the runner.
   const redirectRunner = await createScopedRunner(scope({ engagement: { id: "redirect-test", organizer: "Organizer" } }), {
@@ -98,6 +102,7 @@ try {
   assert.equal(redirectResult.stopped, true);
   assert.match(redirectResult.stopReason, /redirect blocked/);
   await expectAsyncReject(() => redirectRunner.runAction("health-status"), /runner is stopped/);
+  await redirectRunner.close();
 
   // Authentication and rate-limit responses cause an immediate stop.
   const authRunner = await createScopedRunner(scope({ engagement: { id: "auth-test", organizer: "Organizer" } }), {
@@ -107,6 +112,7 @@ try {
   const authResult = await authRunner.runAction("health-status");
   assert.equal(authResult.stopped, true);
   assert.match(authResult.stopReason, /status 403/);
+  await authRunner.close();
 
   // Runtime credentials must be explicitly header-allow-listed.
   const headerScope = scope({
@@ -123,6 +129,7 @@ try {
     fetchImpl: async () => { throw new Error("blocked headers must stop before network"); }
   });
   await expectAsyncReject(() => headerRunner.runAction("health-status"), /runtime header is not allow-listed/);
+  await headerRunner.close();
 
   // A corrupted audit trail fails closed at reopen.
   const tamperPath = join(dir, "tampered.jsonl");
@@ -131,6 +138,7 @@ try {
     fetchImpl: async () => new Response("ok", { status: 200 })
   });
   await tamperRunner.runAction("health-status");
+  await tamperRunner.close();
   const original = await readFile(tamperPath, "utf8");
   await import("node:fs/promises").then(fs => fs.writeFile(tamperPath, original.replace('"status":200', '"status":201')));
   await expectAsyncReject(() => createScopedRunner(scope({ engagement: { id: "tamper-test", organizer: "Organizer" } }), {
