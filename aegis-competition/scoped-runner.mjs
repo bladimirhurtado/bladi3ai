@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { appendFile, mkdir, readFile } from "node:fs/promises";
+import { appendFile, mkdir, open, readFile, unlink } from "node:fs/promises";
 import { dirname } from "node:path";
 
 const READ_ONLY_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
@@ -116,6 +116,7 @@ function parseLedgerLine(line, expectedPrevious, engagementId) {
   let record;
   try { record = JSON.parse(line); } catch { reject("audit ledger contains invalid JSON"); }
   if (!record || record.schemaVersion !== "1.0" || record.engagementId !== engagementId ||
+      !isIsoDate(record.timestamp) || !nonEmptyString(record.type) ||
       record.previousHash !== expectedPrevious || typeof record.hash !== "string") {
     reject("audit ledger chain or engagement identifier is invalid");
   }
@@ -160,8 +161,30 @@ export async function createScopedRunner(manifest, options = {}) {
   const onEvent = typeof options.onEvent === "function" ? options.onEvent : () => {};
   const getHeaders = typeof options.getHeaders === "function" ? options.getHeaders : async () => ({});
   await mkdir(dirname(auditPath), { recursive: true });
+  const lockPath = options.lockPath ?? (auditPath + ".lock");
+  let lockHandle;
+  try {
+    lockHandle = await open(lockPath, "wx", 0o600);
+    await lockHandle.writeFile(JSON.stringify({
+      engagementId: manifest.engagement.id,
+      pid: process.pid,
+      acquiredAt: new Date(now()).toISOString()
+    }));
+    await lockHandle.sync();
+  } catch (error) {
+    if (lockHandle) await lockHandle.close().catch(() => {});
+    if (error?.code === "EEXIST") reject("audit ledger is locked or a stale lock needs operator review");
+    throw error;
+  }
 
-  const records = await readLedger(auditPath, manifest.engagement.id);
+  let records;
+  try {
+    records = await readLedger(auditPath, manifest.engagement.id);
+  } catch (error) {
+    await lockHandle.close().catch(() => {});
+    await unlink(lockPath).catch(() => {});
+    throw error;
+  }
   let previousHash = records.at(-1)?.hash ?? GENESIS;
   let auditRecordCount = records.length;
   let startedAt = records.length ? Date.parse(records[0].timestamp) : now();
@@ -172,6 +195,7 @@ export async function createScopedRunner(manifest, options = {}) {
   let stopped = false;
   let stopReason = null;
   let busy = false;
+  let closed = false;
 
   for (const record of records) {
     if (record.type === "action_started") {
@@ -205,11 +229,12 @@ export async function createScopedRunner(manifest, options = {}) {
     await appendFile(auditPath, JSON.stringify(record) + "\n", { encoding: "utf8", mode: 0o600 });
     previousHash = record.hash;
     auditRecordCount++;
-    onEvent(record);
+    try { onEvent(record); } catch { /* observers must not break durable auditing */ }
     return record;
   }
 
   async function stop(reason) {
+    if (closed) reject("runner is closed");
     if (!stopped) {
       stopped = true;
       stopReason = String(reason || "manual stop").slice(0, 240);
@@ -219,6 +244,7 @@ export async function createScopedRunner(manifest, options = {}) {
   }
 
   async function runAction(actionId) {
+    if (closed) reject("runner is closed");
     if (busy) reject("concurrent actions are disabled");
     busy = true;
     try {
@@ -353,12 +379,27 @@ export async function createScopedRunner(manifest, options = {}) {
     }
   }
 
+  async function close() {
+    if (closed) return { closed: true };
+    if (busy) reject("cannot close while an action is running");
+    await appendEvent("runner_closed", { reason: "operator closed session" });
+    closed = true;
+    if (lockHandle) {
+      await lockHandle.close();
+      lockHandle = null;
+    }
+    try { await unlink(lockPath); } catch (error) { if (error?.code !== "ENOENT") throw error; }
+    return { closed: true };
+  }
+
   return {
     runAction,
     stop,
+    close,
     status: () => ({
       engagementId: manifest.engagement.id,
       stopped,
+      closed,
       stopReason,
       totalActions,
       remainingActions: Math.max(0, manifest.limits.maxActions - totalActions),
