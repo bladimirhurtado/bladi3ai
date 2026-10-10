@@ -112,7 +112,7 @@ export function validateScopeManifest(manifest, now = Date.now()) {
   return { manifest, baseUrl: base, startsAt, expiresAt };
 }
 
-function parseLedgerLine(line, expectedPrevious, engagementId) {
+function parseLedgerLine(line, expectedPrevious, engagementId, scopeHash) {
   let record;
   try { record = JSON.parse(line); } catch { reject("audit ledger contains invalid JSON"); }
   if (!record || record.schemaVersion !== "1.0" || record.engagementId !== engagementId ||
@@ -120,19 +120,20 @@ function parseLedgerLine(line, expectedPrevious, engagementId) {
       record.previousHash !== expectedPrevious || typeof record.hash !== "string") {
     reject("audit ledger chain or engagement identifier is invalid");
   }
+  if (record.scopeHash !== scopeHash) reject("audit ledger scope hash mismatch");
   const { hash, ...unsigned } = record;
   if (hashObject(unsigned) !== hash) reject("audit ledger record hash mismatch");
   return record;
 }
 
-async function readLedger(auditPath, engagementId) {
+async function readLedger(auditPath, engagementId, scopeHash) {
   try {
     const raw = await readFile(auditPath, "utf8");
     const lines = raw.split("\n").filter(Boolean);
     const records = [];
     let previous = GENESIS;
     for (const line of lines) {
-      const record = parseLedgerLine(line, previous, engagementId);
+      const record = parseLedgerLine(line, previous, engagementId, scopeHash);
       records.push(record);
       previous = record.hash;
     }
@@ -154,6 +155,7 @@ async function readLedger(auditPath, engagementId) {
 export async function createScopedRunner(manifest, options = {}) {
   const now = options.clock ?? Date.now;
   const validated = validateScopeManifest(manifest, now());
+  const scopeHash = hashObject(manifest);
   const auditPath = options.auditPath;
   if (!nonEmptyString(auditPath)) reject("a durable auditPath is mandatory");
   const fetchImpl = options.fetchImpl ?? globalThis.fetch;
@@ -179,7 +181,7 @@ export async function createScopedRunner(manifest, options = {}) {
 
   let records;
   try {
-    records = await readLedger(auditPath, manifest.engagement.id);
+    records = await readLedger(auditPath, manifest.engagement.id, scopeHash);
   } catch (error) {
     await lockHandle.close().catch(() => {});
     await unlink(lockPath).catch(() => {});
@@ -219,6 +221,7 @@ export async function createScopedRunner(manifest, options = {}) {
     const unsigned = {
       schemaVersion: "1.0",
       engagementId: manifest.engagement.id,
+      scopeHash,
       timestamp: new Date(now()).toISOString(),
       type,
       previousHash,
@@ -303,7 +306,9 @@ export async function createScopedRunner(manifest, options = {}) {
       recentActions.push(current);
 
       const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), manifest.limits.requestTimeoutMs);
+      const remainingSessionMs = manifest.limits.maxDurationMs - (now() - startedAt);
+      const effectiveTimeoutMs = Math.min(manifest.limits.requestTimeoutMs, Math.max(1, remainingSessionMs));
+      const timer = setTimeout(() => controller.abort(), effectiveTimeoutMs);
       try {
         const response = await fetchImpl(url, {
           method: action.method,
@@ -338,13 +343,12 @@ export async function createScopedRunner(manifest, options = {}) {
         const body = Buffer.concat(chunks);
         const responseHash = createHash("sha256").update(body).digest("hex");
         const durationMs = Math.max(0, now() - current);
-        const severeStatus = response.status === 401 || response.status === 403 ||
-          response.status === 429 || response.status >= 500;
+        const severeStatus = !response.ok;
         await appendEvent("action_completed", {
           attemptId, actionId, status: response.status, bytes,
           responseSha256: responseHash, durationMs
         });
-        if (severeStatus) await stop("target returned status " + response.status);
+        if (severeStatus) await stop("target returned non-success status " + response.status);
         return {
           ok: response.ok && !severeStatus,
           status: response.status,
@@ -398,6 +402,7 @@ export async function createScopedRunner(manifest, options = {}) {
     close,
     status: () => ({
       engagementId: manifest.engagement.id,
+      scopeHash,
       stopped,
       closed,
       stopReason,
