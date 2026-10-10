@@ -9,6 +9,7 @@ AEGIS is a controlled competition-research project with a reproducible synthetic
 - `self-test.mjs`: repeatability, replay, and adversarial test harness.
 - `audit-record.mjs`: Ed25519 signed audit-record utilities.
 - `scoped-runner.mjs`: new controlled runner for organizer-approved, exact-route HTTP actions.
+- `scoped-cli.mjs`: validation-only preflight plus explicit opt-in to run one allow-listed read-only action.
 - `scoped-runner.test.mjs`: tests using mocked fetch responses; no external host is contacted.
 - `engagement-scope.template.json`: intentionally non-runnable scope-card template.
 - `REAL-COMPETITION-OPERATIONS.md`: authorization, execution, audit, and closeout procedure.
@@ -19,6 +20,10 @@ The live adapter can issue actual HTTP requests only after the written authoriza
 
 It intentionally does not provide network scanning, exploit delivery, credential guessing, persistence, stealth, or monitoring-evasion functions. Any future state-changing operation must be implemented narrowly against the competition's written rules and separately reviewed.
 
+## One-action operator interface
+
+The CLI requires a private scope file outside the repository. Validate without network access using `node aegis-competition/scoped-cli.mjs --check <action-id>`; a live request additionally requires `AEGIS_LIVE_EXECUTION=YES` and an absolute audit-ledger path. Optional runtime headers must be supplied from a separate owner-only file whose header names are allow-listed in the scope manifest. The CLI performs only one explicitly named GET/HEAD/OPTIONS action and does not print response bodies.
+
 ## Validation
 
 Run using Node.js 22 or later:
@@ -28,6 +33,7 @@ node --check aegis-competition/engine.mjs
 node --check aegis-competition/audit-record.mjs
 node --check aegis-competition/self-test.mjs
 node --check aegis-competition/scoped-runner.mjs
+node --check aegis-competition/scoped-cli.mjs
 node aegis-competition/self-test.mjs
 node aegis-competition/scoped-runner.test.mjs
 ```
