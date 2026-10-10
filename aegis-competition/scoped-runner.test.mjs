@@ -140,6 +140,21 @@ try {
   assert.equal(rateCalls, 1);
   await rateRunner.close();
 
+  let fakeNow = now;
+  let deadlineFetches = 0;
+  const deadlineRunner = await createScopedRunner(scope({
+    engagement: { id: "deadline-test", organizer: "Organizer" },
+    limits: { maxActions: 3, maxDurationMs: 1000, requestsPerMinute: 3, requestTimeoutMs: 2000, maxResponseBytes: 4096 }
+  }), {
+    auditPath: join(dir, "deadline.jsonl"),
+    clock: () => fakeNow,
+    getHeaders: async () => { fakeNow += 1500; return {}; },
+    fetchImpl: async () => { deadlineFetches++; return new Response("must not run"); }
+  });
+  await expectAsyncReject(() => deadlineRunner.runAction("health-status"), /runtime limit reached/);
+  assert.equal(deadlineFetches, 0);
+  await deadlineRunner.close();
+
   const largeRunner = await createScopedRunner(scope({
     engagement: { id: "large-response-test", organizer: "Organizer" },
     limits: { maxActions: 3, maxDurationMs: 60000, requestsPerMinute: 3, requestTimeoutMs: 2000, maxResponseBytes: 256 }
