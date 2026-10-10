@@ -63,10 +63,10 @@
     "must_reproduce": true,
     "must_survive_all_adversaries": true,
     "max_rounds": 8,
-    "latest_revision_ci_passed": true,
     "exact_written_scope_required_for_live_run": true,
     "audit_ledger_verified": true,
-    "external_competition_gate_passed": false
+    "external_competition_gate_passed": false,
+    "current_revision_ci_source": "latest GitHub Actions run on aegis-competition-v0.4"
   },
   "principle": "AEGIS seeks initiative and information advantage; it does not wait passively for attacks.",
   "audit": {
