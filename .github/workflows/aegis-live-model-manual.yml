@@ -1,6 +1,11 @@
 name: AEGIS Live Model Evaluation (manual)
 
 on:
+  push:
+    branches:
+      - aegis-live-model-v0.1
+    paths:
+      - ".github/workflows/aegis-live-model-manual.yml"
   workflow_dispatch:
     inputs:
       provider:
@@ -37,8 +42,8 @@ jobs:
       AEGIS_OPENAI_MODEL: ${{ vars.AEGIS_OPENAI_MODEL }}
       AEGIS_GEMINI_API_KEY: ${{ secrets.AEGIS_GEMINI_API_KEY }}
       AEGIS_META_API_KEY: ${{ secrets.AEGIS_META_API_KEY }}
-      AEGIS_PROVIDERS: ${{ inputs.provider == 'all' && 'openrouter,openai,gemini,meta' || inputs.provider }}
-      AEGIS_CASE_LIMIT: ${{ inputs.suite == 'full' && '6' || '1' }}
+      AEGIS_PROVIDERS: ${{ github.event_name == 'workflow_dispatch' && (inputs.provider == 'all' && 'openrouter,openai,gemini,meta' || inputs.provider) || 'openrouter' }}
+      AEGIS_CASE_LIMIT: ${{ github.event_name == 'workflow_dispatch' && (inputs.suite == 'full' && '6' || '1') || '1' }}
       AEGIS_MODEL_OUTPUT: aegis-live-results.jsonl
     steps:
       - name: Check out evaluation branch
