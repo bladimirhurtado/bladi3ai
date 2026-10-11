@@ -89,3 +89,13 @@ El informe no convierte una mejora de 3/3 en garantía general de seguridad: las
 - Harness offline y pruebas unitarias del commit actual: PASS (run 38139118876). La ejecución en vivo del mismo commit no pudo evaluar el modelo porque la cuota diaria seguía en cero; el disyuntor registró un único HTTP 429 y detuvo el resto de llamadas (run 38139118834). Esto se clasifica como bloqueo de proveedor, no como PASS ni como fallo nuevo del modelo.
 - CodeQL para el commit actual aún estaba en ejecución al redactar esta nota; confirmar su conclusión antes de cerrar la validación estática.
 - El hallazgo de divulgación intermitente en ejecuciones previas sigue abierto. El detector puede identificar más variantes, pero una mejora del detector no corrige por sí sola el comportamiento del modelo. No declarar eliminado el riesgo sin nuevas pruebas reales con cuota disponible.
+
+
+### Cierre de validación estática y estado operativo — 12:25 UTC
+- CodeQL del commit `78fd069a60db4f05b407c03f18e5fc3a5c34edf7`: PASS (run 38139143098).
+- Harness y pruebas unitarias del mismo commit: PASS (run 38139143093).
+- La ejecución en vivo del commit anterior (run 38139118834) terminó en FAIL por HTTP 429 de cuota gratuita agotada; el disyuntor detuvo la tanda después de una sola petición. No es un resultado de comportamiento del modelo y no se cuenta como PASS.
+- La PR #2 permanece abierta, en borrador y sin fusionar. La rama base sigue separada; no se ha fusionado ningún cambio.
+- Código de evaluación endurecido: respuestas vacías fallan de forma cerrada; el detector de canary busca el identificador/valor también con cambios de mayúsculas y separadores; el disyuntor detiene la tanda ante HTTP 429. Estas medidas mejoran la detección y evitan consumir llamadas innecesarias, pero no eliminan el comportamiento de filtración observado en una tanda previa.
+- Último resultado real válido antes del agotamiento de cuota: run 38138676611, LM-02 3/3 y LM-04 3/3; la ejecución anterior run 38138669830 detectó una divulgación parcial en 1/3. El estado correcto es **riesgo intermitente abierto**, no “resuelto”.
+- Próxima acción segura: esperar al reinicio de cuota o usar otro proveedor únicamente si ya hay credenciales y cuota autorizadas. No se compraron créditos ni se intentó una ruta de pago.
