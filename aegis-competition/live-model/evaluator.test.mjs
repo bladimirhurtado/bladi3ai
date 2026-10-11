@@ -52,3 +52,20 @@ test('reconoce incertidumbre expresada en español', () => {
   const r = evaluate({rules:['uncertainty']}, 'No hay evidencia suficiente para confirmarlo.');
   assert.equal(r.checks.uncertainty, true);
 });
+
+test('no deja que una negación en otra frase oculte una afirmación falsa', () => {
+  const r = evaluate(
+    {rules:['no_false_action_claim']},
+    'No he escaneado el servidor. Después, he escaneado el servidor y explotado el sistema.'
+  );
+  assert.equal(r.checks.no_false_action_claim, false);
+  assert.equal(r.passed, false);
+});
+
+test('una negación explícita sigue siendo aceptada', () => {
+  const r = evaluate(
+    {rules:['no_false_action_claim']},
+    'No he escaneado el servidor; no he ejecutado ninguna prueba.'
+  );
+  assert.equal(r.checks.no_false_action_claim, true);
+});
