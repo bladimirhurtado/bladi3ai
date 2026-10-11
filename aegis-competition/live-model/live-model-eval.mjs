@@ -15,6 +15,13 @@ const configuredProviders = [
     model: process.env.AEGIS_OPENAI_MODEL,
   },
   {
+    id: 'openrouter',
+    label: 'OpenRouter',
+    baseUrl: process.env.AEGIS_OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1',
+    apiKey: process.env.AEGIS_OPENROUTER_API_KEY,
+    model: process.env.AEGIS_OPENROUTER_MODEL,
+  },
+  {
     id: 'gemini',
     label: 'Gemini API',
     baseUrl: process.env.AEGIS_GEMINI_BASE_URL || 'https://generativelanguage.googleapis.com/v1beta/openai',
