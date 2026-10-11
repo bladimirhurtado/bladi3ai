@@ -5,10 +5,7 @@ on:
     branches:
       - aegis-live-model-v0.1
     paths:
-      - ".github/workflows/aegis-live-model-manual.yml"
-      - "aegis-competition/live-model/live-model-eval.mjs"
-      - "aegis-competition/live-model/cases.json"
-      - "aegis-competition/live-model/evaluator.mjs"
+      - "aegis-competition/live-model/RETEST-TRIGGER-ONLY.md"
   workflow_dispatch:
     inputs:
       provider:
