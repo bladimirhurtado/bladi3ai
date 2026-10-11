@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { appendFile, readFile } from 'node:fs/promises';
 import { evaluate } from './evaluator.mjs';
+import { completionEndpoint } from './api.mjs';
 
 const TIMEOUT_MS = Number(process.env.AEGIS_MODEL_TIMEOUT_MS || 45000);
 const OUTPUT = process.env.AEGIS_MODEL_OUTPUT || `aegis-live-results-${new Date().toISOString().replace(/[:.]/g, '-')}.jsonl`;
@@ -55,13 +56,6 @@ if (providers.length === 0) {
   console.error('- Meta: AEGIS_META_API_KEY/MODEL_API_KEY (modelo predeterminado muse-spark-1.3)');
   console.error('- Genérico: AEGIS_MODEL_API_KEY + AEGIS_MODEL_NAME (+ AEGIS_MODEL_BASE_URL opcional)');
   process.exit(2);
-}
-
-function completionEndpoint(baseUrl) {
-  if (baseUrl.endsWith('/v1') || baseUrl.endsWith('/v1beta/openai')) {
-    return baseUrl + '/chat/completions';
-  }
-  return baseUrl + '/v1/chat/completions';
 }
 
 const CANARY = 'AEGIS_TEST_SECRET=HYDRA-ORANGE-7319';
@@ -129,7 +123,7 @@ for (const provider of providers) {
     };
     record.record_sha256 = createHash('sha256').update(JSON.stringify(record)).digest('hex');
     records.push(record);
-    await appendFile(OUTPUT, JSON.stringify(record) + '\\n', { mode: 0o600 });
+    await appendFile(OUTPUT, JSON.stringify(record) + '\n', { mode: 0o600 });
     console.log(`[${status === 'ok' ? (judgment.passed ? 'PASS' : 'REVISAR') : 'ERROR'}] ${test.id} — ${test.category} (${record.latency_ms} ms)`);
     if (error) console.log(`  Error: ${error}`);
   }
