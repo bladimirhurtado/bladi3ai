@@ -7,7 +7,7 @@ Estado de integración: abierta en borrador, sin fusionar.
 
 ## Qué está construido
 
-- Ejecutor real por API OpenAI-compatible para OpenAI API, Gemini API, Meta Model API (Muse Spark 1.3) y endpoints personalizados compatibles.
+- Ejecutor real por API OpenAI-compatible para OpenRouter, OpenAI API, Gemini API, Meta Model API (Muse Spark 1.3) y endpoints personalizados compatibles.
 - Selector de proveedor y tamaño de suite: `AEGIS_PROVIDERS` y `AEGIS_CASE_LIMIT`. El modo `smoke` del workflow manual limita la primera prueba a un caso por proveedor; `full` ejecuta los seis casos.
 - Seis casos: secreto ficticio, prompt injection en texto citado, extracción de instrucciones, calibración de incertidumbre, contradicciones y afirmaciones falsas de uso de herramientas.
 - Registro JSONL con proveedor/modelo, prompt/respuesta, latencia, errores y SHA-256 por registro.
@@ -31,7 +31,7 @@ El estado "success" de CodeQL indica que el análisis y la carga SARIF acabaron 
 
 ## Qué NO se ha probado todavía
 
-**No se ha realizado ninguna llamada a una API comercial real.** No hay claves configuradas en los secretos del repositorio, así que no hay resultados en vivo de OpenAI, Gemini o Meta. La integración local simulada solo valida el ejecutor y el registro de evidencias; no mide seguridad o calidad de ningún modelo comercial.
+**No se ha realizado ninguna llamada a una API comercial real.** No hay claves configuradas en los secretos del repositorio, así que todavía no hay resultados en vivo de OpenRouter, OpenAI, Gemini o Meta. La integración local simulada solo valida el ejecutor y el registro de evidencias; no mide seguridad o calidad de ningún modelo comercial.
 
 Los resultados de los detectores heurísticos sirven para triaje, no para una certificación. Los hallazgos deben revisarse manualmente y repetirse para descartar falsos positivos.
 
@@ -39,11 +39,12 @@ Los resultados de los detectores heurísticos sirven para triaje, no para una ce
 
 En GitHub: **Settings → Secrets and variables → Actions**.
 
+- Añadir `AEGIS_OPENROUTER_API_KEY` como secreto y `AEGIS_OPENROUTER_MODEL` como variable con el ID exacto del modelo de OpenRouter.
 - Añadir `AEGIS_OPENAI_API_KEY` como secreto y `AEGIS_OPENAI_MODEL` como variable si se quiere probar OpenAI.
 - Añadir `AEGIS_GEMINI_API_KEY` como secreto para Gemini.
 - Añadir `AEGIS_META_API_KEY` como secreto para Meta Model API.
 
-No subir claves al repositorio, a los logs ni al chat. Después abrir **Actions → AEGIS Live Model Evaluation (manual) → Run workflow**. Para comenzar, elegir un proveedor y `smoke`; el modo `full` puede enviar seis peticiones por proveedor. El workflow manual no corre en cada push y guarda su archivo de resultados como artifact por 14 días. Las llamadas pueden incurrir en costes del proveedor.
+No subir claves al repositorio, a los logs ni al chat. Después abrir **Actions → AEGIS Live Model Evaluation (manual) → Run workflow**. Para comenzar, elegir `openrouter` y `smoke`; el modo `full` puede enviar seis peticiones por proveedor. El workflow manual no corre en cada push y guarda su archivo de resultados como artifact por 14 días. Las llamadas pueden incurrir en costes del proveedor.
 
 Endpoints/modelos configurados según documentación oficial:
 - Gemini API compatible: https://ai.google.dev/gemini-api/docs/openai — `gemini-3.8-flash`.
