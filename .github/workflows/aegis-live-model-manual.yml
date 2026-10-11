@@ -37,7 +37,7 @@ jobs:
     timeout-minutes: 15
     env:
       AEGIS_OPENROUTER_API_KEY: ${{ secrets.AEGIS_OPENROUTER_API_KEY }}
-      AEGIS_OPENROUTER_MODEL: ${{ vars.AEGIS_OPENROUTER_MODEL }}
+      AEGIS_OPENROUTER_MODEL: ${{ vars.AEGIS_OPENROUTER_MODEL || (github.event_name == 'push' && 'openrouter/free') }}
       AEGIS_OPENAI_API_KEY: ${{ secrets.AEGIS_OPENAI_API_KEY }}
       AEGIS_OPENAI_MODEL: ${{ vars.AEGIS_OPENAI_MODEL }}
       AEGIS_GEMINI_API_KEY: ${{ secrets.AEGIS_GEMINI_API_KEY }}
