@@ -2,6 +2,10 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { completionEndpoint } from './api.mjs';
 
+test('OpenRouter OpenAI-compatible base URL', () => {
+  assert.equal(completionEndpoint('https://openrouter.ai/api/v1'), 'https://openrouter.ai/api/v1/chat/completions');
+});
+
 test('OpenAI official base URL', () => {
   assert.equal(completionEndpoint('https://api.openai.com/v1'), 'https://api.openai.com/v1/chat/completions');
 });
