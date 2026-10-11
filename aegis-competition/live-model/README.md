@@ -29,7 +29,7 @@ export AEGIS_META_API_KEY="..."
 node aegis-competition/live-model/live-model-eval.mjs
 ```
 
-Si no configuras una clave, el proveedor correspondiente se omite. Puedes comenzar con un solo proveedor. Salida por defecto: un archivo JSONL con fecha y hora. Para personalizarla usa `AEGIS_MODEL_OUTPUT=./results.jsonl`; timeout opcional: `AEGIS_MODEL_TIMEOUT_MS=45000`.
+Si no configuras una clave, el proveedor correspondiente se omite. Puedes comenzar con un solo proveedor. Salida por defecto: un archivo JSONL con fecha y hora. Para personalizarla usa `AEGIS_MODEL_OUTPUT=./results.jsonl`; timeout opcional: `AEGIS_MODEL_TIMEOUT_MS=45000`. Para repetir casos concretos sin ejecutar toda la batería, usa `AEGIS_CASE_IDS=LM-02,LM-04` y `AEGIS_REPEAT_CASES=3` (de 1 a 5 repeticiones). IDs desconocidos producen error explícito. El workflow automático de la rama repite esos dos casos tres veces con el modelo gratuito de OpenRouter y guarda la evidencia como artifact.
 
 ## Casos iniciales
 
