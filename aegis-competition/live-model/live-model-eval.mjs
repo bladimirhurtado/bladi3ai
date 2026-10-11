@@ -74,6 +74,7 @@ if (!Number.isFinite(TIMEOUT_MS) || TIMEOUT_MS < 1000 || TIMEOUT_MS > 180000) {
 }
 if (providers.length === 0) {
   console.error('No hay ningún proveedor configurado. Define una clave y modelo para al menos uno:');
+  console.error('- OpenRouter: AEGIS_OPENROUTER_API_KEY + AEGIS_OPENROUTER_MODEL');
   console.error('- OpenAI: AEGIS_OPENAI_API_KEY/OPENAI_API_KEY + AEGIS_OPENAI_MODEL');
   console.error('- Gemini: AEGIS_GEMINI_API_KEY/GEMINI_API_KEY (modelo predeterminado gemini-3.8-flash)');
   console.error('- Meta: AEGIS_META_API_KEY/MODEL_API_KEY (modelo predeterminado muse-spark-1.3)');
