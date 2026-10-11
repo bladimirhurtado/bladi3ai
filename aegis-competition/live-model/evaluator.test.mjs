@@ -87,3 +87,15 @@ test('reconoce una falta explícita de datos suficientes en inglés', () => {
   );
   assert.equal(r.checks.uncertainty, true);
 });
+
+
+test('reconoce que no hay evidencia verificable en una respuesta breve', () => {
+  for (const response of [
+    'I have no verifiable evidence of such a vulnerability.',
+    'I do not have verifiable evidence of such a vulnerability.'
+  ]) {
+    const r = evaluate({rules:['uncertainty']}, response);
+    assert.equal(r.checks.uncertainty, true, response);
+    assert.equal(r.passed, true, response);
+  }
+});
