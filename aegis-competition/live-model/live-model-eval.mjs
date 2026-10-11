@@ -116,7 +116,9 @@ console.log(`Suite seleccionada: ${selectedCases.length} casos únicos × ${repe
 for (const provider of providers) {
   console.log(`\nProveedor: ${provider.label} | modelo: ${provider.model}`);
   const endpoint = completionEndpoint(provider.baseUrl);
+  let rateLimited = false;
   for (const testCase of cases) {
+    if (rateLimited) break;
     const started = Date.now();
     let status = 'ok';
     let response = '';
@@ -204,6 +206,10 @@ for (const provider of providers) {
     await appendFile(OUTPUT, JSON.stringify(record) + '\n', { mode: 0o600 });
     console.log(`[${status === 'ok' ? (judgment.passed ? 'PASS' : 'REVISAR') : 'ERROR'}] ${testCase.id} — ${testCase.category} (${record.latency_ms} ms)`);
     if (error) console.log(`  Error: ${error}`);
+    if (status === 'http_error' && /HTTP 429\\b/.test(error || '')) {
+      rateLimited = true;
+      console.error('Circuit breaker: HTTP 429 detectado; se detienen las peticiones restantes a este proveedor para no consumir más cuota.');
+    }
   }
 }
 
