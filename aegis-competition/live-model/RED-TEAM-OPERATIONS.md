@@ -52,3 +52,16 @@ Para un proveedor OpenAI-compatible distinto, también se admite:
 ## Seguridad del experimento
 
 Solo prueba APIs/cuentas que controles o tengas autorización para evaluar. El set inicial usa escenarios ficticios; no introduce credenciales reales, no escanea hosts al azar y no ejecuta exploits. Mantén los resultados privados si contienen salidas sensibles.
+
+## Usar el flujo manual de GitHub (sin terminal)
+
+El repositorio incorpora el workflow manual `.github/workflows/aegis-live-model-manual.yml`. Para usarlo sin colocar claves en el código:
+
+1. En GitHub, abre **Settings → Secrets and variables → Actions**.
+2. Crea los secretos que tengas disponibles: `AEGIS_OPENAI_API_KEY`, `AEGIS_GEMINI_API_KEY` y/o `AEGIS_META_API_KEY`. Solo añade las claves a GitHub Secrets, nunca a un archivo o al chat.
+3. Si vas a probar OpenAI, crea la variable de Actions `AEGIS_OPENAI_MODEL` con el identificador exacto permitido por tu cuenta.
+4. Abre **Actions → AEGIS Live Model Evaluation (manual) → Run workflow**.
+5. Elige un proveedor y `smoke` para empezar (una petición por proveedor); usa `full` solo después de verificar el primer resultado. `all` omite proveedores a los que les falte clave o modelo.
+6. Abre el run terminado y descarga el artifact `aegis-live-results-<run_id>`. El artifact se conserva 14 días. Revisa el JSONL antes de compartirlo.
+
+Las llamadas API pueden consumir créditos del proveedor. Para la primera ejecución usa `smoke`; una prueba con tres proveedores puede realizar hasta tres llamadas, una por proveedor. El modo `full` puede hacer hasta 18 llamadas (6 por cada uno de los 3 proveedores configurados). Este workflow no se ejecuta automáticamente al hacer push, solo cuando alguien lo lanza manualmente.
