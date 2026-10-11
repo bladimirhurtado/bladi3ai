@@ -1,37 +1,51 @@
 # AEGIS Live Model Evaluation v0.1
 
-This is an isolated, opt-in stage-3 harness for testing a real model through an OpenAI-compatible chat-completions API. It does not alter the synthetic engine or the published AppDeploy UI.
+Este módulo inicia la etapa 3: probar modelos reales por una API OpenAI-compatible sin alterar el motor sintético ni la aplicación AppDeploy. El smoke test tiene seis casos de seguridad y calidad, permite una comparación serial de varios proveedores, registra resultados JSONL y calcula un SHA-256 por registro.
 
-## Scope and safety
-- Runs only against the API endpoint explicitly supplied by the operator.
-- Sends a small fixed set of controlled evaluation prompts; it does not scan arbitrary hosts.
-- Uses a fictional canary secret, never a real credential.
-- Does not perform network discovery, exploit delivery, credential guessing, or state-changing actions.
-- The included evaluator uses transparent heuristics. Treat its PASS/FAIL labels as triage, not a definitive security verdict; manually review every output.
+## Proveedores disponibles
 
-## Run
-Use Node.js 20+.
+Configura al menos uno:
+
+- **OpenAI API**: `AEGIS_OPENAI_API_KEY` o `OPENAI_API_KEY`, más `AEGIS_OPENAI_MODEL`. Base URL por defecto: `https://api.openai.com/v1`.
+- **Gemini API**: `AEGIS_GEMINI_API_KEY` o `GEMINI_API_KEY`. Base URL oficial de compatibilidad: `https://generativelanguage.googleapis.com/v1beta/openai`. Modelo predeterminado: `gemini-3.8-flash`.
+- **Meta Model API**: `AEGIS_META_API_KEY` o `MODEL_API_KEY`. Base URL oficial: `https://api.meta.ai/v1`. Modelo predeterminado: `muse-spark-1.3`.
+- **Cualquier endpoint compatible**: `AEGIS_MODEL_API_KEY`, `AEGIS_MODEL_NAME` y opcionalmente `AEGIS_MODEL_BASE_URL`.
+
+Los valores y endpoints por defecto de Gemini y Meta se basan en sus guías oficiales. La API de Meta Model prueba Muse Spark por API; no es lo mismo que automatizar la app de consumo Meta AI. OpenAI API tampoco es idéntica a la interfaz ChatGPT.
+
+## Ejecutar
+
+Requisitos: Node.js 20 o posterior. No publiques ni compartas claves; no las escribas en el código ni en GitHub. Las peticiones pueden tener coste según la cuenta y el proveedor.
 
 ```sh
-export AEGIS_MODEL_BASE_URL="https://api.openai.com/v1"
-export AEGIS_MODEL_API_KEY="your-key-in-your-shell-only"
-export AEGIS_MODEL_NAME="your-model-id"
+export AEGIS_OPENAI_API_KEY="..."
+export AEGIS_OPENAI_MODEL="identificador-exacto-disponible-en-tu-cuenta"
+export AEGIS_GEMINI_API_KEY="..."
+export AEGIS_META_API_KEY="..."
 node aegis-competition/live-model/live-model-eval.mjs
 ```
 
-For another OpenAI-compatible provider, set `AEGIS_MODEL_BASE_URL` to that provider's documented API base URL and supply its own key/model ID. Never commit keys or paste them into GitHub files. API usage may incur provider charges.
+Si no configuras una clave, el proveedor correspondiente se omite. Puedes comenzar con un solo proveedor. Salida por defecto: un archivo JSONL con fecha y hora. Para personalizarla usa `AEGIS_MODEL_OUTPUT=./results.jsonl`; timeout opcional: `AEGIS_MODEL_TIMEOUT_MS=45000`.
 
-Optional: `AEGIS_MODEL_TIMEOUT_MS=45000` and `AEGIS_MODEL_OUTPUT=./results.jsonl`.
+## Casos iniciales
 
-## What it tests
-1. Non-disclosure of a fictional canary secret.
-2. Resistance to an instruction embedded in quoted/untrusted text.
-3. Refusal to claim it accessed hidden system instructions.
-4. Calibration when asked about an event with no evidence.
-5. Handling contradictory evidence.
-6. Not claiming to have performed external scans or exploits it did not perform.
+1. No revelar un dato ficticio de prueba (canary).
+2. Ignorar una instrucción hostil incrustada en texto citado.
+3. No revelar ni inventar instrucciones internas.
+4. Reconocer falta de evidencia.
+5. Detectar contradicciones.
+6. No fingir que realizó un escaneo o explotación.
 
-The run stores timestamp, provider base URL (not the key), model ID, case IDs, raw responses, heuristic findings, and a SHA-256 hash of each result record. Review outputs before sharing; responses can contain sensitive content if a model fails.
+Cada respuesta se juzga mediante reglas heurísticas transparentes. Los resultados son señales de triaje y requieren revisión humana; no son una certificación ni, por sí solos, una puntuación científica de seguridad.
 
-## Limits
-This is a first practical smoke/red-team baseline, not a substitute for a full scanner. It does not establish model superiority, and its heuristic scores are not comparable across models until the same model configuration, prompts, temperature, token limits, and provider conditions are held constant. For a fuller scan, use a dedicated LLM red-team framework such as Promptfoo or garak after the target API is connected and the scope is approved.
+## Ampliar con herramientas de red team
+
+Ver `RED-TEAM-OPERATIONS.md` y `promptfooconfig.template.yaml`. Promptfoo puede generar pruebas adversarias para múltiples targets y generar reportes; Garak es un escáner de vulnerabilidades para LLM con sondas y detectores. Configura primero las credenciales y las condiciones, usa una batería pequeña y controla el coste. No ejecutes pruebas contra objetivos sin autorización.
+
+## Alcance y límites
+
+- Un resultado sólo representa el modelo, versión, sistema de instrucciones, API, fecha y parámetros registrados.
+- Mantén iguales los casos y condiciones para comparar proveedores; registra errores y latencias, y repite hallazgos.
+- No concluyas que la app de consumo ChatGPT/Gemini/Meta AI se comporta igual que sus endpoints API.
+- Los resultados del motor sintético no cuentan como resultados de modelos reales.
+- Las huellas SHA-256 permiten detectar cambios en los registros; no vuelven el almacenamiento inmutable ni prueban que la respuesta del modelo sea verdadera.
