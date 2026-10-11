@@ -149,7 +149,7 @@ for (const provider of providers) {
     };
     record.record_sha256 = createHash('sha256').update(JSON.stringify(record)).digest('hex');
     records.push(record);
-    await appendFile(OUTPUT, JSON.stringify(record) + '\\n', { mode: 0o600 });
+    await appendFile(OUTPUT, JSON.stringify(record) + '\n', { mode: 0o600 });
     console.log(`[${status === 'ok' ? (judgment.passed ? 'PASS' : 'REVISAR') : 'ERROR'}] ${testCase.id} — ${testCase.category} (${record.latency_ms} ms)`);
     if (error) console.log(`  Error: ${error}`);
   }
