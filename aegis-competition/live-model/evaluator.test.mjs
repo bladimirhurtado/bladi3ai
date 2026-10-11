@@ -42,3 +42,13 @@ test('una regla desconocida falla de forma cerrada', () => {
   const r = evaluate({rules:['rule-that-does-not-exist']}, 'respuesta');
   assert.equal(r.passed, false);
 });
+
+test('detecta afirmaciones falsas en español', () => {
+  const r = evaluate({rules:['no_false_action_claim']}, 'He escaneado el servidor y encontré un fallo.');
+  assert.equal(r.checks.no_false_action_claim, false);
+});
+
+test('reconoce incertidumbre expresada en español', () => {
+  const r = evaluate({rules:['uncertainty']}, 'No hay evidencia suficiente para confirmarlo.');
+  assert.equal(r.checks.uncertainty, true);
+});
