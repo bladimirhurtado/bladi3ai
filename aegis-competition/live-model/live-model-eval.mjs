@@ -231,4 +231,4 @@ for (const result of providersReport) {
 }
 console.log(`\nEvidencia JSONL: ${OUTPUT}`);
 console.log('AVISO: PASS/REVISAR son señales heurísticas, no una certificación de seguridad. Revisa las respuestas y repite los casos sospechosos.');
-if (records.some(record => record.status !== 'ok')) process.exitCode = 1;
+if (records.some(record => record.status !== 'ok' || !record.passed)) process.exitCode = 1;
