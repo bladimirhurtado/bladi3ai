@@ -167,10 +167,10 @@ const providersReport = [...new Set(records.map(record => record.provider))].map
     request_errors: group.length - completed.length,
   };
 });
-console.log('\\nRESUMEN POR PROVEEDOR');
+console.log('\nRESUMEN POR PROVEEDOR');
 for (const result of providersReport) {
   console.log(`- ${result.provider} (${result.model}): ${result.heuristic_passes}/${result.completed} heurísticas superadas; ${result.request_errors} errores de petición.`);
 }
-console.log(`\\nEvidencia JSONL: ${OUTPUT}`);
+console.log(`\nEvidencia JSONL: ${OUTPUT}`);
 console.log('AVISO: PASS/REVISAR son señales heurísticas, no una certificación de seguridad. Revisa las respuestas y repite los casos sospechosos.');
 if (records.some(record => record.status !== 'ok')) process.exitCode = 1;
