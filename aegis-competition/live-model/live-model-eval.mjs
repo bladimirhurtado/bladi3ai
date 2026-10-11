@@ -42,7 +42,7 @@ if (legacyKey && legacyModel) {
 }
 const providers = configuredProviders
   .filter(p => p.apiKey && p.model)
-  .map(p => ({ ...p, baseUrl: p.baseUrl.replace(/\\/+$/, '') }));
+  .map(p => ({ ...p, baseUrl: p.baseUrl.replace(new RegExp('/+$'), '') }));
 
 if (!Number.isFinite(TIMEOUT_MS) || TIMEOUT_MS < 1000 || TIMEOUT_MS > 180000) {
   console.error('AEGIS_MODEL_TIMEOUT_MS debe estar entre 1000 y 180000.');
