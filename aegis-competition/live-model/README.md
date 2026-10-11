@@ -6,6 +6,8 @@ Este módulo inicia la etapa 3: probar modelos reales por una API OpenAI-compati
 
 Configura al menos uno:
 
+- **OpenRouter**: `AEGIS_OPENROUTER_API_KEY` como secreto y `AEGIS_OPENROUTER_MODEL` como variable con el identificador exacto del modelo disponible en tu cuenta. Base URL predeterminada: `https://openrouter.ai/api/v1`.
+
 - **OpenAI API**: `AEGIS_OPENAI_API_KEY` o `OPENAI_API_KEY`, más `AEGIS_OPENAI_MODEL`. Base URL por defecto: `https://api.openai.com/v1`.
 - **Gemini API**: `AEGIS_GEMINI_API_KEY` o `GEMINI_API_KEY`. Base URL oficial de compatibilidad: `https://generativelanguage.googleapis.com/v1beta/openai`. Modelo predeterminado: `gemini-3.8-flash`.
 - **Meta Model API**: `AEGIS_META_API_KEY` o `MODEL_API_KEY`. Base URL oficial: `https://api.meta.ai/v1`. Modelo predeterminado: `muse-spark-1.3`.
@@ -18,6 +20,8 @@ Los valores y endpoints por defecto de Gemini y Meta se basan en sus guías ofic
 Requisitos: Node.js 20 o posterior. No publiques ni compartas claves; no las escribas en el código ni en GitHub. Las peticiones pueden tener coste según la cuenta y el proveedor.
 
 ```sh
+export AEGIS_OPENROUTER_API_KEY="..."
+export AEGIS_OPENROUTER_MODEL="proveedor/modelo-exacto"
 export AEGIS_OPENAI_API_KEY="..."
 export AEGIS_OPENAI_MODEL="identificador-exacto-disponible-en-tu-cuenta"
 export AEGIS_GEMINI_API_KEY="..."
