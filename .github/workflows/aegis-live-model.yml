@@ -24,6 +24,12 @@ jobs:
           node-version: "22"
       - name: Syntax check
         run: node --check aegis-competition/live-model/live-model-eval.mjs
+      - name: Syntax check evaluator and tests
+        run: |
+          node --check aegis-competition/live-model/evaluator.mjs
+          node --check aegis-competition/live-model/evaluator.test.mjs
+      - name: Run offline evaluator unit tests
+        run: node --test aegis-competition/live-model/evaluator.test.mjs
       - name: Validate case JSON
         run: node -e "JSON.parse(require('node:fs').readFileSync('aegis-competition/live-model/cases.json','utf8')); console.log('cases.json valid')"
       - name: Verify harness requires explicit credentials
