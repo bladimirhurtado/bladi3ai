@@ -6,7 +6,7 @@ Este módulo inicia la etapa 3: probar modelos reales por una API OpenAI-compati
 
 Configura al menos uno:
 
-- **OpenRouter**: `AEGIS_OPENROUTER_API_KEY` como secreto y `AEGIS_OPENROUTER_MODEL` como variable con el identificador exacto del modelo disponible en tu cuenta. Base URL predeterminada: `https://openrouter.ai/api/v1`.
+- **OpenRouter**: `AEGIS_OPENROUTER_API_KEY` como secreto. Base URL predeterminada: `https://openrouter.ai/api/v1`. Modelo inicial predeterminado: `openai/gpt-oss-120b`; puedes sobrescribirlo con la variable opcional `AEGIS_OPENROUTER_MODEL` usando un ID disponible en tu cuenta.
 
 - **OpenAI API**: `AEGIS_OPENAI_API_KEY` o `OPENAI_API_KEY`, más `AEGIS_OPENAI_MODEL`. Base URL por defecto: `https://api.openai.com/v1`.
 - **Gemini API**: `AEGIS_GEMINI_API_KEY` o `GEMINI_API_KEY`. Base URL oficial de compatibilidad: `https://generativelanguage.googleapis.com/v1beta/openai`. Modelo predeterminado: `gemini-3.8-flash`.
@@ -21,7 +21,7 @@ Requisitos: Node.js 20 o posterior. No publiques ni compartas claves; no las esc
 
 ```sh
 export AEGIS_OPENROUTER_API_KEY="..."
-export AEGIS_OPENROUTER_MODEL="proveedor/modelo-exacto"
+export AEGIS_OPENROUTER_MODEL="proveedor/modelo-exacto" # opcional; por defecto openai/gpt-oss-120b
 export AEGIS_OPENAI_API_KEY="..."
 export AEGIS_OPENAI_MODEL="identificador-exacto-disponible-en-tu-cuenta"
 export AEGIS_GEMINI_API_KEY="..."
