@@ -90,9 +90,28 @@ if (!Number.isSafeInteger(caseLimit) || caseLimit < 1 || caseLimit > allCases.le
   console.error(`AEGIS_CASE_LIMIT debe estar entre 1 y ${allCases.length}.`);
   process.exit(2);
 }
-const cases = allCases.slice(0, caseLimit);
+const requestedCaseIds = process.env.AEGIS_CASE_IDS?.split(',').map(value => value.trim()).filter(Boolean);
+const candidateCases = requestedCaseIds?.length
+  ? allCases.filter(testCase => requestedCaseIds.includes(testCase.id))
+  : allCases;
+if (requestedCaseIds?.length) {
+  const unknownIds = requestedCaseIds.filter(id => !allCases.some(testCase => testCase.id === id));
+  if (unknownIds.length) {
+    console.error(`AEGIS_CASE_IDS contiene IDs desconocidos: ${unknownIds.join(', ')}.`);
+    process.exit(2);
+  }
+}
+const selectedCases = candidateCases.slice(0, caseLimit);
+const repeatCount = Number(process.env.AEGIS_REPEAT_CASES || 1);
+if (!Number.isSafeInteger(repeatCount) || repeatCount < 1 || repeatCount > 5) {
+  console.error('AEGIS_REPEAT_CASES debe estar entre 1 y 5.');
+  process.exit(2);
+}
+const cases = selectedCases.flatMap(testCase =>
+  Array.from({ length: repeatCount }, (_, index) => ({ ...testCase, attempt: index + 1 }))
+);
 const records = [];
-console.log(`Suite seleccionada: ${cases.length}/${allCases.length} casos por proveedor.`);
+console.log(`Suite seleccionada: ${selectedCases.length} casos únicos × ${repeatCount} repetición(es) = ${cases.length} peticiones por proveedor.`);
 
 for (const provider of providers) {
   console.log(`\nProveedor: ${provider.label} | modelo: ${provider.model}`);
@@ -101,6 +120,10 @@ for (const provider of providers) {
     const started = Date.now();
     let status = 'ok';
     let response = '';
+    let finishReason = null;
+    let refusal = null;
+    let reasoningPresent = false;
+    let responseContentType = 'missing';
     let error = null;
     try {
       const res = await fetch(endpoint, {
@@ -125,7 +148,17 @@ for (const provider of providers) {
         error = `HTTP ${res.status}: ${(await res.text()).slice(0, 800)}`;
       } else {
         const data = await res.json();
-        response = data?.choices?.[0]?.message?.content ?? '';
+        const choice = data?.choices?.[0];
+        const message = choice?.message;
+        const rawContent = message?.content;
+        finishReason = choice?.finish_reason ?? null;
+        refusal = typeof message?.refusal === 'string' ? message.refusal : null;
+        reasoningPresent = Boolean(message?.reasoning || message?.reasoning_content);
+        responseContentType = rawContent === null || rawContent === undefined
+          ? 'missing'
+          : Array.isArray(rawContent) ? 'array'
+          : typeof rawContent;
+        response = rawContent ?? '';
         if (typeof response !== 'string') response = JSON.stringify(response);
       }
     } catch (err) {
@@ -141,6 +174,7 @@ for (const provider of providers) {
       provider: provider.id,
       provider_label: provider.label,
       case_id: testCase.id,
+      attempt: testCase.attempt || 1,
       category: testCase.category,
       prompt: testCase.prompt,
       status,
@@ -152,6 +186,12 @@ for (const provider of providers) {
       passed: judgment.passed,
       checks: judgment.checks,
       evaluator_note: judgment.note,
+      finish_reason: finishReason,
+      response_content_type: responseContentType,
+      response_empty: response.trim().length === 0,
+      refusal_present: Boolean(refusal),
+      refusal,
+      reasoning_present: reasoningPresent,
       error,
       response,
     };
