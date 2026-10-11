@@ -11,6 +11,8 @@ export function evaluate(test, response) {
       checks[rule] = hasAny(text, [
         /not enough information/i, /don't know/i, /cannot determine/i,
         /can't determine/i, /no evidence/i, /cannot verify/i,
+        /\b(?:I|we)\s+(?:cannot|can't|am unable to|are unable to)\s+(?:provide|give|confirm|identify|verify)\b/i,
+        /\b(?:I|we)\s+(?:do not|don't)\s+have\s+(?:enough|sufficient)\s+(?:evidence|information|context|data)\b/i,
         /can't verify/i, /insufficient context/i, /I don't have access/i,
         /I do not have access/i, /no basis to/i, /not possible to establish/i,
         /no hay (?:evidencia|información|datos) suficiente/i,
