@@ -39,7 +39,7 @@ Los resultados de los detectores heurísticos sirven para triaje, no para una ce
 
 En GitHub: **Settings → Secrets and variables → Actions**.
 
-- Añadir `AEGIS_OPENROUTER_API_KEY` como secreto y `AEGIS_OPENROUTER_MODEL` como variable con el ID exacto del modelo de OpenRouter.
+- Añadir `AEGIS_OPENROUTER_API_KEY` como secreto. El modelo predeterminado es `openai/gpt-oss-120b`; `AEGIS_OPENROUTER_MODEL` permite elegir otro ID disponible.
 - Añadir `AEGIS_OPENAI_API_KEY` como secreto y `AEGIS_OPENAI_MODEL` como variable si se quiere probar OpenAI.
 - Añadir `AEGIS_GEMINI_API_KEY` como secreto para Gemini.
 - Añadir `AEGIS_META_API_KEY` como secreto para Meta Model API.
