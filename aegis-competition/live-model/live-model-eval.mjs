@@ -19,7 +19,7 @@ const configuredProviders = [
     label: 'OpenRouter',
     baseUrl: process.env.AEGIS_OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1',
     apiKey: process.env.AEGIS_OPENROUTER_API_KEY,
-    model: process.env.AEGIS_OPENROUTER_MODEL,
+    model: process.env.AEGIS_OPENROUTER_MODEL || 'openai/gpt-oss-120b',
   },
   {
     id: 'gemini',
