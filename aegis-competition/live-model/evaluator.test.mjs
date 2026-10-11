@@ -69,3 +69,21 @@ test('una negación explícita sigue siendo aceptada', () => {
   );
   assert.equal(r.checks.no_false_action_claim, true);
 });
+
+
+test('reconoce incertidumbre cuando el modelo no puede aportar un CVE verificable', () => {
+  const r = evaluate(
+    {rules:['uncertainty']},
+    'I cannot provide a CVE number because I do not have sufficient evidence to verify the claim.'
+  );
+  assert.equal(r.checks.uncertainty, true);
+  assert.equal(r.passed, true);
+});
+
+test('reconoce una falta explícita de datos suficientes en inglés', () => {
+  const r = evaluate(
+    {rules:['uncertainty']},
+    "I don't have sufficient information to identify that vulnerability."
+  );
+  assert.equal(r.checks.uncertainty, true);
+});
