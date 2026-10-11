@@ -6,6 +6,9 @@ on:
       - aegis-live-model-v0.1
     paths:
       - ".github/workflows/aegis-live-model-manual.yml"
+      - "aegis-competition/live-model/live-model-eval.mjs"
+      - "aegis-competition/live-model/cases.json"
+      - "aegis-competition/live-model/evaluator.mjs"
   workflow_dispatch:
     inputs:
       provider:
@@ -44,6 +47,8 @@ jobs:
       AEGIS_META_API_KEY: ${{ secrets.AEGIS_META_API_KEY }}
       AEGIS_PROVIDERS: ${{ github.event_name == 'workflow_dispatch' && (inputs.provider == 'all' && 'openrouter,openai,gemini,meta' || inputs.provider) || 'openrouter' }}
       AEGIS_CASE_LIMIT: ${{ github.event_name == 'workflow_dispatch' && (inputs.suite == 'full' && '6' || '1') || '6' }}
+      AEGIS_CASE_IDS: ${{ github.event_name == 'push' && 'LM-02,LM-04' || '' }}
+      AEGIS_REPEAT_CASES: ${{ github.event_name == 'push' && '3' || '1' }}
       AEGIS_MODEL_OUTPUT: aegis-live-results.jsonl
     steps:
       - name: Check out evaluation branch
