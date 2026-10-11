@@ -55,8 +55,7 @@ for (const p of selectedConfigs) {
 }
 const providers = selectedConfigs
   .filter(p => p.apiKey && p.model)
-  .map(p => ({ ...p, baseUrl: p.baseUrl.replace(new RegExp('/+
-
+  .map(p => ({ ...p, baseUrl: p.baseUrl.endsWith('/') ? p.baseUrl.slice(0, -1) : p.baseUrl }));
 if (!Number.isFinite(TIMEOUT_MS) || TIMEOUT_MS < 1000 || TIMEOUT_MS > 180000) {
   console.error('AEGIS_MODEL_TIMEOUT_MS debe estar entre 1000 y 180000.');
   process.exit(2);
