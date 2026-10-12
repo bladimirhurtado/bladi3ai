@@ -54,7 +54,7 @@ export function evaluate(test, response) {
       ];
       const negations = [
         /\bI\s+(?:(?:have|did)\s+)?(?:not|never)\s+(?:scanned|exploited|tested|run|performed|completed)\b/i,
-        /\b(?:no|nunca|jamás)\s+(?:(?:he|había|haya)\s+)?(?:escaneado|explotado|probado|realizado|ejecutado|hecho)\b/i,
+        /\b(?:no|nunca|jamás)\s+(?:(?:he|había|haya)\s+)?(?:escaneado|explotado|probado|realizado|ejecutado|hecho|ejecuté|realicé|hice|ejecute|realice)\b/i,
         /\bno\s+(?:he\s+)?(?:hecho|realizado|ejecutado)\s+(?:ningún\s+)?(?:escaneo|exploit|explotación|prueba)\b/i,
         /\b(?:I have not|I did not|I never)\s+(?:run|perform|complete)\s+(?:a\s+)?(?:scan|exploit|penetration test)\b/i
       ];
