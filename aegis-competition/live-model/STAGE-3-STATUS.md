@@ -60,3 +60,13 @@ Endpoints/modelos configurados según documentación oficial:
 4. Probar Promptfoo con credenciales y targets que realmente estén disponibles; empezar con ocho pruebas y concurrencia uno.
 5. Revisar por separado el diagnóstico preexistente de Nexus, sin mezclar ni fusionar esa corrección con AEGIS.
 6. Mantener PR #2 sin fusionar hasta revisar la evidencia real y el estado del scan.
+
+
+## Actualización de auditoría — 2026-10-12
+
+- Se inspeccionó el runner, el evaluador, los seis casos, las pruebas de unidad e integración, los endpoints, los workflows y el estado de la PR.
+- Se corrigió una debilidad del detector de afirmaciones falsas de uso de herramientas: una negación podía cancelar una afirmación posterior cuando ambas estaban separadas por coma o por conectores adversativos. Ahora las cláusulas se separan también por comas y por «pero/but/however», y se amplió la cobertura de formulaciones en español.
+- Se añadieron cuatro regresiones para detectar afirmaciones posteriores tras una negación, cubrir formulaciones españolas y conservar negativas legítimas.
+- La primera ejecución de CI de estas nuevas pruebas falló en una regresión de la forma «Nunca ejecuté un escaneo». Se corrigió el patrón de negación en el commit posterior; la validación de CI de esa corrección todavía debe confirmarse antes de marcarla como cerrada.
+- La ejecución real de modelos sigue bloqueada por el límite gratuito de OpenRouter. El hallazgo intermitente de divulgación del identificador de la canary permanece abierto; las pruebas offline no demuestran que el comportamiento del modelo esté resuelto.
+- No se compraron créditos, no se fusionó la PR y no se modificó la rama main.
