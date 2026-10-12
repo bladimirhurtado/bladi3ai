@@ -29,11 +29,15 @@ CodeQL informó errores de análisis sintáctico en el archivo existente `nexus/
 
 El estado "success" de CodeQL indica que el análisis y la carga SARIF acabaron correctamente; no equivale a afirmar que se encontró cero vulnerabilidades. La salida de diagnóstico también advierte de archivos que no pudo analizar.
 
-## Qué NO se ha probado todavía
+## Estado de las pruebas reales y límites
 
-**No se ha realizado ninguna llamada a una API comercial real.** No hay claves configuradas en los secretos del repositorio, así que todavía no hay resultados en vivo de OpenRouter, OpenAI, Gemini o Meta. La integración local simulada solo valida el ejecutor y el registro de evidencias; no mide seguridad o calidad de ningún modelo comercial.
+**Sí se han ejecutado llamadas reales a OpenRouter**, incluidas tandas con el modelo gratuito `nvidia/nemotron-3-super-120b-a12b:free`. Los resultados y artefactos históricos están en `LIVE-RESULTS-2026-10-11.md`. No se ha completado una comparación equivalente con un segundo proveedor.
 
-Los resultados de los detectores heurísticos sirven para triaje, no para una certificación. Los hallazgos deben revisarse manualmente y repetirse para descartar falsos positivos.
+- Se observó una filtración intermitente del identificador ficticio de la canary en una tanda: 1 de 3 intentos en el run 38138669830. Una tanda posterior pasó 6/6, pero eso no elimina el riesgo variable.
+- Las nuevas llamadas al modelo gratuito quedaron bloqueadas por HTTP 429 (`free-models-per-day`). Esos runs no cuentan como resultado de comportamiento.
+- El intento con el modelo de pago devolvió HTTP 402. No se compraron créditos ni se cambió a una ruta de pago.
+- El evaluador y las pruebas offline se han endurecido; esto mejora la detección, pero no demuestra que el modelo haya dejado de filtrar.
+- Las pruebas heurísticas requieren revisión humana y no son una certificación de seguridad.
 
 ## Cómo habilitar la primera prueba real
 
@@ -44,7 +48,7 @@ En GitHub: **Settings → Secrets and variables → Actions**.
 - Añadir `AEGIS_GEMINI_API_KEY` como secreto para Gemini.
 - Añadir `AEGIS_META_API_KEY` como secreto para Meta Model API.
 
-No subir claves al repositorio, a los logs ni al chat. Después abrir **Actions → AEGIS Live Model Evaluation (manual) → Run workflow**. Para comenzar, elegir `openrouter` y `smoke`; el modo `full` puede enviar seis peticiones por proveedor. El workflow manual no corre en cada push y guarda su archivo de resultados como artifact por 14 días. Las llamadas pueden incurrir en costes del proveedor.
+No subir claves al repositorio, a los logs ni al chat. Después abrir **Actions → AEGIS Live Model Evaluation (manual) → Run workflow**. Para comenzar, elegir `openrouter` y `smoke`; el modo `full` puede enviar seis peticiones por proveedor. El workflow se ejecuta solo mediante lanzamiento manual y guarda su archivo de resultados como artifact por 14 días. No se debe automatizar el consumo de cuota del modelo en cada push. Las llamadas pueden incurrir en costes del proveedor.
 
 Endpoints/modelos configurados según documentación oficial:
 - Gemini API compatible: https://ai.google.dev/gemini-api/docs/openai — `gemini-3.8-flash`.
@@ -67,6 +71,15 @@ Endpoints/modelos configurados según documentación oficial:
 - Se inspeccionó el runner, el evaluador, los seis casos, las pruebas de unidad e integración, los endpoints, los workflows y el estado de la PR.
 - Se corrigió una debilidad del detector de afirmaciones falsas de uso de herramientas: una negación podía cancelar una afirmación posterior cuando ambas estaban separadas por coma o por conectores adversativos. Ahora las cláusulas se separan también por comas y por «pero/but/however», y se amplió la cobertura de formulaciones en español.
 - Se añadieron cuatro regresiones para detectar afirmaciones posteriores tras una negación, cubrir formulaciones españolas y conservar negativas legítimas.
-- La primera ejecución de CI de estas nuevas pruebas falló en una regresión de la forma «Nunca ejecuté un escaneo». Se corrigió el patrón de negación en el commit posterior; la validación de CI de esa corrección todavía debe confirmarse antes de marcarla como cerrada.
+- La primera ejecución de CI de estas nuevas pruebas falló en una regresión de la forma «Nunca ejecuté un escaneo». Se corrigió el patrón de negación en el commit posterior. En el SHA comprobado más reciente, harness, pruebas sintéticas/scope-gate y CodeQL terminaron en PASS (runs 38236943180, 38236943202 y 38236944031).
 - La ejecución real de modelos sigue bloqueada por el límite gratuito de OpenRouter. El hallazgo intermitente de divulgación del identificador de la canary permanece abierto; las pruebas offline no demuestran que el comportamiento del modelo esté resuelto.
 - No se compraron créditos, no se fusionó la PR y no se modificó la rama main.
+
+
+## Auditoría adicional de ejecución automática — 2026-10-12
+
+- Se detectó que el workflow denominado manual también tenía un disparador `push`, lo que podía gastar cuota del proveedor al cambiar código. Se eliminó ese disparador: las llamadas reales ahora requieren `workflow_dispatch`.
+- La selección de modelo de pago ya no se fuerza en ejecuciones automáticas; el workflow solo corre bajo decisión explícita desde Actions.
+- La guía operativa se sincronizó con los límites teóricos correctos: hasta 4 llamadas en `smoke` y hasta 24 en `full`, dependiendo de los proveedores que tengan credenciales y modelo configurados.
+- Checks del SHA `8c5852213c071f4c4f84aa0767f4c0a0215fa8b2`: harness PASS (run 38236943180), pruebas sintéticas/scope-gate PASS (run 38236943202), CodeQL PASS (run 38236944031). El cambio posterior de workflow/documentación vuelve a activar CI y debe verificarse.
+- La PR #2 continúa abierta en borrador, sin fusionar; `main` y Nexus no se modificaron. El riesgo de filtración intermitente de canary sigue abierto y la cuota gratuita sigue siendo el bloqueo para nuevas repeticiones en vivo.
