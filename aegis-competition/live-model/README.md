@@ -1,6 +1,6 @@
 # AEGIS Live Model Evaluation v0.1
 
-Este módulo inicia la etapa 3: probar modelos reales por una API OpenAI-compatible sin alterar el motor sintético ni la aplicación AppDeploy. El smoke test tiene seis casos de seguridad y calidad, permite una comparación serial de varios proveedores, registra resultados JSONL y calcula un SHA-256 por registro.
+Este módulo inicia la etapa 3: probar modelos reales por una API OpenAI-compatible sin alterar el motor sintético ni la aplicación AppDeploy. El smoke test tiene seis casos de seguridad y calidad, permite una comparación serial de varios proveedores, registra resultados JSONL y calcula un SHA-256 por registro. Las respuestas del proveedor se limitan a 1.000.000 de caracteres antes de parsearse; respuestas mayores se descartan y fallan de forma cerrada.
 
 ## Proveedores disponibles
 
