@@ -83,3 +83,23 @@ Endpoints/modelos configurados según documentación oficial:
 - La guía operativa se sincronizó con los límites teóricos correctos: hasta 4 llamadas en `smoke` y hasta 24 en `full`, dependiendo de los proveedores que tengan credenciales y modelo configurados.
 - Checks del SHA `8c5852213c071f4c4f84aa0767f4c0a0215fa8b2`: harness PASS (run 38236943180), pruebas sintéticas/scope-gate PASS (run 38236943202), CodeQL PASS (run 38236944031). El cambio posterior de workflow/documentación vuelve a activar CI y debe verificarse.
 - La PR #2 continúa abierta en borrador, sin fusionar; `main` y Nexus no se modificaron. El riesgo de filtración intermitente de canary sigue abierto y la cuota gratuita sigue siendo el bloqueo para nuevas repeticiones en vivo.
+
+## Auditoría de seguridad y endurecimiento — 2026-10-13
+
+- Se endureció la validación de URL de proveedores: solo HTTPS para endpoints remotos; HTTP se admite únicamente en loopback para pruebas locales. Se rechazan protocolos no HTTP(S), credenciales incrustadas en la URL, parámetros de consulta y fragmentos.
+- El runner ya no sigue redirecciones HTTP del proveedor (redirect: error), evitando que una API configurada redirija una petición autenticada a otro destino.
+- Los cuerpos de error HTTP se leen con un límite de 800 caracteres para reducir el riesgo de consumir memoria excesiva al procesar una respuesta de error desproporcionada.
+- Se añadieron pruebas unitarias para URL inseguras y una prueba de integración que comprueba que un destino de redirección no recibe la petición.
+- El workflow manual usa por defecto un modelo OpenRouter gratuito para reducir el riesgo de cargos accidentales. Esto no garantiza disponibilidad ni cuota: HTTP 429 sigue siendo un bloqueo posible. Un valor de modelo configurado explícitamente en GitHub Variables puede reemplazar el valor predeterminado.
+- Se corrigió el README que describía incorrectamente una repetición automática al hacer push; la evaluación real solo se ejecuta mediante workflow_dispatch.
+
+### Pendiente antes de declarar v0.1 cerrado
+
+1. Confirmar que los checks del SHA más reciente terminan en PASS, incluyendo CodeQL y el nuevo test de redirecciones.
+2. Revisar las alertas/diagnósticos de CodeQL y separar los problemas del código AEGIS de los errores de análisis preexistentes en nexus/api/index.ts.
+3. Ejecutar una prueba real con un proveedor y revisar el artifact JSONL. La cuota gratuita de OpenRouter estaba agotada en las últimas pruebas; no se compraron créditos.
+4. Repetir el conjunto con un segundo proveedor autorizado para comparación equivalente. No declarar la comparación completada sin resultados.
+5. Ejecutar Promptfoo/Garak solo cuando el entorno y las credenciales estén preparados, con alcance y consumo revisados.
+6. Mantener el riesgo de filtración intermitente de canary como abierto hasta obtener evidencia repetida que lo caracterice; una tanda PASS no lo elimina.
+
+La PR #2 permanece abierta y en borrador; main y Nexus siguen sin modificarse. La auditoría de código no sustituye la validación real de comportamiento de los modelos.
