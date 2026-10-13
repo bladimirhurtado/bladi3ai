@@ -1,0 +1,40 @@
+name: AEGIS CodeQL Security Scan
+
+on:
+  push:
+    branches:
+      - aegis-live-model-v0.1
+    paths:
+      - "aegis-competition/**"
+      - ".github/workflows/aegis-codeql-security.yml"
+  pull_request:
+    branches:
+      - aegis-competition-v0.4
+    paths:
+      - "aegis-competition/**"
+      - ".github/workflows/aegis-codeql-security.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+
+jobs:
+  analyze:
+    name: Analyze JavaScript / TypeScript
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          queries: security-and-quality
+          build-mode: none
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:javascript-typescript"

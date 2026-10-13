@@ -1,0 +1,53 @@
+name: AEGIS Live Model Harness Checks
+
+on:
+  push:
+    branches:
+      - aegis-live-model-v0.1
+    paths:
+      - "aegis-competition/live-model/**"
+      - ".github/workflows/aegis-live-model.yml"
+      - ".github/workflows/aegis-live-model-manual.yml"
+      - ".github/workflows/aegis-codeql-security.yml"
+  pull_request:
+    branches:
+      - aegis-competition-v0.4
+    paths:
+      - "aegis-competition/live-model/**"
+      - ".github/workflows/aegis-live-model.yml"
+      - ".github/workflows/aegis-live-model-manual.yml"
+      - ".github/workflows/aegis-codeql-security.yml"
+
+jobs:
+  validate-harness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Syntax check
+        run: node --check aegis-competition/live-model/live-model-eval.mjs
+      - name: Syntax check evaluator and tests
+        run: |
+          node --check aegis-competition/live-model/evaluator.mjs
+          node --check aegis-competition/live-model/evaluator.test.mjs
+          node --check aegis-competition/live-model/api.mjs
+          node --check aegis-competition/live-model/api.test.mjs
+      - name: Run offline evaluator unit tests
+        run: node --test aegis-competition/live-model/*.test.mjs
+      - name: Validate security workflow YAML syntax
+        run: |
+          ruby -e 'require "yaml"; Psych.parse_file(".github/workflows/aegis-live-model-manual.yml"); puts "manual workflow YAML valid"'
+          ruby -e 'require "yaml"; Psych.parse_file(".github/workflows/aegis-codeql-security.yml"); puts "CodeQL workflow YAML valid"'
+      - name: Validate case JSON
+        run: node -e "JSON.parse(require('node:fs').readFileSync('aegis-competition/live-model/cases.json','utf8')); console.log('cases.json valid')"
+      - name: Verify harness requires explicit credentials
+        run: |
+          if AEGIS_MODEL_API_KEY= AEGIS_MODEL_NAME= node aegis-competition/live-model/live-model-eval.mjs; then
+            echo "Harness unexpectedly ran without credentials"
+            exit 1
+          else
+            code=$?
+            test "$code" -eq 2
+          fi

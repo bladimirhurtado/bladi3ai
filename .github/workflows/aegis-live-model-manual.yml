@@ -1,0 +1,59 @@
+name: AEGIS Live Model Evaluation (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: "Proveedor API que quieres probar"
+        required: true
+        type: choice
+        options:
+          - all
+          - openrouter
+          - openai
+          - gemini
+          - meta
+        default: all
+      suite:
+        description: "Smoke = 1 petición por proveedor; full = 6 pruebas por proveedor"
+        required: true
+        type: choice
+        options:
+          - smoke
+          - full
+        default: smoke
+
+permissions:
+  contents: read
+
+jobs:
+  live-model-evaluation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      AEGIS_OPENROUTER_API_KEY: ${{ secrets.AEGIS_OPENROUTER_API_KEY }}
+      AEGIS_OPENROUTER_MODEL: ${{ vars.AEGIS_OPENROUTER_MODEL || 'nvidia/nemotron-3-super-120b-a12b:free' }}
+      AEGIS_OPENAI_API_KEY: ${{ secrets.AEGIS_OPENAI_API_KEY }}
+      AEGIS_OPENAI_MODEL: ${{ vars.AEGIS_OPENAI_MODEL }}
+      AEGIS_GEMINI_API_KEY: ${{ secrets.AEGIS_GEMINI_API_KEY }}
+      AEGIS_META_API_KEY: ${{ secrets.AEGIS_META_API_KEY }}
+      AEGIS_PROVIDERS: ${{ inputs.provider == 'all' && 'openrouter,openai,gemini,meta' || inputs.provider }}
+      AEGIS_CASE_LIMIT: ${{ inputs.suite == 'full' && '6' || '1' }}
+      AEGIS_MODEL_OUTPUT: aegis-live-results.jsonl
+    steps:
+      - name: Check out evaluation branch
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Run selected live model evaluation
+        run: node aegis-competition/live-model/live-model-eval.mjs
+      - name: Upload evaluation evidence (repository access)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: aegis-live-results-${{ github.run_id }}
+          path: aegis-live-results.jsonl
+          if-no-files-found: warn
+          retention-days: 14
