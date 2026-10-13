@@ -43,7 +43,7 @@ El estado "success" de CodeQL indica que el análisis y la carga SARIF acabaron 
 
 En GitHub: **Settings → Secrets and variables → Actions**.
 
-- Añadir `AEGIS_OPENROUTER_API_KEY` como secreto. El modelo predeterminado es `openai/gpt-oss-120b`; `AEGIS_OPENROUTER_MODEL` permite elegir otro ID disponible.
+- Añadir `AEGIS_OPENROUTER_API_KEY` como secreto. El modelo predeterminado del runner y del workflow es `nvidia/nemotron-3-super-120b-a12b:free`; `AEGIS_OPENROUTER_MODEL` o la variable `AEGIS_OPENROUTER_MODEL` de Actions permiten elegir otro ID. Los modelos configurados explícitamente pueden tener coste.
 - Añadir `AEGIS_OPENAI_API_KEY` como secreto y `AEGIS_OPENAI_MODEL` como variable si se quiere probar OpenAI.
 - Añadir `AEGIS_GEMINI_API_KEY` como secreto para Gemini.
 - Añadir `AEGIS_META_API_KEY` como secreto para Meta Model API.
