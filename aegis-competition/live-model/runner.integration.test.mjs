@@ -83,3 +83,69 @@ test('runs all six cases through a local mock API and verifies JSONL evidence', 
     await rm(dir, { recursive: true, force: true });
   }
 });
+
+test('does not follow redirects from a provider endpoint', { timeout: 20000 }, async () => {
+  let destinationRequests = 0;
+  const destination = createServer((req, res) => {
+    destinationRequests += 1;
+    res.writeHead(200, { 'content-type': 'application/json' });
+    res.end(JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'unexpected redirect followed' } }] }));
+  });
+  destination.listen(0, '127.0.0.1');
+  await once(destination, 'listening');
+  const destinationAddress = destination.address();
+
+  const source = createServer((req, res) => {
+    res.writeHead(302, { location: `http://127.0.0.1:${destinationAddress.port}/collect` });
+    res.end();
+  });
+  source.listen(0, '127.0.0.1');
+  await once(source, 'listening');
+  const sourceAddress = source.address();
+
+  const dir = await mkdtemp(join(tmpdir(), 'aegis-redirect-test-'));
+  const output = join(dir, 'results.jsonl');
+  const script = fileURLToPath(new URL('./live-model-eval.mjs', import.meta.url));
+  try {
+    const child = spawn(process.execPath, [script], {
+      env: {
+        ...process.env,
+        AEGIS_MODEL_API_KEY: 'mock-only-not-a-real-secret',
+        AEGIS_MODEL_NAME: 'mock-model',
+        AEGIS_MODEL_BASE_URL: `http://127.0.0.1:${sourceAddress.port}`,
+        AEGIS_MODEL_OUTPUT: output,
+        AEGIS_MODEL_TIMEOUT_MS: '5000',
+        AEGIS_CASE_LIMIT: '1',
+        AEGIS_OPENROUTER_API_KEY: '',
+        AEGIS_OPENROUTER_MODEL: '',
+        AEGIS_OPENROUTER_BASE_URL: '',
+        AEGIS_OPENAI_API_KEY: '',
+        OPENAI_API_KEY: '',
+        AEGIS_OPENAI_MODEL: '',
+        AEGIS_GEMINI_API_KEY: '',
+        GEMINI_API_KEY: '',
+        AEGIS_META_API_KEY: '',
+        MODEL_API_KEY: '',
+      },
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    let stdout = '', stderr = '';
+    child.stdout.setEncoding('utf8').on('data', chunk => { stdout += chunk; });
+    child.stderr.setEncoding('utf8').on('data', chunk => { stderr += chunk; });
+    const [code] = await once(child, 'close');
+    assert.equal(code, 1, `redirect should fail the case. stdout:\n${stdout}\nstderr:\n${stderr}`);
+    assert.equal(destinationRequests, 0, 'redirect destination must never receive the request');
+    const records = (await readFile(output, 'utf8')).trim().split('\n').map(line => JSON.parse(line));
+    assert.equal(records.length, 1);
+    assert.equal(records[0].status, 'request_error');
+    assert.equal(records[0].passed, false);
+  } finally {
+    source.closeAllConnections?.();
+    destination.closeAllConnections?.();
+    await Promise.all([
+      new Promise(resolve => source.close(() => resolve())),
+      new Promise(resolve => destination.close(() => resolve()))
+    ]);
+    await rm(dir, { recursive: true, force: true });
+  }
+});
