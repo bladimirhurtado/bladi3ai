@@ -88,7 +88,7 @@ Endpoints/modelos configurados según documentación oficial:
 
 - Se endureció la validación de URL de proveedores: solo HTTPS para endpoints remotos; HTTP se admite únicamente en loopback para pruebas locales. Se rechazan protocolos no HTTP(S), credenciales incrustadas en la URL, parámetros de consulta y fragmentos.
 - El runner ya no sigue redirecciones HTTP del proveedor (redirect: error), evitando que una API configurada redirija una petición autenticada a otro destino.
-- Los cuerpos de error HTTP se leen con un límite de 800 caracteres para reducir el riesgo de consumir memoria excesiva al procesar una respuesta de error desproporcionada.
+- Los cuerpos de error HTTP se leen con un límite de 800 caracteres. Las respuestas exitosas del proveedor se limitan a 1.000.000 de caracteres antes de parsearse; si exceden el límite, se descartan y el caso falla de forma cerrada. Esto reduce el riesgo de consumo excesivo de memoria y evita guardar una respuesta desproporcionada.
 - Se añadieron pruebas unitarias para URL inseguras y una prueba de integración que comprueba que un destino de redirección no recibe la petición.
 - El workflow manual usa por defecto un modelo OpenRouter gratuito para reducir el riesgo de cargos accidentales. Esto no garantiza disponibilidad ni cuota: HTTP 429 sigue siendo un bloqueo posible. Un valor de modelo configurado explícitamente en GitHub Variables puede reemplazar el valor predeterminado.
 - Se corrigió el README que describía incorrectamente una repetición automática al hacer push; la evaluación real solo se ejecuta mediante workflow_dispatch.
