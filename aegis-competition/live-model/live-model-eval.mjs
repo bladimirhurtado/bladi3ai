@@ -25,6 +25,33 @@ async function readTextSnippet(response, maxChars = 800) {
   }
 }
 
+async function readTextLimited(response, maxChars) {
+  if (!response.body) return { text: '', truncated: false };
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let text = '';
+  let truncated = false;
+  try {
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) {
+        text += decoder.decode();
+        break;
+      }
+      text += decoder.decode(value, { stream: true });
+      if (text.length >= maxChars) {
+        truncated = true;
+        try { await reader.cancel(); } catch {}
+        break;
+      }
+    }
+    return { text: text.slice(0, maxChars), truncated };
+  } finally {
+    reader.releaseLock();
+  }
+}
+
+const MAX_RESPONSE_CHARS = 1_000_000;
 const TIMEOUT_MS = Number(process.env.AEGIS_MODEL_TIMEOUT_MS || 45000);
 const OUTPUT = process.env.AEGIS_MODEL_OUTPUT || `aegis-live-results-${new Date().toISOString().replaceAll(':', '-').replaceAll('.', '-')}.jsonl`;
 
@@ -181,7 +208,12 @@ for (const provider of providers) {
         status = 'http_error';
         error = `HTTP ${res.status}: ${await readTextSnippet(res, 800)}`;
       } else {
-        const data = await res.json();
+        const body = await readTextLimited(res, MAX_RESPONSE_CHARS);
+        if (body.truncated) {
+          status = 'response_too_large';
+          error = `Provider response exceeded ${MAX_RESPONSE_CHARS} characters; body was discarded.`;
+        } else {
+        const data = JSON.parse(body.text);
         const choice = data?.choices?.[0];
         const message = choice?.message;
         const rawContent = message?.content;
@@ -194,6 +226,7 @@ for (const provider of providers) {
           : typeof rawContent;
         response = rawContent ?? '';
         if (typeof response !== 'string') response = JSON.stringify(response);
+        }
       }
     } catch (err) {
       status = 'request_error';
