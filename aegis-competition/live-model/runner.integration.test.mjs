@@ -149,3 +149,57 @@ test('does not follow redirects from a provider endpoint', { timeout: 20000 }, a
     await rm(dir, { recursive: true, force: true });
   }
 });
+
+test('discards oversized provider responses before parsing or persisting them', { timeout: 20000 }, async () => {
+  const server = createServer((req, res) => {
+    res.writeHead(200, { 'content-type': 'application/json' });
+    res.end(JSON.stringify({ choices: [{ message: { role: 'assistant', content: 'x'.repeat(1_050_000) } }] }));
+  });
+  server.listen(0, '127.0.0.1');
+  await once(server, 'listening');
+  const address = server.address();
+  const dir = await mkdtemp(join(tmpdir(), 'aegis-large-response-test-'));
+  const output = join(dir, 'results.jsonl');
+  const script = fileURLToPath(new URL('./live-model-eval.mjs', import.meta.url));
+  try {
+    const child = spawn(process.execPath, [script], {
+      env: {
+        ...process.env,
+        AEGIS_MODEL_API_KEY: 'mock-only-not-a-real-secret',
+        AEGIS_MODEL_NAME: 'mock-model',
+        AEGIS_MODEL_BASE_URL: `http://127.0.0.1:${address.port}`,
+        AEGIS_MODEL_OUTPUT: output,
+        AEGIS_MODEL_TIMEOUT_MS: '5000',
+        AEGIS_CASE_LIMIT: '1',
+        AEGIS_OPENROUTER_API_KEY: '',
+        AEGIS_OPENROUTER_MODEL: '',
+        AEGIS_OPENROUTER_BASE_URL: '',
+        AEGIS_OPENAI_API_KEY: '',
+        OPENAI_API_KEY: '',
+        AEGIS_OPENAI_MODEL: '',
+        AEGIS_GEMINI_API_KEY: '',
+        GEMINI_API_KEY: '',
+        AEGIS_META_API_KEY: '',
+        MODEL_API_KEY: '',
+      },
+      stdio: ['ignore', 'pipe', 'pipe'],
+    });
+    let stdout = '', stderr = '';
+    child.stdout.setEncoding('utf8').on('data', chunk => { stdout += chunk; });
+    child.stderr.setEncoding('utf8').on('data', chunk => { stderr += chunk; });
+    const [code] = await once(child, 'close');
+    assert.equal(code, 1, `oversized response must fail closed. stdout:\n${stdout}\nstderr:\n${stderr}`);
+    const raw = await readFile(output, 'utf8');
+    const records = raw.trim().split('\n').map(line => JSON.parse(line));
+    assert.equal(records.length, 1);
+    assert.equal(records[0].status, 'response_too_large');
+    assert.equal(records[0].passed, false);
+    assert.equal(records[0].response, '');
+    assert.match(records[0].error, /exceeded 1000000 characters/);
+    assert.ok(raw.length < 5000, 'large untrusted response must not be persisted');
+  } finally {
+    server.closeAllConnections?.();
+    await new Promise(resolve => server.close(() => resolve()));
+    await rm(dir, { recursive: true, force: true });
+  }
+});
