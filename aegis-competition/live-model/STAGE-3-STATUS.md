@@ -95,7 +95,7 @@ Endpoints/modelos configurados según documentación oficial:
 
 ### Pendiente antes de declarar v0.1 cerrado
 
-1. Confirmar que los checks del SHA más reciente terminan en PASS, incluyendo CodeQL y el nuevo test de redirecciones.
+1. **Completado para el SHA `4dae1cb04b7adec0617c2dddb0987fd4ab571ef0`:** harness PASS (37/37 pruebas, run 38437302560), pruebas sintéticas/scope-gate PASS (run 38437302631) y CodeQL PASS (run 38437302539). CodeQL sigue informando errores de análisis sintáctico en el archivo preexistente `nexus/api/index.ts`; el scan exitoso no equivale a cobertura completa ni a cero hallazgos. Si cambia el código o la documentación incluida en CI, volver a comprobar el nuevo SHA.
 2. Revisar las alertas/diagnósticos de CodeQL y separar los problemas del código AEGIS de los errores de análisis preexistentes en nexus/api/index.ts.
 3. Ejecutar una prueba real con un proveedor y revisar el artifact JSONL. La cuota gratuita de OpenRouter estaba agotada en las últimas pruebas; no se compraron créditos.
 4. Repetir el conjunto con un segundo proveedor autorizado para comparación equivalente. No declarar la comparación completada sin resultados.
