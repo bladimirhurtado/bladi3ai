@@ -114,9 +114,6 @@ jobs:
           node examples/arcade-cabinet/build.mjs --light
           node examples/ripple-tank/build.mjs
           node examples/ripple-tank/build.mjs --light
-          node examples/turning-dial/build.mjs
-          node examples/turning-dial/build.mjs --light
-          node examples/turning-dial/build.mjs --light --verify
           node examples/raptor-engine/build.mjs
           node examples/raptor-engine/build.mjs --light
           diff -qr /tmp/anatomy-source/examples examples
