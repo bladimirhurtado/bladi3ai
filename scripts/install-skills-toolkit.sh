@@ -2,7 +2,7 @@
 set -euo pipefail
 
 REPO_URL="https://github.com/bladimirhurtado/bladi3ai.git"
-BRANCH="${SKILLS_TOOLKIT_BRANCH:-tooling/20-skills-toolkit}"
+BRANCH="${SKILLS_TOOLKIT_BRANCH:-main}"
 TARGET="."
 FORCE=0
 
