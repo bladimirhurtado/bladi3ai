@@ -11,31 +11,31 @@ permissions:
   contents: write
 
 concurrency:
-  group: anatomy-vendor-sync
+  group: anatomy-vendor-sync-linux-pinned
   cancel-in-progress: false
 
 jobs:
   vendor-and-verify:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - name: Check out repository
+      - name: Check out repository without a persisted write token
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          persist-credentials: false
 
       - name: Set up Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: 22
 
-      - name: Download official Anatomy source
+      - name: Download pinned official Anatomy source
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p /tmp/anatomy-source
           curl --fail --location --retry 3 \
-            https://github.com/wheresryan22/anatomy/archive/refs/heads/main.tar.gz \
+            https://github.com/wheresryan22/anatomy/archive/e6600ffc4e8e6620eeb45bf49bcdbd5e4b84163f.tar.gz \
             -o /tmp/anatomy.tar.gz
           tar -xzf /tmp/anatomy.tar.gz --strip-components=1 -C /tmp/anatomy-source
           test -s /tmp/anatomy-source/SKILL.md
@@ -55,11 +55,11 @@ jobs:
           cat > .agents/skills/anatomy/VENDOR.md <<'EOF'
           # Anatomy vendor copy
 
-          This folder contains the upstream Anatomy agent skill from https://github.com/wheresryan22/anatomy.
-          The upstream source, examples, scripts, references, kit and MIT license are preserved.
-          Refresh it with the **Sync and verify Anatomy skill** workflow.
+          This folder contains the pinned upstream Anatomy agent skill from https://github.com/wheresryan22/anatomy.
+          Upstream commit: e6600ffc4e8e6620eeb45bf49bcdbd5e4b84163f.
+          The source, examples, scripts, references, kit and MIT license are preserved.
           Codex discovers project skills from `.agents/skills/anatomy/SKILL.md`.
-          The `skills/anatomy` path in this repository is a compatibility symlink to this canonical copy.
+          The `skills/anatomy` path is a compatibility symlink to this canonical copy.
           EOF
           ln -s ../.agents/skills/anatomy skills/anatomy
 
@@ -113,8 +113,10 @@ jobs:
           node examples/raptor-engine/build.mjs --light
           git -C "$GITHUB_WORKSPACE" diff --stat --exit-code -- .agents/skills/anatomy/examples
 
-      - name: Commit complete skill and verification results
+      - name: Commit verified skill with short-lived workflow token
         shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -125,4 +127,5 @@ jobs:
             exit 0
           fi
           git commit -m "Vendor complete Anatomy skill and examples"
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git push
