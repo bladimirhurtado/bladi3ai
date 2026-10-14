@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: anatomy-vendor-sync-linux-pinned
+  group: anatomy-vendor-sync-fast-validation
   cancel-in-progress: true
 
 jobs:
