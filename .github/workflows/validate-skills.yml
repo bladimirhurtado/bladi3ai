@@ -28,4 +28,4 @@ jobs:
       - name: Check installer shell syntax
         run: bash -n scripts/install-skills-toolkit.sh
       - name: Check installer help path
-        run: scripts/install-skills-toolkit.sh --help
+        run: bash scripts/install-skills-toolkit.sh --help
