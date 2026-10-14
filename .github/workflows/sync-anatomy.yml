@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: anatomy-vendor-sync-final-20261014
+  group: anatomy-vendor-sync-v1-1-0
   cancel-in-progress: true
 
 jobs:
@@ -42,7 +42,7 @@ jobs:
           set -euo pipefail
           mkdir -p /tmp/anatomy-source
           curl --fail --location --retry 3 \
-            https://github.com/wheresryan22/anatomy/archive/e6600ffc4e8e6620eeb45bf49bcdbd5e4b84163f.tar.gz \
+            https://github.com/wheresryan22/anatomy/archive/be2fa9b47a7e4b05dec468be9ffc42e830c2101c.tar.gz \
             -o /tmp/anatomy.tar.gz
           tar -xzf /tmp/anatomy.tar.gz --strip-components=1 -C /tmp/anatomy-source
           test -s /tmp/anatomy-source/SKILL.md
@@ -79,7 +79,7 @@ jobs:
             SKILL.md LICENSE references/craft.md references/kit.md \
             references/motion.md references/react.md references/verify.md \
             references/webgl.md references/3d.md kit/iso-kit.mjs \
-            scripts/capture.mjs scripts/drive.mjs examples/dial-indicator/build.mjs; do
+            scripts/capture.mjs scripts/drive.mjs scripts/publish.mjs references/publish.md examples/dial-indicator/build.mjs; do
             test -s "$file" || { echo "Missing required file: $file"; exit 1; }
           done
           test "$(find examples -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')" -ge 8
@@ -88,9 +88,18 @@ jobs:
           echo "Reference files: $(find references -type f | wc -l)"
           echo "Script files: $(find scripts -type f | wc -l)"
 
-      - name: Note previously passed upstream regression suite
+      - name: Run upstream regression tests
         shell: bash
-        run: echo "The upstream regression suite passed in run 38640677944; this final sync uses bounded smoke checks to avoid duplicating the long browser test suite."
+        env:
+          CHROME_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}
+        run: |
+          set -euo pipefail
+          test_deps="$(mktemp -d)"
+          trap 'rm -rf "$test_deps"' EXIT
+          npm install --prefix "$test_deps" --no-audit --no-fund --ignore-scripts \
+            react@19.3.0 react-dom@19.3.0 typescript@5.9.3 esbuild@0.28.2
+          cd .agents/skills/anatomy
+          timeout 180s env NODE_PATH="$test_deps/node_modules" node --test scripts/*.test.mjs
 
       - name: Rebuild representative upstream examples and verify vendored source
         shell: bash
