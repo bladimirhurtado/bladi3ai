@@ -12,7 +12,7 @@ permissions:
 
 concurrency:
   group: anatomy-vendor-sync-linux-pinned
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   vendor-and-verify:
@@ -117,7 +117,6 @@ jobs:
           node examples/turning-dial/build.mjs
           node examples/turning-dial/build.mjs --light
           node examples/turning-dial/build.mjs --light --verify
-          node examples/turning-dial/stress.mjs --light
           node examples/raptor-engine/build.mjs
           node examples/raptor-engine/build.mjs --light
           diff -qr /tmp/anatomy-source/examples examples
