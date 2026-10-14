@@ -16,12 +16,18 @@ concurrency:
 
 jobs:
   vendor-and-verify:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
+    timeout-minutes: 30
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - name: Download official Anatomy source
         shell: bash
@@ -39,56 +45,73 @@ jobs:
           test -d /tmp/anatomy-source/examples
           test -d /tmp/anatomy-source/scripts
 
-      - name: Vendor complete upstream skill
+      - name: Install complete skill in the standard Codex path
         shell: bash
         run: |
           set -euo pipefail
-          rm -rf skills/anatomy
-          mkdir -p skills/anatomy
-          cp -a /tmp/anatomy-source/. skills/anatomy/
-          printf '\n\n--- Local vendor metadata ---\n' >> skills/anatomy/README.md
-          cat >> skills/anatomy/README.md <<'EOF'
+          rm -rf .agents/skills/anatomy skills/anatomy
+          mkdir -p .agents/skills/anatomy skills
+          cp -a /tmp/anatomy-source/. .agents/skills/anatomy/
+          cat > .agents/skills/anatomy/VENDOR.md <<'EOF'
+          # Anatomy vendor copy
 
-          ## Copy in this repository
-
-          This directory vendors the upstream Anatomy skill from https://github.com/wheresryan22/anatomy.
-          The upstream source and MIT license are retained. To refresh, run the **Sync and verify Anatomy skill** workflow.
+          This folder contains the upstream Anatomy agent skill from https://github.com/wheresryan22/anatomy.
+          The upstream source, examples, scripts, references, kit and MIT license are preserved.
+          Refresh it with the **Sync and verify Anatomy skill** workflow.
+          Codex discovers project skills from `.agents/skills/anatomy/SKILL.md`.
+          The `skills/anatomy` path in this repository is a compatibility symlink to this canonical copy.
           EOF
+          ln -s ../.agents/skills/anatomy skills/anatomy
 
-      - name: Verify source inventory
+      - name: Verify full source inventory
         shell: bash
         run: |
           set -euo pipefail
+          cd .agents/skills/anatomy
           for file in \
-            skills/anatomy/SKILL.md \
-            skills/anatomy/LICENSE \
-            skills/anatomy/references/craft.md \
-            skills/anatomy/references/kit.md \
-            skills/anatomy/references/motion.md \
-            skills/anatomy/references/react.md \
-            skills/anatomy/references/verify.md \
-            skills/anatomy/references/webgl.md \
-            skills/anatomy/references/3d.md \
-            skills/anatomy/kit/iso-kit.mjs; do
+            SKILL.md LICENSE references/craft.md references/kit.md \
+            references/motion.md references/react.md references/verify.md \
+            references/webgl.md references/3d.md kit/iso-kit.mjs \
+            scripts/capture.mjs scripts/drive.mjs examples/dial-indicator/build.mjs; do
             test -s "$file" || { echo "Missing required file: $file"; exit 1; }
           done
-          echo "Example directories: $(find skills/anatomy/examples -mindepth 1 -maxdepth 1 -type d | wc -l)"
-          echo "Kit files: $(find skills/anatomy/kit -type f | wc -l)"
-          echo "Reference files: $(find skills/anatomy/references -type f | wc -l)"
+          test "$(find examples -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')" -ge 8
+          echo "Examples: $(find examples -mindepth 1 -maxdepth 1 -type d | wc -l)"
+          echo "Kit files: $(find kit -type f | wc -l)"
+          echo "Reference files: $(find references -type f | wc -l)"
+          echo "Script files: $(find scripts -type f | wc -l)"
 
-      - name: Verify Node.js syntax and rebuild examples
+      - name: Run upstream regression tests
         shell: bash
         run: |
           set -euo pipefail
-          node --version
-          find skills/anatomy/kit skills/anatomy/scripts -name '*.mjs' -type f -print0 | while IFS= read -r -d '' file; do
-            node --check "$file"
-          done
-          for build in skills/anatomy/examples/*/build.mjs; do
-            test -f "$build" || continue
-            echo "Building $build"
-            node "$build"
-          done
+          test_deps="$(mktemp -d)"
+          trap 'rm -rf "$test_deps"' EXIT
+          npm install --prefix "$test_deps" --no-audit --no-fund --ignore-scripts \
+            react@19.3.0 react-dom@19.3.0 typescript@5.9.3 esbuild@0.28.2
+          cd .agents/skills/anatomy
+          NODE_PATH="$test_deps/node_modules" node --test scripts/*.test.mjs
+
+      - name: Rebuild and verify upstream examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd .agents/skills/anatomy
+          node examples/dial-indicator/build.mjs
+          node examples/dial-indicator/build.mjs --light
+          node examples/desk-computer/build.mjs
+          node examples/desk-computer/build.mjs --light
+          node examples/arcade-cabinet/build.mjs
+          node examples/arcade-cabinet/build.mjs --light
+          node examples/ripple-tank/build.mjs
+          node examples/ripple-tank/build.mjs --light
+          node examples/turning-dial/build.mjs
+          node examples/turning-dial/build.mjs --light
+          node examples/turning-dial/build.mjs --light --verify
+          node examples/turning-dial/stress.mjs --light
+          node examples/raptor-engine/build.mjs
+          node examples/raptor-engine/build.mjs --light
+          git -C "$GITHUB_WORKSPACE" diff --stat --exit-code -- .agents/skills/anatomy/examples
 
       - name: Commit complete skill and verification results
         shell: bash
@@ -96,7 +119,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add skills/anatomy
+          git add -A .agents/skills/anatomy skills/anatomy
           if git diff --cached --quiet; then
             echo "Anatomy vendor is already up to date."
             exit 0
