@@ -324,11 +324,3 @@ Issues and pull requests are welcome. Read [CONTRIBUTING.md](CONTRIBUTING.md) fi
 [MIT](LICENSE) © 2026 Ryan · [@wheresryan22](https://x.com/wheresryan22)
 
 <p align="center"><sub>If Anatomy drew something useful for you, a ⭐ helps other people find it.</sub></p>
-
-
---- Local vendor metadata ---
-
-## Copy in this repository
-
-This directory vendors the upstream Anatomy skill from https://github.com/wheresryan22/anatomy.
-The upstream source and MIT license are retained. To refresh, run the **Sync and verify Anatomy skill** workflow.
