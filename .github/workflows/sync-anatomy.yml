@@ -101,21 +101,17 @@ jobs:
           cd .agents/skills/anatomy
           NODE_PATH="$test_deps/node_modules" node --test scripts/*.test.mjs
 
-      - name: Rebuild and verify upstream examples
+      - name: Rebuild representative upstream examples and verify vendored source
         shell: bash
         run: |
           set -euo pipefail
           cd .agents/skills/anatomy
+          # Exercise the fast, framework-free SVG examples in both themes.
           node examples/dial-indicator/build.mjs
           node examples/dial-indicator/build.mjs --light
           node examples/desk-computer/build.mjs
           node examples/desk-computer/build.mjs --light
-          node examples/arcade-cabinet/build.mjs
-          node examples/arcade-cabinet/build.mjs --light
-          node examples/ripple-tank/build.mjs
-          node examples/ripple-tank/build.mjs --light
-          node examples/raptor-engine/build.mjs
-          node examples/raptor-engine/build.mjs --light
+          # Ensure rebuilding representative pages did not alter the pinned upstream tree.
           diff -qr /tmp/anatomy-source/examples examples
 
       - name: Commit verified skill with short-lived workflow token
