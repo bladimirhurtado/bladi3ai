@@ -29,6 +29,13 @@ jobs:
         with:
           node-version: 22
 
+      - name: Install Chrome for browser-based regression tests
+        uses: browser-actions/setup-chrome@2e1d749697dd1612b833dba4a722266286fbefcd
+        id: setup-chrome
+        with:
+          chrome-version: stable
+          install-dependencies: true
+
       - name: Download pinned official Anatomy source
         shell: bash
         run: |
@@ -83,6 +90,8 @@ jobs:
 
       - name: Run upstream regression tests
         shell: bash
+        env:
+          CHROME_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}
         run: |
           set -euo pipefail
           test_deps="$(mktemp -d)"
@@ -111,7 +120,7 @@ jobs:
           node examples/turning-dial/stress.mjs --light
           node examples/raptor-engine/build.mjs
           node examples/raptor-engine/build.mjs --light
-          git -C "$GITHUB_WORKSPACE" diff --stat --exit-code -- .agents/skills/anatomy/examples
+          diff -qr /tmp/anatomy-source/examples examples
 
       - name: Commit verified skill with short-lived workflow token
         shell: bash
