@@ -32,7 +32,7 @@ for name in sorted(EXPECTED):
         continue
     header = text[4:end]
     for field in ("name:", "description:"):
-        if not re.search(rf"(?m)^{re.escape(field)}\\s*\\S+", header):
+        if not re.search(rf"(?m)^{re.escape(field)}\s*\S+", header):
             errors.append(f"METADATA: {path.relative_to(ROOT)} missing {field[:-1]}")
     if f"name: {name}" not in header:
         errors.append(f"NAME: {path.relative_to(ROOT)} name does not match folder")
