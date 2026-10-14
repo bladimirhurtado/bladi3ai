@@ -4,7 +4,7 @@ from pathlib import Path
 import re
 import sys
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[1] / ".agents" / "skills"
 EXPECTED = {
     "investigacion-herramientas", "ingenieria-software",
     "auditoria-ia-aegis-hydra", "integracion-sistemas", "control-calidad-qa",
