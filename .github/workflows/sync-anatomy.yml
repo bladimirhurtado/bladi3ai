@@ -1,0 +1,105 @@
+name: Sync and verify Anatomy skill
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/sync-anatomy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: anatomy-vendor-sync
+  cancel-in-progress: false
+
+jobs:
+  vendor-and-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download official Anatomy source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/anatomy-source
+          curl --fail --location --retry 3 \
+            https://github.com/wheresryan22/anatomy/archive/refs/heads/main.tar.gz \
+            -o /tmp/anatomy.tar.gz
+          tar -xzf /tmp/anatomy.tar.gz --strip-components=1 -C /tmp/anatomy-source
+          test -s /tmp/anatomy-source/SKILL.md
+          test -s /tmp/anatomy-source/LICENSE
+          test -d /tmp/anatomy-source/kit
+          test -d /tmp/anatomy-source/references
+          test -d /tmp/anatomy-source/examples
+          test -d /tmp/anatomy-source/scripts
+
+      - name: Vendor complete upstream skill
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf skills/anatomy
+          mkdir -p skills/anatomy
+          cp -a /tmp/anatomy-source/. skills/anatomy/
+          printf '\n\n--- Local vendor metadata ---\n' >> skills/anatomy/README.md
+          cat >> skills/anatomy/README.md <<'EOF'
+
+          ## Copy in this repository
+
+          This directory vendors the upstream Anatomy skill from https://github.com/wheresryan22/anatomy.
+          The upstream source and MIT license are retained. To refresh, run the **Sync and verify Anatomy skill** workflow.
+          EOF
+
+      - name: Verify source inventory
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in \
+            skills/anatomy/SKILL.md \
+            skills/anatomy/LICENSE \
+            skills/anatomy/references/craft.md \
+            skills/anatomy/references/kit.md \
+            skills/anatomy/references/motion.md \
+            skills/anatomy/references/react.md \
+            skills/anatomy/references/verify.md \
+            skills/anatomy/references/webgl.md \
+            skills/anatomy/references/3d.md \
+            skills/anatomy/kit/iso-kit.mjs; do
+            test -s "$file" || { echo "Missing required file: $file"; exit 1; }
+          done
+          echo "Example directories: $(find skills/anatomy/examples -mindepth 1 -maxdepth 1 -type d | wc -l)"
+          echo "Kit files: $(find skills/anatomy/kit -type f | wc -l)"
+          echo "Reference files: $(find skills/anatomy/references -type f | wc -l)"
+
+      - name: Verify Node.js syntax and rebuild examples
+        shell: bash
+        run: |
+          set -euo pipefail
+          node --version
+          find skills/anatomy/kit skills/anatomy/scripts -name '*.mjs' -type f -print0 | while IFS= read -r -d '' file; do
+            node --check "$file"
+          done
+          for build in skills/anatomy/examples/*/build.mjs; do
+            test -f "$build" || continue
+            echo "Building $build"
+            node "$build"
+          done
+
+      - name: Commit complete skill and verification results
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add skills/anatomy
+          if git diff --cached --quiet; then
+            echo "Anatomy vendor is already up to date."
+            exit 0
+          fi
+          git commit -m "Vendor complete Anatomy skill and examples"
+          git push
