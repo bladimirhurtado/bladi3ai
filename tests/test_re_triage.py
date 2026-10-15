@@ -132,7 +132,7 @@ class ReverseTriageTests(unittest.TestCase):
     def test_high_compression_ratio_is_flagged_as_signal(self):
         path = self.root / "ratio.zip"
         with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-            archive.writestr("repeat.txt", b"A" * 200_000)
+            archive.writestr("repeat.txt", b"A" * 2_000_000)
         result = inspect_file(path)
         self.assertTrue(result["archive"]["high_compression_ratio"])
         self.assertEqual(result["status"], "ok")
