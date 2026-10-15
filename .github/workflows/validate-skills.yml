@@ -5,11 +5,17 @@ on:
     paths:
       - ".agents/skills/**"
       - "scripts/validate-skills.py"
+      - "scripts/re_triage.py"
+      - "tests/**"
+      - "docs/reverse-engineering/**"
       - ".github/workflows/validate-skills.yml"
   pull_request:
     paths:
       - ".agents/skills/**"
       - "scripts/validate-skills.py"
+      - "scripts/re_triage.py"
+      - "tests/**"
+      - "docs/reverse-engineering/**"
       - ".github/workflows/validate-skills.yml"
 
 permissions:
@@ -25,6 +31,10 @@ jobs:
           python-version: "3.x"
       - name: Validate skill metadata and structure
         run: python3 scripts/validate-skills.py
+      - name: Run reverse-engineering unit tests
+        run: python3 -m unittest discover -s tests -v
+      - name: Check Python syntax
+        run: python3 -m py_compile scripts/re_triage.py tests/test_re_triage.py
       - name: Check installer shell syntax
         run: bash -n scripts/install-skills-toolkit.sh
       - name: Check installer help path
