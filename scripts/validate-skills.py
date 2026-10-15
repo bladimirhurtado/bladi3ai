@@ -6,15 +6,15 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1] / ".agents" / "skills"
 EXPECTED = {
-    "investigacion-herramientas", "ingenieria-software",
-    "auditoria-ia-aegis-hydra", "integracion-sistemas", "control-calidad-qa",
-    "arquitectura-sistemas", "seguridad-optimizacion", "gestion-documentacion",
-    "diseno-ui-ux", "gestion-errores-resiliencia", "automatizacion-flujos",
-    "analisis-datos-metricas", "despliegue-configuracion",
-    "seguridad-auditoria-ataque", "ingenieria-inversa-educativa", "hackeo-etico-laboratorio",
-    "refactorizacion-codigo", "gestion-dependencias-parches",
-    "diseno-bases-datos", "clonacion-replicacion-entornos",
-    "anatomia-agentes-ia", "reverse-engineering",
+    "investigacion-herramientas", "investigacion-analisis-y-codigo",
+    "ingenieria-software", "auditoria-ia-aegis-hydra", "integracion-sistemas",
+    "control-calidad-qa", "arquitectura-sistemas", "seguridad-optimizacion",
+    "gestion-documentacion", "diseno-ui-ux", "gestion-errores-resiliencia",
+    "automatizacion-flujos", "analisis-datos-metricas", "despliegue-configuracion",
+    "seguridad-auditoria-ataque", "ingenieria-inversa-educativa",
+    "hackeo-etico-laboratorio", "refactorizacion-codigo",
+    "gestion-dependencias-parches", "diseno-bases-datos",
+    "clonacion-replicacion-entornos", "anatomia-agentes-ia", "reverse-engineering",
 }
 errors = []
 for name in sorted(EXPECTED):
