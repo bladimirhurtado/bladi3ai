@@ -10,12 +10,13 @@ Reconstruir una explicación técnica desde artefactos y comportamiento observab
 ## Flujo operativo
 1. **Definir alcance**: pregunta concreta, procedencia, autorización, sistemas incluidos/excluidos, restricciones de licencia y datos que no deben recopilarse.
 2. **Preservar**: conserva el original sin modificarlo; trabaja con copia autorizada y registra SHA-256, tamaño, fecha y procedencia. No publiques secretos ni datos personales.
-3. **Triage estático**: empieza por documentación, metadatos, firmas, formato, estructura y dependencias. Para una primera pasada local usa `python scripts/re_triage.py <archivo>` (ver `docs/reverse-engineering/USAGE.md`). La herramienta no ejecuta muestras ni extrae entradas ZIP/APK.
-4. **Seleccionar herramienta**: usa `re-tooling.md` para elegir Ghidra, JADX, Frida o Wireshark según la pregunta y el tipo de artefacto; verifica requisitos y procedencia de las herramientas.
-5. **Analizar estáticamente**: examina símbolos, cadenas, recursos, manifiestos, llamadas, dependencias, formatos y flujos de control según corresponda. Registra versión y comandos reproducibles.
-6. **Análisis dinámico opcional**: solo si aporta valor, con autorización explícita y laboratorio aislado, datos sintéticos y límites de red claros. No ejecutes muestras desconocidas en el equipo o teléfono principal.
-7. **Correlacionar**: construye hipótesis y busca evidencia que las contradiga; considera explicaciones alternativas y falsos positivos.
-8. **Validar y comunicar**: separa observación de interpretación, asigna confianza justificada y documenta limitaciones, resultados negativos y siguientes pruebas. Usa `docs/reverse-engineering/REPORT-TEMPLATE.md`.
+3. **Triage estático**: empieza por documentación, metadatos, firmas, formato, estructura y dependencias. Para una primera pasada local usa `python scripts/re_triage.py <archivo>` (ver docs/reverse-engineering/USAGE.md). La herramienta no ejecuta muestras ni extrae entradas ZIP/APK.
+4. **APK Android, segunda pasada**: cuando la pregunta requiere más que tamaño/hash/inventario ZIP, usa `python scripts/apk_static_inspect.py <archivo.apk> --out <informe.json>`. Esta herramienta analiza cadenas de la tabla DEX, cadenas imprimibles de bibliotecas nativas y pistas de recursos Unreal de forma acotada. No decodifica el manifiesto ni descompila código.
+5. **Seleccionar herramienta**: usa re-tooling.md para elegir Ghidra, JADX, Frida o Wireshark según la pregunta y el tipo de artefacto; verifica requisitos y procedencia de las herramientas.
+6. **Analizar estáticamente**: examina símbolos, cadenas, recursos, manifiestos, llamadas, dependencias, formatos y flujos de control según corresponda. Registra versión y comandos reproducibles.
+7. **Análisis dinámico opcional**: solo si aporta valor, con autorización explícita y laboratorio aislado, datos sintéticos y límites de red claros. No ejecutes muestras desconocidas en el equipo o teléfono principal.
+8. **Correlacionar**: construye hipótesis y busca evidencia que las contradiga; considera explicaciones alternativas y falsos positivos.
+9. **Validar y comunicar**: separa observación de interpretación, asigna confianza justificada y documenta limitaciones, resultados negativos y siguientes pruebas. Usa docs/reverse-engineering/REPORT-TEMPLATE.md.
 
 ## Reglas y límites
 - No ayudar a robar credenciales, vulnerar protecciones para cometer abuso, desplegar malware ni acceder sin autorización.
@@ -24,9 +25,11 @@ Reconstruir una explicación técnica desde artefactos y comportamiento observab
 - No presentes indicadores aislados como veredicto de malware o prueba concluyente.
 - No afirmes que una herramienta está instalada, que una muestra fue ejecutada o que un dispositivo fue validado sin evidencia real.
 - Preserva el repositorio original y usa cambios pequeños y reversibles.
+- No recuperes claves ni reproduzcas mecanismos de evasión de firma, origen de instalación o licencias; desarrolla herramientas independientes basadas en interfaces y formatos documentados.
 
 ## Recursos del paquete
-- `docs/reverse-engineering/SPEC.md`: alcance y criterios del proyecto.
-- `docs/reverse-engineering/USAGE.md`: CLI, formato de salida y límites.
-- `docs/reverse-engineering/REPORT-TEMPLATE.md`: informe reproducible.
-- `re-tooling.md`: selección de herramientas especializadas.
+- docs/reverse-engineering/SPEC.md: alcance y criterios del proyecto.
+- docs/reverse-engineering/USAGE.md: CLI, formato de salida y límites.
+- docs/reverse-engineering/APK-STATIC-INSPECTOR.md: segunda pasada reutilizable para APKs.
+- docs/reverse-engineering/REPORT-TEMPLATE.md: informe reproducible.
+- re-tooling.md: selección de herramientas especializadas.
