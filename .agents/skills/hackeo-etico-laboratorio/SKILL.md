@@ -20,9 +20,9 @@ Trabajar con el ciclo: observar → formular hipótesis → investigar → exper
 ## Uso con ARK / APK Android
 - Primera pasada: scripts/re_triage.py.
 - Segunda pasada: scripts/apk_static_inspect.py para inventario acotado, cadenas DEX, cadenas imprimibles nativas y pistas Unreal.
-- Flujo de inicio: scripts/FreeARK4Fun_startup_trace.py, si la copia local de la herramienta está disponible.
 - Auditoría opcional de dispositivo: scripts/android_device_audit.py --package <id> requiere ADB instalado y autorización del dueño; consulta solo metadatos del paquete indicado.
-- Usa Analizador Pro Móvil para una primera revisión local de archivos/código y correlaciona sus indicios con el informe Python. No confundas coincidencias de cadenas con prueba de comportamiento.
+- Usa Analizador Pro Móvil para una primera revisión local de archivos/código y correlaciona sus indicios con el informe Python.
+- Informe de caso actual: docs/reverse-engineering/FREEARK4FUN-STATIC-FINDINGS.md. No confundas coincidencias de cadenas con prueba de comportamiento.
 
 ## Límites
 - Solo CTF, laboratorio propio, muestras autorizadas y dispositivos cuyo dueño haya dado permiso.
