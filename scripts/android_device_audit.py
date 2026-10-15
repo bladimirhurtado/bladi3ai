@@ -7,6 +7,7 @@ messages, contacts, network capture, or file extraction is performed.
 from __future__ import annotations
 import argparse
 import json
+import os
 import re
 import shutil
 import subprocess
@@ -37,7 +38,7 @@ def audit_device(package: str, adb: str = "adb", serial: str | None = None) -> d
     if serial and not SERIAL_RE.fullmatch(serial):
         return {"status":"error","error":"invalid_serial","message":"Invalid ADB serial format."}
     adb_path = shutil.which(adb) if not ("/" in adb or "\\" in adb) else adb
-    if not adb_path or ("/" in adb and not shutil.os.path.isfile(adb_path)):
+    if not adb_path or ("/" in adb and not os.path.isfile(adb_path)):
         return {"status":"error","error":"adb_not_found","message":"ADB executable was not found on this computer."}
     devices = run_adb(adb_path, ["devices"], None)
     if not devices["ok"]:
