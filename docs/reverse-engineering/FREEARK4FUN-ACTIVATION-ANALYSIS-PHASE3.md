@@ -49,7 +49,7 @@ El valor completo del token se omite de este informe y no debe registrarse en re
 1. `MainActivity.onCreate` conduce a `Load.Init`.
 2. El inicio llama a `Key.generate`, construye `LoadKey`, recupera una clave guardada y pasa por `nativeVerifyKey`.
 3. `Key.generate` consulta `Settings.Secure.ANDROID_ID` y aplica SHA-256 a una cadena construida con ese valor y otros componentes.
-4. La interfaz muestra estados de clave vacía, inválida o caducada. El texto de caducidad menciona un comando `/regenerate` en Discord y un código del usuario.
+4. La interfaz muestra literalmente `Your code: ` y un botón `Copy Code`, además de `Enter Key`. El texto de caducidad indica que se escriba `/regenerate [código]` en Discord y vuelve a mostrar `Your code: `. Esto confirma que el código de dispositivo se copia y se entrega al servicio de activación; no es el mismo campo que la clave que se pega.
 5. Una clave introducida se guarda en `SharedPreferences` (`ark_prefs`, `saved_key`).
 6. La ruta `fetchLinks` hace una solicitud HTTP mediante una URL obtenida de `GetURL`; el endpoint sigue sin confirmar.
 
@@ -64,9 +64,10 @@ El valor completo del token se omite de este informe y no debe registrarse en re
 
 1. No instalar esta copia en el teléfono principal mientras la procedencia siga sin verificarse.
 2. Pedir al vendedor que confirme por escrito que el token es válido para la versión `2.0.29` y que lo emita para el código que muestra el dispositivo del usuario. El análisis estático confirma que el verificador recibe ese código de dispositivo como argumento.
-3. Si el vendedor sostiene que el token ya es correcto, solicitar instrucciones oficiales de activación o un mecanismo de soporte/reemisión; no publicar el código en abierto.
-4. Para comprobarlo técnicamente, usar una copia de laboratorio aislada y autorización del propietario del software, sin cuentas reales ni eludir la validación.
-5. Para elevar la confianza en la procedencia, obtener una distribución verificable y comparar la firma con una fuente oficial; la firma del archivo actual sigue siendo una preocupación documentada en la fase 2.
+3. Si el código se emitió para el teléfono del remitente, solicitar al vendedor una clave nueva para el código de dispositivo del usuario. La interfaz sugiere que el propio sistema admite regeneración mediante Discord (`/regenerate [código]`); usar únicamente el canal oficial que confirme el vendedor y no compartir el token en público.
+4. Si el vendedor sostiene que el token ya es correcto, solicitar instrucciones oficiales de activación o un mecanismo de soporte/reemisión; no publicar la clave en abierto.
+5. Para comprobarlo técnicamente, usar una copia de laboratorio aislada y autorización del propietario del software, sin cuentas reales ni eludir la validación.
+6. Para elevar la confianza en la procedencia, obtener una distribución verificable y comparar la firma con una fuente oficial; la firma del archivo actual sigue siendo una preocupación documentada en la fase 2.
 
 ## Limitaciones
 
