@@ -11,7 +11,7 @@ EXPECTED = {
     "arquitectura-sistemas", "seguridad-optimizacion", "gestion-documentacion",
     "diseno-ui-ux", "gestion-errores-resiliencia", "automatizacion-flujos",
     "analisis-datos-metricas", "despliegue-configuracion",
-    "seguridad-auditoria-ataque", "ingenieria-inversa-educativa",
+    "seguridad-auditoria-ataque", "ingenieria-inversa-educativa", "hackeo-etico-laboratorio",
     "refactorizacion-codigo", "gestion-dependencias-parches",
     "diseno-bases-datos", "clonacion-replicacion-entornos",
     "anatomia-agentes-ia", "reverse-engineering",
