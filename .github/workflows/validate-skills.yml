@@ -12,9 +12,6 @@ on:
   pull_request:
     paths:
       - ".agents/skills/**"
-      - "portable-skills/reverse-engineering/**"
-      - "scripts/install-portable-skill.py"
-      - "tests/test_portable_installer.py"
       - "scripts/validate-skills.py"
       - "scripts/re_triage.py"
       - "tests/**"
