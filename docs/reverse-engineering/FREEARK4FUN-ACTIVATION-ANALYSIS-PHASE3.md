@@ -20,12 +20,13 @@ Se identificaron exportaciones JNI para `GetURL`, `nativeVerifyKey`, `nativeIsVa
 
 La desensamblación estática muestra operaciones consistentes con:
 1. Recibir y convertir dos argumentos de texto de Java a cadenas nativas.
-2. Construir una tabla de búsqueda de 64 valores y recorrer el primer argumento para decodificarlo con un formato tipo Base64.
-3. Transformar el contenido decodificado con datos embebidos ofuscados.
-4. Buscar un separador `_` en el resultado y dividir/procesar segmentos.
-5. Actualizar estado nativo de validación y devolver un resultado al código Java.
+2. El call site DEX de `LoadKey.onActivate` pasa como primer argumento la clave escrita y como segundo `LoadKey.mDeviceCode` (campo confirmado en `classes69.dex`).
+3. Construir una tabla de búsqueda de 64 valores y recorrer la clave para decodificarla con un formato tipo Base64.
+4. Transformar el contenido decodificado con datos embebidos ofuscados.
+5. Buscar un separador `_` en el resultado y dividir/procesar segmentos.
+6. Actualizar estado nativo de validación y devolver un resultado al código Java.
 
-**Interpretación prudente:** la clave parece tener estructura interna y no ser simplemente una contraseña de texto plano. El método recibe dos argumentos de texto, lo que es compatible con una comprobación que toma la clave y otro valor (posiblemente el código del dispositivo), pero el mapeo exacto debe confirmarse con una descompilación DEX completa. No se ha derivado, fabricado ni validado ninguna clave.
+**Conclusión de mayor confianza:** la validación recibe explícitamente la clave y el código de dispositivo. Por tanto, la clave parece estar vinculada, como mínimo, al código de dispositivo que presenta la aplicación. No se ha derivado, fabricado ni validado ninguna clave.
 
 La tabla de decodificación se construye desde datos embebidos y podría utilizar un alfabeto personalizado. Por eso, que un código tenga caracteres compatibles con Base64 estándar o que el decodificador estándar produzca bytes no demuestra que el APK lo acepte.
 
