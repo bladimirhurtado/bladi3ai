@@ -4,9 +4,6 @@ on:
   push:
     paths:
       - ".agents/skills/**"
-      - "portable-skills/reverse-engineering/**"
-      - "scripts/install-portable-skill.py"
-      - "tests/test_portable_installer.py"
       - "scripts/validate-skills.py"
       - "scripts/re_triage.py"
       - "tests/**"
@@ -40,7 +37,7 @@ jobs:
       - name: Run reverse-engineering unit tests
         run: python3 -m unittest discover -s tests -v
       - name: Check Python syntax
-        run: python3 -m py_compile scripts/re_triage.py scripts/install-portable-skill.py tests/test_re_triage.py tests/test_portable_installer.py
+        run: python3 -m py_compile scripts/re_triage.py tests/test_re_triage.py
       - name: Check triage CLI help
         run: python3 scripts/re_triage.py --help
       - name: Smoke-test triage CLI with a synthetic file
@@ -49,7 +46,3 @@ jobs:
           trap 'rm -f "$tmp_file"' EXIT
           printf 'synthetic fixture' > "$tmp_file"
           python3 scripts/re_triage.py "$tmp_file" --json | python3 -c 'import json, sys; data = json.load(sys.stdin); assert data["status"] == "ok"; assert len(data["sha256"]) == 64'
-      - name: Check installer shell syntax
-        run: bash -n scripts/install-skills-toolkit.sh
-      - name: Check installer help path
-        run: bash scripts/install-skills-toolkit.sh --help
