@@ -26,6 +26,7 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 | `diseno-bases-datos` | Hay que diseñar esquemas, consultas o migraciones. |
 | `clonacion-replicacion-entornos` | Hay que replicar repositorios, plantillas o entornos sin dañar el origen. |
 | `anatomia-agentes-ia` | Hay que analizar arneses, bucles, herramientas y memoria de agentes. |
+| `analizador-pro-movil` | Hay que revisar código fuente y realizar una inspección preliminar y local de APKs sin ejecutarlos. |
 | `anatomy` (upstream) | Hay que usar el paquete original de Anatomy para trabajos de visualización/explicación técnica según sus propias instrucciones. |
 
 ## Cómo usarlas
@@ -40,4 +41,4 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 Desde la raíz del repositorio ejecuta:
 `python3 scripts/validate-skills.py`
 
-Estado: las 20 skills solicitadas tienen guías operativas iniciales. Deben considerarse **versión inicial** hasta que se validen en tareas reales; no son certificaciones ni evidencia de que proyectos concretos funcionen. El paquete upstream Anatomy se conserva intacto y se incluye como base original complementaria para la skill de anatomía de agentes.
+Estado: las 21 skills solicitadas tienen guías operativas iniciales. Deben considerarse **versión inicial** hasta que se validen en tareas reales; no son certificaciones ni evidencia de que proyectos concretos funcionen. El paquete upstream Anatomy se conserva intacto y se incluye como base original complementaria para la skill de anatomía de agentes.

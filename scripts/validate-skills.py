@@ -14,7 +14,7 @@ EXPECTED = {
     "seguridad-auditoria-ataque", "ingenieria-inversa-educativa",
     "refactorizacion-codigo", "gestion-dependencias-parches",
     "diseno-bases-datos", "clonacion-replicacion-entornos",
-    "anatomia-agentes-ia",
+    "anatomia-agentes-ia", "analizador-pro-movil",
 }
 errors = []
 for name in sorted(EXPECTED):
