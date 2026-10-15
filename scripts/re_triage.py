@@ -84,6 +84,13 @@ def _is_suspicious_archive_path(name: str) -> bool:
 def _inspect_zip(path: Path) -> tuple[dict | None, list[str]]:
     notes: list[str] = []
     if not zipfile.is_zipfile(path):
+        try:
+            with path.open("rb") as stream:
+                prefix = stream.read(4)
+        except OSError:
+            return None, notes
+        if prefix.startswith((b"PK\\x03\\x04", b"PK\\x05\\x06", b"PK\\x07\\x08")) or path.suffix.lower() in (".zip", ".apk"):
+            notes.append("archive_inspection_failed")
         return None, notes
     try:
         with zipfile.ZipFile(path, "r") as archive:
