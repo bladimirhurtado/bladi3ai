@@ -39,7 +39,7 @@ En la ruta estática de `nativeVerifyKey` no se identificó una llamada directa 
 
 El usuario informó que un tercero le pasó un código de 40 caracteres y que ese tercero lo recibió del vendedor del APK. La cadena usa caracteres compatibles con el alfabeto Base64 estándar y la decodificación estándar produce 30 bytes binarios; no produce una contraseña legible.
 
-Esto **es compatible con un token codificado**, pero no prueba que sea una clave válida para esta versión, para este dispositivo ni que el vendedor lo haya emitido para el identificador del usuario. Como el APK parece utilizar una tabla de decodificación posiblemente personalizada, la prueba Base64 estándar no basta para validar el formato.
+Esto **es compatible con un token codificado**, pero no prueba que sea una clave válida para esta versión ni para el código de dispositivo del usuario. El segundo argumento que llega al verificador nativo es `mDeviceCode`, así que si el vendedor generó el token para el dispositivo del remitente, no debe esperarse que funcione en otro dispositivo. Como el APK parece utilizar una tabla de decodificación posiblemente personalizada, la prueba Base64 estándar no basta para validar el formato.
 
 El valor completo del token se omite de este informe y no debe registrarse en repositorios. Trátese como una credencial: no publicarlo en issues, chats públicos o commits.
 
@@ -55,14 +55,14 @@ El valor completo del token se omite de este informe y no debe registrarse en re
 ## Conclusiones y confianza
 
 - **Alta confianza:** existe una ruta nativa específica para verificar la clave; el código usa una transformación tipo Base64 y procesamiento estructurado del contenido.
-- **Alta confianza:** el APK deriva un código relacionado con `ANDROID_ID` y ofrece un flujo de activación/renovación.
-- **Confianza media:** el token puede estar vinculado al código del dispositivo o incluir datos de caducidad; el texto de la interfaz lo sugiere, pero no prueba la estructura exacta.
+- **Alta confianza:** el APK deriva un código relacionado con `ANDROID_ID`, ofrece un flujo de activación/renovación y pasa `mDeviceCode` al verificador junto con la clave.
+- **Alta confianza:** la validación está vinculada al código de dispositivo suministrado; no está confirmado si también hay fecha de caducidad dentro del token, aunque la interfaz muestra un estado de clave caducada.
 - **No confirmado:** si el código recibido es válido, si fue emitido para este dispositivo, cuál es el endpoint de activación, qué datos envía el cliente o si el APK está libre de malware.
 
 ## Próximo paso legítimo y práctico
 
 1. No instalar esta copia en el teléfono principal mientras la procedencia siga sin verificarse.
-2. Pedir al vendedor que confirme por escrito que el token es válido para la versión `2.0.29` y que lo emita para el código que muestra el dispositivo del usuario, si la activación es por dispositivo.
+2. Pedir al vendedor que confirme por escrito que el token es válido para la versión `2.0.29` y que lo emita para el código que muestra el dispositivo del usuario. El análisis estático confirma que el verificador recibe ese código de dispositivo como argumento.
 3. Si el vendedor sostiene que el token ya es correcto, solicitar instrucciones oficiales de activación o un mecanismo de soporte/reemisión; no publicar el código en abierto.
 4. Para comprobarlo técnicamente, usar una copia de laboratorio aislada y autorización del propietario del software, sin cuentas reales ni eludir la validación.
 5. Para elevar la confianza en la procedencia, obtener una distribución verificable y comparar la firma con una fuente oficial; la firma del archivo actual sigue siendo una preocupación documentada en la fase 2.
