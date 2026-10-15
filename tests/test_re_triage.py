@@ -113,6 +113,30 @@ class ReverseTriageTests(unittest.TestCase):
         self.assertEqual(payload["status"], "ok")
         self.assertNotIn("contents", payload)
 
+    def test_cli_works_from_another_working_directory(self):
+        import subprocess
+        import sys
+
+        path = self.write("outside-cwd.bin", b"cli works")
+        script = Path(__file__).resolve().parents[1] / "scripts" / "re_triage.py"
+        completed = subprocess.run(
+            [sys.executable, str(script), str(path), "--json"],
+            cwd=self.root,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertEqual(json.loads(completed.stdout)["status"], "ok")
+
+    def test_high_compression_ratio_is_flagged_as_signal(self):
+        path = self.root / "ratio.zip"
+        with zipfile.ZipFile(path, "w", compression=zipfile.ZIP_DEFLATED) as archive:
+            archive.writestr("repeat.txt", b"A" * 200_000)
+        result = inspect_file(path)
+        self.assertTrue(result["archive"]["high_compression_ratio"])
+        self.assertEqual(result["status"], "ok")
+
     def test_cli_error_has_nonzero_exit(self):
         output = io.StringIO()
         with contextlib.redirect_stdout(output):
