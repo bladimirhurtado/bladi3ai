@@ -20,7 +20,8 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 | `analisis-datos-metricas` | Hay que validar, analizar o comunicar datos y métricas. |
 | `despliegue-configuracion` | Hay que preparar entornos, configuración o lanzamientos. |
 | `seguridad-auditoria-ataque` | Hay que hacer pruebas de seguridad con autorización y alcance definido. |
-| `ingenieria-inversa-educativa` | Hay que estudiar sistemas/código con finalidad educativa y autorización. Incluye triage local de solo lectura y guías para análisis especializado. |
+| `ingenieria-inversa-educativa` | Hay que estudiar sistemas/código con finalidad educativa dentro de Bladi 3AI. Incluye triage local y guías para análisis especializado. |
+| `reverse-engineering` | Hay que analizar software, APKs, binarios, archivos o comportamiento observable con evidencia reproducible y autorización. Skill independiente y reutilizable. |
 | `refactorizacion-codigo` | Hay que mejorar estructura sin cambiar comportamiento accidentalmente. |
 | `gestion-dependencias-parches` | Hay que actualizar o auditar dependencias y parches. |
 | `diseno-bases-datos` | Hay que diseñar esquemas, consultas o migraciones. |
@@ -52,10 +53,3 @@ Desde la raíz del repositorio ejecuta:
 `python3 scripts/validate-skills.py`
 
 Estado: las 20 skills solicitadas tienen guías operativas iniciales. Deben considerarse **versión inicial** hasta que se validen en tareas reales; no son certificaciones ni evidencia de que proyectos concretos funcionen. El paquete upstream Anatomy se conserva intacto y se incluye como base original complementaria para la skill de anatomía de agentes.
-
-## Paquete portátil de ingeniería inversa
-
-- Skill portable e independiente de rutas del repositorio: `portable-skills/reverse-engineering/SKILL.md`
-- Instrucciones para incorporarla a otros proyectos/agentes compatibles: `portable-skills/reverse-engineering/README.md`
-
-La skill portátil complementa la skill específica de Bladi 3AI; no la sustituye. La compatibilidad depende de que el agente destino admita y cargue el formato `SKILL.md` y de que las herramientas necesarias estén disponibles en su entorno.
