@@ -52,3 +52,10 @@ Desde la raíz del repositorio ejecuta:
 `python3 scripts/validate-skills.py`
 
 Estado: las 20 skills solicitadas tienen guías operativas iniciales. Deben considerarse **versión inicial** hasta que se validen en tareas reales; no son certificaciones ni evidencia de que proyectos concretos funcionen. El paquete upstream Anatomy se conserva intacto y se incluye como base original complementaria para la skill de anatomía de agentes.
+
+## Paquete portátil de ingeniería inversa
+
+- Skill portable e independiente de rutas del repositorio: `portable-skills/reverse-engineering/SKILL.md`
+- Instrucciones para incorporarla a otros proyectos/agentes compatibles: `portable-skills/reverse-engineering/README.md`
+
+La skill portátil complementa la skill específica de Bladi 3AI; no la sustituye. La compatibilidad depende de que el agente destino admita y cargue el formato `SKILL.md` y de que las herramientas necesarias estén disponibles en su entorno.
