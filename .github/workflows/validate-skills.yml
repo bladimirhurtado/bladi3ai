@@ -35,6 +35,14 @@ jobs:
         run: python3 -m unittest discover -s tests -v
       - name: Check Python syntax
         run: python3 -m py_compile scripts/re_triage.py tests/test_re_triage.py
+      - name: Check triage CLI help
+        run: python3 scripts/re_triage.py --help
+      - name: Smoke-test triage CLI with a synthetic file
+        run: |
+          tmp_file="$(mktemp)"
+          trap 'rm -f "$tmp_file"' EXIT
+          printf 'synthetic fixture' > "$tmp_file"
+          python3 scripts/re_triage.py "$tmp_file" --json | python3 -c 'import json, sys; data = json.load(sys.stdin); assert data["status"] == "ok"; assert len(data["sha256"]) == 64'
       - name: Check installer shell syntax
         run: bash -n scripts/install-skills-toolkit.sh
       - name: Check installer help path
