@@ -21,6 +21,7 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 | `despliegue-configuracion` | Hay que preparar entornos, configuración o lanzamientos. |
 | `seguridad-auditoria-ataque` | Hay que hacer pruebas de seguridad con autorización y alcance definido. |
 | `ingenieria-inversa-educativa` | Hay que estudiar sistemas/código con finalidad educativa dentro de Bladi 3AI. Incluye triage local y guías para análisis especializado. |
+| `hackeo-etico-laboratorio` | Hay que aplicar metodología de red team en CTF, laboratorios propios o artefactos autorizados, con evidencia y contención. |
 | `reverse-engineering` | Hay que analizar software, APKs, binarios, archivos o comportamiento observable con evidencia reproducible y autorización. Skill independiente y reutilizable. |
 | `refactorizacion-codigo` | Hay que mejorar estructura sin cambiar comportamiento accidentalmente. |
 | `gestion-dependencias-parches` | Hay que actualizar o auditar dependencias y parches. |
@@ -35,7 +36,10 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 - Plan: `docs/reverse-engineering/IMPLEMENTATION-PLAN.md`
 - Uso del analizador: `docs/reverse-engineering/USAGE.md`
 - Plantilla de informe: `docs/reverse-engineering/REPORT-TEMPLATE.md`
+- Informe del caso FreeARK4Fun: `docs/reverse-engineering/FREEARK4FUN-STATIC-FINDINGS.md`
 - CLI estática: `python scripts/re_triage.py <archivo> [--json]`
+- Inspector APK: `python scripts/apk_static_inspect.py <archivo.apk> --out <informe.json>`
+- Auditoría de metadatos del teléfono (requiere ADB y autorización): `python scripts/android_device_audit.py --package <id> --out <informe.json>`
 - Pruebas: `python -m unittest discover -s tests -v`
 
 El analizador es una primera pasada estática: calcula hash, detecta indicios de formato y resume metadatos limitados de ZIP/APK sin ejecutar ni extraer. No sustituye un descompilador ni determina por sí solo si un archivo es malicioso.
@@ -52,4 +56,4 @@ El analizador es una primera pasada estática: calcula hash, detecta indicios de
 Desde la raíz del repositorio ejecuta:
 `python3 scripts/validate-skills.py`
 
-Estado: las 20 skills solicitadas tienen guías operativas iniciales. Deben considerarse **versión inicial** hasta que se validen en tareas reales; no son certificaciones ni evidencia de que proyectos concretos funcionen. El paquete upstream Anatomy se conserva intacto y se incluye como base original complementaria para la skill de anatomía de agentes.
+Estado: las skills del catálogo tienen guías operativas iniciales; el validador estructural comprueba metadatos y presencia, no certifica eficacia técnica. Deben considerarse **versión inicial** hasta que se validen en tareas reales; no son certificaciones ni evidencia de que proyectos concretos funcionen. El paquete upstream Anatomy se conserva intacto y se incluye como base original complementaria para la skill de anatomía de agentes.
