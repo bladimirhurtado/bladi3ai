@@ -20,13 +20,25 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 | `analisis-datos-metricas` | Hay que validar, analizar o comunicar datos y métricas. |
 | `despliegue-configuracion` | Hay que preparar entornos, configuración o lanzamientos. |
 | `seguridad-auditoria-ataque` | Hay que hacer pruebas de seguridad con autorización y alcance definido. |
-| `ingenieria-inversa-educativa` | Hay que estudiar sistemas/código con finalidad educativa y autorización. |
+| `ingenieria-inversa-educativa` | Hay que estudiar sistemas/código con finalidad educativa dentro de Bladi 3AI. Incluye triage local y guías para análisis especializado. |
+| `reverse-engineering` | Hay que analizar software, APKs, binarios, archivos o comportamiento observable con evidencia reproducible y autorización. Skill independiente y reutilizable. |
 | `refactorizacion-codigo` | Hay que mejorar estructura sin cambiar comportamiento accidentalmente. |
 | `gestion-dependencias-parches` | Hay que actualizar o auditar dependencias y parches. |
 | `diseno-bases-datos` | Hay que diseñar esquemas, consultas o migraciones. |
 | `clonacion-replicacion-entornos` | Hay que replicar repositorios, plantillas o entornos sin dañar el origen. |
 | `anatomia-agentes-ia` | Hay que analizar arneses, bucles, herramientas y memoria de agentes. |
 | `anatomy` (upstream) | Hay que usar el paquete original de Anatomy para trabajos de visualización/explicación técnica según sus propias instrucciones. |
+
+## Workbench de ingeniería inversa
+
+- Especificación: `docs/reverse-engineering/SPEC.md`
+- Plan: `docs/reverse-engineering/IMPLEMENTATION-PLAN.md`
+- Uso del analizador: `docs/reverse-engineering/USAGE.md`
+- Plantilla de informe: `docs/reverse-engineering/REPORT-TEMPLATE.md`
+- CLI estática: `python scripts/re_triage.py <archivo> [--json]`
+- Pruebas: `python -m unittest discover -s tests -v`
+
+El analizador es una primera pasada estática: calcula hash, detecta indicios de formato y resume metadatos limitados de ZIP/APK sin ejecutar ni extraer. No sustituye un descompilador ni determina por sí solo si un archivo es malicioso.
 
 ## Cómo usarlas
 1. Lee el `SKILL.md` de la skill más pertinente antes de iniciar el trabajo.
