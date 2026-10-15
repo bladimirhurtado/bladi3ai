@@ -7,6 +7,7 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 | Skill | Úsala cuando... |
 |---|---|
 | `investigacion-herramientas` | Hay que descubrir, comparar o validar una herramienta o recurso. |
+| `investigacion-analisis-y-codigo` | Hay que investigar un problema técnico, contrastar hipótesis y crear código reproducible con pruebas. |
 | `ingenieria-software` | Hay que implementar, depurar o probar código. |
 | `auditoria-ia-aegis-hydra` | Hay que evaluar seguridad, privacidad y supervisión de un sistema de IA. |
 | `integracion-sistemas` | Hay que conectar APIs, servicios, webhooks o autenticación. |
