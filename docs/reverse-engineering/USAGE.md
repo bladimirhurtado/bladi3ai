@@ -55,4 +55,4 @@ python -m py_compile scripts/re_triage.py tests/test_re_triage.py
 python scripts/validate-skills.py
 ```
 
-Para análisis más profundo, usa herramientas especializadas solo con autorización y un alcance definido. Consulta `re-tooling.md` y la plantilla `REPORT-TEMPLATE.md`.
+Para análisis más profundo, usa herramientas especializadas solo con autorización y un alcance definido. Consulta `.agents/skills/ingenieria-inversa-educativa/re-tooling.md` y la plantilla `REPORT-TEMPLATE.md`.
