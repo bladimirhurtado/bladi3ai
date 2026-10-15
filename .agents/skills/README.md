@@ -36,6 +36,7 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 - Plan: `docs/reverse-engineering/IMPLEMENTATION-PLAN.md`
 - Uso del analizador: `docs/reverse-engineering/USAGE.md`
 - Plantilla de informe: `docs/reverse-engineering/REPORT-TEMPLATE.md`
+- Informe del caso FreeARK4Fun: `docs/reverse-engineering/FREEARK4FUN-STATIC-FINDINGS.md`
 - CLI estática: `python scripts/re_triage.py <archivo> [--json]`
 - Inspector APK: `python scripts/apk_static_inspect.py <archivo.apk> --out <informe.json>`
 - Auditoría de metadatos del teléfono (requiere ADB y autorización): `python scripts/android_device_audit.py --package <id> --out <informe.json>`
