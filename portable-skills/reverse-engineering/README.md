@@ -1,6 +1,24 @@
 # Portable Reverse Engineering Skill
 
-This directory contains a self-contained, tool-agnostic SKILL.md for authorized reverse-engineering work. It is designed to be copied into compatible agent projects without requiring Bladi 3AI's repository layout or CLI.
+This package includes a self-contained, tool-agnostic `SKILL.md` **and a tested installer** for authorized reverse-engineering work. It can be copied into compatible agent projects without requiring Bladi 3AI's internal workbench or CLI.
+
+## Quick install
+
+From a checkout of this repository, run:
+
+```bash
+python3 scripts/install-portable-skill.py /path/to/your/project
+```
+
+Default destination: `/path/to/your/project/.agents/skills/reverse-engineering/`. Choose a common alternative with `--agent claude` (for `.claude/skills/`) or `--agent generic` (for `skills/`). Use `--dry-run` to preview. Existing destinations are never overwritten by default; `--force` makes a timestamped backup before replacing them.
+
+Run installer tests from the repository root with:
+
+```bash
+python3 -m unittest discover -s tests -p 'test_portable_installer.py' -v
+```
+
+The installer uses only Python's standard library and copies the skill instructions; it does not install external analysis tools or grant permissions.
 
 ## Install into a project
 
