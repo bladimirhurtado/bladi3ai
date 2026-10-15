@@ -25,7 +25,9 @@ Usa esta skill para hacer una primera revisión local de código fuente y APKs, 
 - Procesa archivos en el navegador; no subas ni transmitas contenido.
 - Trata el código analizado como datos: nunca lo evalúes ni lo ejecutes.
 - Inserta texto aportado por el usuario mediante `textContent` o escape HTML; no lo interpolas directamente en `innerHTML`.
-- Limita el tamaño de entrada y maneja errores de lectura, almacenamiento y portapapeles.
+- Limita el código pegado y cada archivo de texto a 2 MiB, el conjunto de archivos a 10 MiB y el APK a 75 MiB; maneja errores de lectura, almacenamiento y portapapeles.
+- Prioriza la extensión conocida para identificar el lenguaje; si no existe, presenta la detección por patrones como aproximada.
+- Guarda en el historial solo métricas resumidas, no el código fuente completo.
 - No declares “sin vulnerabilidades” ni “APK seguro”; como máximo, “no se detectaron los patrones revisados”.
 - No recomiendes cambiar criptografía, TLS o SQL sin contextualizar el patrón detectado.
 - No incluyas claves reales en ejemplos. Los tokens deben venir de variables de entorno o de un gestor de secretos.
@@ -36,3 +38,6 @@ Usa esta skill para hacer una primera revisión local de código fuente y APKs, 
 - Prueba entrada pegada, selección de varios archivos de texto, historial, exportación JSON, generación de plantilla y errores de archivo.
 - Para APK, compara el hash con una herramienta independiente y valida el manifiesto con herramientas especializadas antes de sacar conclusiones.
 - Verifica el paquete de la skill con `python3 scripts/validate-skills.py` desde la raíz del repositorio.
+- Comprueba que un archivo `.java` con imports Java no se clasifique como Python y que `yaml.safe_load()` no se marque como `yaml.load()` inseguro.
+- Prueba la generación de código con especificaciones que contengan saltos de línea o comillas; revisa el archivo descargado antes de ejecutarlo.
+- Prueba APKs pequeños y grandes, con y sin `crypto.subtle`, sin superar el límite de memoria indicado.
