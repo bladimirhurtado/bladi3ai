@@ -8,6 +8,7 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 |---|---|
 | `investigacion-herramientas` | Hay que descubrir, comparar o validar una herramienta o recurso. |
 | `agente-desarrollo-skills` | Hay que clonar repositorios, revisar errores o coordinar una refactorización verificable. Incluye CLI estándar en `scripts/dev_agent.py`. |
+| `orquestador-multi-ia` | Hay que coordinar modelos de varios proveedores, asignar roles independientes y sintetizar resultados con verificación y límites de coste. |
 | `ingenieria-software` | Hay que implementar, depurar o probar código. |
 | `auditoria-ia-aegis-hydra` | Hay que evaluar seguridad, privacidad y supervisión de un sistema de IA. |
 | `integracion-sistemas` | Hay que conectar APIs, servicios, webhooks o autenticación. |
@@ -29,6 +30,12 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 | `anatomia-agentes-ia` | Hay que analizar arneses, bucles, herramientas y memoria de agentes. |
 | `analizador-pro-movil` | Hay que revisar código fuente y realizar una inspección preliminar y local de APKs sin ejecutarlos. |
 | `anatomy` (upstream) | Hay que usar el paquete original de Anatomy para trabajos de visualización/explicación técnica según sus propias instrucciones. |
+
+## Equipo multi-IA
+
+- Skill operativa: `.agents/skills/orquestador-multi-ia/SKILL.md`
+- Arquitectura/configuración: `docs/multi-ai-team/README.md`
+- El modo Equipo de Nexus utiliza modelos distintos mediante OpenRouter; los nombres configurados no garantizan que cada modelo esté disponible. La disponibilidad real debe probarse con la clave del entorno.
 
 ## Agente de Desarrollo
 
