@@ -22,10 +22,10 @@ Respuesta + atribución de modelos + advertencias
 Los nombres son valores predeterminados de configuración, no una garantía de disponibilidad del catálogo. Se pueden cambiar sin editar código mediante estas variables de entorno:
 
 - `OPENROUTER_API_KEY`: clave solo del lado servidor.
-- `NEXUS_TEAM_ARCHITECT_MODEL`: por defecto `anthropic/claude-sonnet-4`.
-- `NEXUS_TEAM_RESEARCHER_MODEL`: por defecto `google/gemini-2.5-flash`.
-- `NEXUS_TEAM_CRITIC_MODEL`: por defecto `deepseek/deepseek-chat`.
-- `NEXUS_TEAM_SYNTHESIS_MODEL`: por defecto `openai/gpt-5`.
+- `NEXUS_TEAM_ARCHITECT_MODEL`: por defecto `~anthropic/claude-sonnet-latest`.
+- `NEXUS_TEAM_RESEARCHER_MODEL`: por defecto `~google/gemini-flash-latest`.
+- `NEXUS_TEAM_CRITIC_MODEL`: por defecto `~deepseek/deepseek-flash-latest`.
+- `NEXUS_TEAM_SYNTHESIS_MODEL`: por defecto `~openai/gpt-latest`.
 
 ## Ejecución
 1. Configurar `OPENROUTER_API_KEY` en las variables de entorno del proveedor de despliegue (Netlify o Vercel); no añadirla a Git.
