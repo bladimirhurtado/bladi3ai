@@ -23,6 +23,7 @@ Respuesta + atribución de modelos + advertencias
 Los nombres son valores predeterminados de configuración, no una garantía de disponibilidad del catálogo. Se pueden cambiar sin editar código mediante estas variables de entorno:
 
 - `OPENROUTER_API_KEY`: clave solo del lado servidor.
+- `NEXUS_ALLOWED_ORIGINS`: lista separada por comas de orígenes web autorizados para el backend Vercel; por defecto, `https://nexus-ai-hub-wfrk.netlify.app`. Añade el origen exacto del frontend si es distinto.
 - `NEXUS_TEAM_ARCHITECT_MODEL`: por defecto `~anthropic/claude-sonnet-latest`.
 - `NEXUS_TEAM_RESEARCHER_MODEL`: por defecto `~google/gemini-flash-latest`.
 - `NEXUS_TEAM_CODER_MODEL`: por defecto `openai/gpt-5.3-codex`.
@@ -38,6 +39,11 @@ Los nombres son valores predeterminados de configuración, no una garantía de d
 
 ## Coste y privacidad
 El modo Equipo realiza hasta cinco llamadas de modelo por ejecución (cuatro colaboradores en paralelo y una síntesis si responden al menos tres), más búsqueda web opcional. Esto puede costar más que una conversación normal. Cada llamada recibe el prompt y el contexto web proporcionado; no enviar secretos ni información sensible. La app no almacena la clave en el navegador. No hay llamada real demostrada hasta probar el despliegue con una clave válida.
+
+## Seguridad operativa
+- El endpoint de scraping valida que el destino use HTTP/HTTPS, rechaza hosts/IPs locales o privados, bloquea redirecciones en Vercel, limita el tiempo de espera y acota el cuerpo leído.
+- El backend Vercel rechaza orígenes de navegador que no estén en `NEXUS_ALLOWED_ORIGINS`; esto no reemplaza autenticación ni limitación de solicitudes en la plataforma.
+- Antes de uso público, configura rate limiting/cuotas en el proveedor de despliegue y límites de gasto en OpenRouter. No se pueden demostrar desde CI.
 
 ## Límites
 - No se copian ni descargan los pesos de Claude, Gemini, DeepSeek o GPT. Nexus los consume por API.
