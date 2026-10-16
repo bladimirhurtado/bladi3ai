@@ -11,10 +11,10 @@ Coordinar modelos de distintos proveedores como colaboradores especializados sin
 ## Equipo por defecto
 Usa los modelos configurados por variables de entorno. Los valores por defecto son ejemplos operativos y pueden cambiar según disponibilidad del proveedor:
 
-- **Arquitectura:** `anthropic/claude-sonnet-4` mediante OpenRouter.
-- **Investigación/contexto:** `google/gemini-2.5-flash` mediante OpenRouter.
-- **Crítica y revisión adversarial:** `deepseek/deepseek-chat` mediante OpenRouter.
-- **Síntesis/coordinación:** `openai/gpt-5` mediante OpenRouter.
+- **Arquitectura:** `~anthropic/claude-sonnet-latest` mediante OpenRouter.
+- **Investigación/contexto:** `~google/gemini-flash-latest` mediante OpenRouter.
+- **Crítica y revisión adversarial:** `~deepseek/deepseek-flash-latest` mediante OpenRouter.
+- **Síntesis/coordinación:** `~openai/gpt-latest` mediante OpenRouter.
 - **Ejecución de código y pruebas:** herramientas de desarrollo disponibles en el entorno; el modelo no sustituye al runtime.
 - **QA y seguridad:** pruebas reproducibles, analizadores disponibles y una revisión independiente.
 
