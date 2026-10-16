@@ -13,12 +13,13 @@ Usa los modelos configurados por variables de entorno. Los valores por defecto s
 
 - **Arquitectura:** `~anthropic/claude-sonnet-latest` mediante OpenRouter.
 - **Investigación/contexto:** `~google/gemini-flash-latest` mediante OpenRouter.
-- **Crítica y revisión adversarial:** `~deepseek/deepseek-flash-latest` mediante OpenRouter.
+- **Programación:** `openai/gpt-5.3-codex` mediante OpenRouter; propone cambios, pero no ejecuta herramientas por sí solo.
+- **Crítica y revisión adversarial/de seguridad:** `~deepseek/deepseek-flash-latest` mediante OpenRouter.
 - **Síntesis/coordinación:** `~openai/gpt-latest` mediante OpenRouter.
 - **Ejecución de código y pruebas:** herramientas de desarrollo disponibles en el entorno; el modelo no sustituye al runtime.
 - **QA y seguridad:** pruebas reproducibles, analizadores disponibles y una revisión independiente.
 
-Configurable mediante `NEXUS_TEAM_ARCHITECT_MODEL`, `NEXUS_TEAM_RESEARCHER_MODEL`, `NEXUS_TEAM_CRITIC_MODEL` y `NEXUS_TEAM_SYNTHESIS_MODEL`. La clave compartida de OpenRouter se mantiene en el servidor como `OPENROUTER_API_KEY`. Las claves nunca se incluyen en el frontend, prompts, commits ni logs.
+Configurable mediante `NEXUS_TEAM_ARCHITECT_MODEL`, `NEXUS_TEAM_RESEARCHER_MODEL`, `NEXUS_TEAM_CODER_MODEL`, `NEXUS_TEAM_CRITIC_MODEL` y `NEXUS_TEAM_SYNTHESIS_MODEL`. La clave compartida de OpenRouter se mantiene en el servidor como `OPENROUTER_API_KEY`. Las claves nunca se incluyen en el frontend, prompts, commits ni logs.
 
 ## Flujo de trabajo
 1. **Inspeccionar:** leer instrucciones del repositorio, arquitectura, dependencias, estado Git, pruebas y límites de autorización.
@@ -60,7 +61,7 @@ El crítico debe intentar refutar la solución, no limitarse a resumirla. El inv
 - Para tareas con información sensible, usar solo proveedores y políticas aprobados para ese dato.
 
 ## Criterios de aceptación
-- Cada rol tiene configuración de modelo distinta y reporta qué modelo intentó usar.
+- Cada rol tiene configuración de modelo distinta y reporta qué modelo intentó usar; la programación se atribuye al modelo Codex configurado.
 - Los errores parciales quedan visibles.
 - La síntesis identifica los colaboradores que respondieron realmente.
 - Las claves solo se leen en el servidor.
