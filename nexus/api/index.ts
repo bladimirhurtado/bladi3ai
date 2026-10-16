@@ -1,6 +1,5 @@
 import { readTextLimited, validatePublicHttpUrl } from '../security/url-guard.js';
 import { validateChatInput } from '../security/chat-input.js';
-import { validatePublicHttpUrl, readTextLimited } from '../security/url-guard.js';
 
 const roles={general:'Eres Nexus: directo, preciso, honesto y práctico. No inventes datos.',architect:'Eres el arquitecto de Nexus. Divide problemas en capas, dependencias, riesgos y pruebas verificables.',coder:'Eres ingeniero senior. Prioriza seguridad, mantenibilidad y pruebas.',analyst:'Eres analista técnico. Separa hechos, supuestos, incertidumbres y riesgos.',critic:'Eres revisor crítico de seguridad y calidad. Busca vulnerabilidades, errores de lógica, regresiones, supuestos débiles y puntos únicos de fallo; clasifica gravedad y propone pruebas.'};
 const env=(k)=>process.env[k]||'';
