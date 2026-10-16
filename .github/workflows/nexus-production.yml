@@ -1,0 +1,112 @@
+name: Nexus build, security checks, and production deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "nexus/**"
+      - "netlify.toml"
+      - ".github/workflows/nexus-production.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "nexus/**"
+      - "netlify.toml"
+      - ".github/workflows/nexus-production.yml"
+  workflow_dispatch:
+    inputs:
+      deploy_production:
+        description: "Publish to the configured Netlify production site"
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: nexus-production-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-and-build:
+    name: Validate and build Nexus
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install dependencies
+        working-directory: nexus
+        run: npm install --no-audit --no-fund
+      - name: Validate chat input contract
+        working-directory: nexus
+        run: node scripts/validate-chat-input.mjs
+      - name: Validate URL and DNS security boundaries
+        working-directory: nexus
+        run: node scripts/validate-security-boundaries.mjs
+      - name: Validate team routing and provider contracts
+        working-directory: nexus
+        run: node scripts/validate-team-routing.mjs
+      - name: Build production frontend
+        working-directory: nexus
+        run: npm run build
+      - name: Verify deploy output exists
+        run: test -s nexus/dist/index.html
+      - name: Publish build summary
+        if: always()
+        run: |
+          {
+            echo "## Nexus build pipeline"
+            echo "- Commit: ${{ github.sha }}"
+            echo "- Build and static contracts run before any production deployment."
+            echo "- Live model calls are not part of CI and must be tested against the deployed API."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  deploy-production:
+    name: Deploy Nexus to Netlify production
+    needs: validate-and-build
+    runs-on: ubuntu-latest
+    if: >-
+      (github.event_name == 'push' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_dispatch' && inputs.deploy_production == true)
+    steps:
+      - name: Check deployment credentials
+        id: credentials
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        shell: bash
+        run: |
+          if [[ -z "$NETLIFY_AUTH_TOKEN" || -z "$NETLIFY_SITE_ID" ]]; then
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+            {
+              echo "## Production deployment not started"
+              echo "The build passed, but the repository is missing one or both Actions secrets:"
+              echo "- NETLIFY_AUTH_TOKEN"
+              echo "- NETLIFY_SITE_ID (expected site: nexus-ai-hub-wfrk)"
+              echo "Add them in GitHub Settings → Secrets and variables → Actions, then run this workflow with deploy_production=true."
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Checkout repository
+        if: steps.credentials.outputs.ready == 'true'
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        if: steps.credentials.outputs.ready == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Build and publish production deploy
+        if: steps.credentials.outputs.ready == 'true'
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: npx --yes netlify-cli@latest deploy --build --prod --site "$NETLIFY_SITE_ID"
+      - name: Confirm deploy step ran
+        if: steps.credentials.outputs.ready == 'true'
+        run: echo "Netlify CLI completed. Verify the public site and API with live smoke tests."
