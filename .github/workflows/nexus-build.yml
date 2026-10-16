@@ -45,3 +45,5 @@ jobs:
         run: node scripts/validate-team-routing.mjs
       - name: Test security boundaries
         run: node scripts/validate-security-boundaries.mjs
+      - name: Test chat input validation
+        run: node scripts/validate-chat-input.mjs
