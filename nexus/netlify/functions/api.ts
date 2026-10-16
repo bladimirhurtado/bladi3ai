@@ -49,8 +49,8 @@ async function scrape(input:string){
  const r=await fetch(url.toString(),{headers:{'user-agent':'Nexus/1.0'},redirect:'error',signal:AbortSignal.timeout(10000)});
  if(!r.ok)throw Error('El sitio remoto respondió HTTP '+r.status+'.');
  const t=await readTextLimited(r);
- const title=(t.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i)?.[1]||url.toString()).replace(/<[^>]+>/g,'').trim();
- const text=t.replace(/<script[\\s\\S]*?<\\/script>/gi,' ').replace(/<style[\\s\\S]*?<\\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\\s+/g,' ').trim();
+ const title=(t.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]||url.toString()).replace(/<[^>]+>/g,'').trim();
+ const text=t.replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\s+/g,' ').trim();
  return{title,text:text.slice(0,30000),status:r.status,engine:'direct'};
 }
 
