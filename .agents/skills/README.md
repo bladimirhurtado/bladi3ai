@@ -7,7 +7,7 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 | Skill | Úsala cuando... |
 |---|---|
 | investigacion-herramientas | Hay que descubrir, comparar o validar una herramienta o recurso. |
-| agente-desarrollo-skills | Hay que clonar un repositorio, revisar errores o coordinar una refactorización verificable. Incluye CLI estándar en scripts/dev_agent.py. |
+| agente-desarrollo-skills | Hay que clonar repositorios, revisar errores o coordinar una refactorización verificable. Incluye CLI estándar en scripts/dev_agent.py. |
 | ingenieria-software | Hay que implementar, depurar o probar código. |
 | auditoria-ia-aegis-hydra | Hay que evaluar seguridad, privacidad y supervisión de un sistema de IA. |
 | integracion-sistemas | Hay que conectar APIs, servicios, webhooks o autenticación. |
@@ -32,12 +32,12 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 
 ## Agente de Desarrollo
 
-- Skill operativa: .agents/skills/agente-desarrollo-skills/SKILL.md
-- Guía y comandos: docs/development-agent/README.md
-- CLI estándar: scripts/dev_agent.py
+- Skill: .agents/skills/agente-desarrollo-skills/SKILL.md
+- Guía: docs/development-agent/README.md
+- CLI: scripts/dev_agent.py
 - Pruebas: python3 -m unittest discover -s tests -v
 
-La CLI ofrece inventario (inspect), clonación explícita a destino nuevo (clone), revisión heurística de archivos de texto (review) y planificación sin escritura (plan). No ejecuta código de los proyectos inspeccionados ni instala dependencias automáticamente.
+La CLI permite inventariar (inspect), clonar explícitamente a un destino nuevo (clone), realizar una revisión heurística (review) y generar un plan sin escritura (plan). No ejecuta código del proyecto inspeccionado ni instala dependencias automáticamente.
 
 ## Cómo usarlas
 1. Lee el SKILL.md de la skill más pertinente antes de iniciar el trabajo.
@@ -47,21 +47,8 @@ La CLI ofrece inventario (inspect), clonación explícita a destino nuevo (clone
 5. Preserva originales, secretos y datos; utiliza ramas y puntos de reversión.
 6. Registra qué skill se utilizó y qué verificaciones se ejecutaron cuando aporte trazabilidad.
 
-## Workbench de ingeniería inversa
-- Especificación: docs/reverse-engineering/SPEC.md
-- Plan: docs/reverse-engineering/IMPLEMENTATION-PLAN.md
-- Uso del analizador: docs/reverse-engineering/USAGE.md
-- Plantilla de informe: docs/reverse-engineering/REPORT-TEMPLATE.md
-- Informe del caso FreeARK4Fun: docs/reverse-engineering/FREEARK4FUN-STATIC-FINDINGS.md
-- CLI estática: python scripts/re_triage.py <archivo> [--json]
-- Inspector APK: python scripts/apk_static_inspect.py <archivo.apk> --out <informe.json>
-- Auditoría de metadatos del teléfono (requiere ADB y autorización): python scripts/android_device_audit.py --package <id> --out <informe.json>
-- Pruebas: python -m unittest discover -s tests -v
-
-El analizador es una primera pasada estática: calcula hash, detecta indicios de formato y resume metadatos limitados de ZIP/APK sin ejecutar ni extraer. No sustituye un descompilador ni determina por sí solo si un archivo es malicioso.
-
 ## Validación
 Desde la raíz del repositorio ejecuta:
     python3 scripts/validate-skills.py
 
-Estado: las skills del catálogo tienen guías operativas iniciales; el validador estructural comprueba metadatos y presencia, no certifica eficacia técnica. Deben considerarse versión inicial hasta que se validen en tareas reales; no son certificaciones ni evidencia de que proyectos concretos funcionen. El paquete upstream Anatomy se conserva intacto y se incluye como base original complementaria para la skill de anatomía de agentes.
+Estado: las skills del catálogo tienen guías operativas iniciales. El validador estructural comprueba metadatos y presencia, no certifica eficacia técnica. Deben considerarse versión inicial hasta que se validen en tareas reales; no son certificaciones ni evidencia de que proyectos concretos funcionen. El paquete upstream Anatomy se conserva intacto y se incluye como base original complementaria para la skill de anatomía de agentes.
