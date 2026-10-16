@@ -14,7 +14,7 @@ async function llm(provider:string,model:string,system:string,prompt:string){
   // Netlify AI Gateway injects OPENROUTER_BASE_URL and provider credentials at runtime.
   // Use the official SDK so the gateway base URL is honored; fall back to direct OpenRouter only when a user key is configured.
   if(env('OPENROUTER_BASE_URL')){
-   const client=new OpenRouter();
+   const client=new OpenRouter({serverURL:env('OPENROUTER_BASE_URL')});
    const result=await client.chat.send({chatRequest:{model,temperature:0.2,messages:[{role:'system',content:system},{role:'user',content:prompt}]}});
    const content=result.choices?.[0]?.message?.content;
    return typeof content==='string'?content:Array.isArray(content)?content.map((part:any)=>part.text||'').join(''):'';
