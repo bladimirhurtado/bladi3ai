@@ -1,4 +1,4 @@
-import { validatePublicHttpUrl } from '../../security/url-guard.js';
+import { readTextLimited, validatePublicHttpUrl } from '../../security/url-guard.js';
 import { validateChatInput } from '../../security/chat-input.js';
 import type { Handler } from '@netlify/functions';
 import { OpenRouter } from '@openrouter/sdk';
