@@ -41,11 +41,9 @@ jobs:
         run: |
           npx esbuild netlify/functions/api.ts --bundle --platform=node --external:@netlify/functions --outfile=/tmp/nexus-netlify-api.js
           npx esbuild api/index.ts --bundle --platform=node --outfile=/tmp/nexus-vercel-api.js
-      - name: Validate security boundaries
-        run: node scripts/validate-security-boundaries.mjs
-      - name: Validate multi-AI team contract
-        run: node scripts/validate-team-routing.mjs
       - name: Test security boundaries
         run: node scripts/validate-security-boundaries.mjs
       - name: Test chat input validation
         run: node scripts/validate-chat-input.mjs
+      - name: Validate multi-AI team contract
+        run: node scripts/validate-team-routing.mjs
