@@ -9,6 +9,7 @@ const app = read('../src/App.tsx');
 const roles = [
   ['NEXUS_TEAM_ARCHITECT_MODEL', '~anthropic/claude-sonnet-latest'],
   ['NEXUS_TEAM_RESEARCHER_MODEL', '~google/gemini-flash-latest'],
+  ['NEXUS_TEAM_CODER_MODEL', 'openai/gpt-5.3-codex'],
   ['NEXUS_TEAM_CRITIC_MODEL', '~deepseek/deepseek-flash-latest'],
   ['NEXUS_TEAM_SYNTHESIS_MODEL', '~openai/gpt-latest'],
 ];
@@ -28,6 +29,7 @@ assert.ok(vercel.includes("provider==='openrouter'?'OPENROUTER_API_KEY'"),
   'Vercel backend must use the OpenRouter server-side key');
 assert.ok(app.includes('Estado de colaboradores'), 'UI must show team status');
 assert.ok(app.includes('d.models?.architect'), 'UI must attribute model names');
+assert.ok(app.includes('d.models?.coder'), 'UI must attribute the Codex coding role');
 
 console.log('OK: Vercel and Netlify team contracts, model attribution, and partial-failure reporting are aligned.');
 console.log('Note: this is a static contract check; it does not make paid API calls.');
