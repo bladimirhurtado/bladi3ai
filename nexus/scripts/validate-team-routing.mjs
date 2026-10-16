@@ -31,5 +31,10 @@ assert.ok(app.includes('Estado de colaboradores'), 'UI must show team status');
 assert.ok(app.includes('d.models?.architect'), 'UI must attribute model names');
 assert.ok(app.includes('d.models?.coder'), 'UI must attribute the Codex coding role');
 
-console.log('OK: Vercel and Netlify team contracts, model attribution, and partial-failure reporting are aligned.');
+assert.ok(vercel.includes('validatePublicHttpUrl(input)'), 'Vercel scrape must validate public URL targets');
+assert.ok(netlify.includes('validatePublicHttpUrl(input)'), 'Netlify scrape must validate public URL targets');
+assert.ok(vercel.includes("redirect:'error'"), 'Vercel scrape must not follow unvalidated redirects');
+assert.ok(vercel.includes('AbortSignal.timeout(10000)'), 'Vercel scrape must have a request timeout');
+assert.ok(vercel.includes('readTextLimited(r)'), 'Vercel scrape must enforce a response-size limit');
+console.log('OK: Vercel and Netlify team contracts and scrape security guards are aligned.');
 console.log('Note: this is a static contract check; it does not make paid API calls.');
