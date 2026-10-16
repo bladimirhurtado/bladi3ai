@@ -38,5 +38,8 @@ assert.ok(netlify.includes('validatePublicHttpUrl(input)'), 'Netlify scrape must
 assert.ok(vercel.includes("redirect:'error'"), 'Vercel scrape must not follow unvalidated redirects');
 assert.ok(vercel.includes('AbortSignal.timeout(10000)'), 'Vercel scrape must have a request timeout');
 assert.ok(vercel.includes('readTextLimited(r)'), 'Vercel scrape must enforce a response-size limit');
+assert.ok(netlify.includes("redirect:'error'"), 'Netlify scrape must not follow unvalidated redirects');
+assert.ok(netlify.includes('AbortSignal.timeout(10000)'), 'Netlify scrape must have a request timeout');
+assert.ok(netlify.includes('readTextLimited(r)'), 'Netlify scrape must enforce a response-size limit');
 console.log('OK: Vercel and Netlify team contracts and scrape security guards are aligned.');
 console.log('Note: this is a static contract check; it does not make paid API calls.');
