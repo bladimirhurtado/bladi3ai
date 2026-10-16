@@ -1,46 +1,46 @@
 # Catálogo de skills reutilizables
 
-Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada paquete usa SKILL.md con metadatos YAML (name, description) e instrucciones operativas.
+Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada paquete usa `SKILL.md` con metadatos YAML (`name`, `description`) e instrucciones operativas.
 
 ## Inventario y enrutamiento
 
 | Skill | Úsala cuando... |
 |---|---|
-| investigacion-herramientas | Hay que descubrir, comparar o validar una herramienta o recurso. |
-| agente-desarrollo-skills | Hay que clonar repositorios, revisar errores o coordinar una refactorización verificable. Incluye CLI estándar en scripts/dev_agent.py. |
-| ingenieria-software | Hay que implementar, depurar o probar código. |
-| auditoria-ia-aegis-hydra | Hay que evaluar seguridad, privacidad y supervisión de un sistema de IA. |
-| integracion-sistemas | Hay que conectar APIs, servicios, webhooks o autenticación. |
-| control-calidad-qa | Hay que demostrar que un entregable cumple sus requisitos. |
-| arquitectura-sistemas | Hay que definir componentes, límites, contratos o decisiones técnicas. |
-| seguridad-optimizacion | Hay que endurecer o mejorar rendimiento con mediciones. |
-| gestion-documentacion | Hay que redactar o mantener documentación técnica. |
-| diseno-ui-ux | Hay que diseñar o revisar una interfaz y su experiencia. |
-| gestion-errores-resiliencia | Hay que diagnosticar fallos y diseñar recuperación segura. |
-| automatizacion-flujos | Hay que automatizar tareas repetitivas o procesos. |
-| analisis-datos-metricas | Hay que validar, analizar o comunicar datos y métricas. |
-| despliegue-configuracion | Hay que preparar entornos, configuración o lanzamientos. |
-| seguridad-auditoria-ataque | Hay que hacer pruebas de seguridad con autorización y alcance definido. |
-| ingenieria-inversa-educativa | Hay que estudiar código fuente y comportamiento con finalidad educativa y autorización. |
-| refactorizacion-codigo | Hay que mejorar estructura sin cambiar comportamiento accidentalmente. |
-| gestion-dependencias-parches | Hay que actualizar o auditar dependencias y parches. |
-| diseno-bases-datos | Hay que diseñar esquemas, consultas o migraciones. |
-| clonacion-replicacion-entornos | Hay que replicar repositorios, plantillas o entornos sin dañar el origen. |
-| anatomia-agentes-ia | Hay que analizar arneses, bucles, herramientas y memoria de agentes. |
-| analizador-pro-movil | Hay que revisar código fuente y realizar una inspección preliminar y local de APKs sin ejecutarlos. |
-| anatomy (upstream) | Hay que usar el paquete original de Anatomy para trabajos de visualización/explicación técnica según sus propias instrucciones. |
+| `investigacion-herramientas` | Hay que descubrir, comparar o validar una herramienta o recurso. |
+| `agente-desarrollo-skills` | Hay que clonar repositorios, revisar errores o coordinar una refactorización verificable. Incluye CLI estándar en `scripts/dev_agent.py`. |
+| `ingenieria-software` | Hay que implementar, depurar o probar código. |
+| `auditoria-ia-aegis-hydra` | Hay que evaluar seguridad, privacidad y supervisión de un sistema de IA. |
+| `integracion-sistemas` | Hay que conectar APIs, servicios, webhooks o autenticación. |
+| `control-calidad-qa` | Hay que demostrar que un entregable cumple sus requisitos. |
+| `arquitectura-sistemas` | Hay que definir componentes, límites, contratos o decisiones técnicas. |
+| `seguridad-optimizacion` | Hay que endurecer o mejorar rendimiento con mediciones. |
+| `gestion-documentacion` | Hay que redactar o mantener documentación técnica. |
+| `diseno-ui-ux` | Hay que diseñar o revisar una interfaz y su experiencia. |
+| `gestion-errores-resiliencia` | Hay que diagnosticar fallos y diseñar recuperación segura. |
+| `automatizacion-flujos` | Hay que automatizar tareas repetitivas o procesos. |
+| `analisis-datos-metricas` | Hay que validar, analizar o comunicar datos y métricas. |
+| `despliegue-configuracion` | Hay que preparar entornos, configuración o lanzamientos. |
+| `seguridad-auditoria-ataque` | Hay que hacer pruebas de seguridad con autorización y alcance definido. |
+| `ingenieria-inversa-educativa` | Hay que estudiar código fuente y comportamiento con finalidad educativa y autorización. |
+| `refactorizacion-codigo` | Hay que mejorar estructura sin cambiar comportamiento accidentalmente. |
+| `gestion-dependencias-parches` | Hay que actualizar o auditar dependencias y parches. |
+| `diseno-bases-datos` | Hay que diseñar esquemas, consultas o migraciones. |
+| `clonacion-replicacion-entornos` | Hay que replicar repositorios, plantillas o entornos sin dañar el origen. |
+| `anatomia-agentes-ia` | Hay que analizar arneses, bucles, herramientas y memoria de agentes. |
+| `analizador-pro-movil` | Hay que revisar código fuente y realizar una inspección preliminar y local de APKs sin ejecutarlos. |
+| `anatomy` (upstream) | Hay que usar el paquete original de Anatomy para trabajos de visualización/explicación técnica según sus propias instrucciones. |
 
 ## Agente de Desarrollo
 
-- Skill: .agents/skills/agente-desarrollo-skills/SKILL.md
-- Guía: docs/development-agent/README.md
-- CLI: scripts/dev_agent.py
-- Pruebas: python3 -m unittest discover -s tests -v
+- Skill operativa: `.agents/skills/agente-desarrollo-skills/SKILL.md`
+- Guía y comandos: `docs/development-agent/README.md`
+- CLI estándar: `scripts/dev_agent.py`
+- Pruebas: `python3 -m unittest discover -s tests -v`
 
-La CLI permite inventariar (inspect), clonar explícitamente a un destino nuevo (clone), realizar una revisión heurística (review) y generar un plan sin escritura (plan). No ejecuta código del proyecto inspeccionado ni instala dependencias automáticamente.
+La CLI ofrece inventario (`inspect`), clonación explícita a destino nuevo (`clone`), revisión heurística de archivos de texto (`review`) y planificación sin escritura (`plan`). No ejecuta código de los proyectos inspeccionados ni instala dependencias automáticamente.
 
 ## Cómo usarlas
-1. Lee el SKILL.md de la skill más pertinente antes de iniciar el trabajo.
+1. Lee el `SKILL.md` de la skill más pertinente antes de iniciar el trabajo.
 2. Para tareas grandes, combina skills complementarias (por ejemplo, ingeniería de software + QA + seguridad).
 3. No cargues todas las skills por defecto: selecciona las necesarias para el objetivo.
 4. Usa documentación oficial y pruebas reales; no inventes resultados.
@@ -49,6 +49,6 @@ La CLI permite inventariar (inspect), clonar explícitamente a un destino nuevo 
 
 ## Validación
 Desde la raíz del repositorio ejecuta:
-    python3 scripts/validate-skills.py
+`python3 scripts/validate-skills.py`
 
-Estado: las skills del catálogo tienen guías operativas iniciales. El validador estructural comprueba metadatos y presencia, no certifica eficacia técnica. Deben considerarse versión inicial hasta que se validen en tareas reales; no son certificaciones ni evidencia de que proyectos concretos funcionen. El paquete upstream Anatomy se conserva intacto y se incluye como base original complementaria para la skill de anatomía de agentes.
+Estado: las 22 skills del catálogo tienen guías operativas iniciales. Deben considerarse **versión inicial** hasta que se validen en tareas reales; no son certificaciones ni evidencia de que proyectos concretos funcionen. El paquete upstream Anatomy se conserva intacto y se incluye como base original complementaria para la skill de anatomía de agentes.
