@@ -1,6 +1,7 @@
 import { validatePublicHttpUrl } from '../../security/url-guard.js';
 import { validateChatInput } from '../../security/chat-input.js';
 import type { Handler } from '@netlify/functions';
+import { OpenRouter } from '@openrouter/sdk';
 
 const roles:Record<string,string>={general:'Eres Nexus: directo, preciso, honesto y práctico. No inventes datos.',coder:'Eres ingeniero de código. Propón una implementación concreta, archivos afectados, riesgos y pruebas; no afirmes haber ejecutado código.',architect:'Eres el arquitecto de Nexus. Divide problemas en capas, dependencias, riesgos y pruebas verificables.',analyst:'Eres analista técnico. Separa hechos, supuestos, incertidumbres y riesgos.',critic:'Eres revisor crítico de seguridad y calidad. Busca vulnerabilidades, errores de lógica, regresiones, supuestos débiles y puntos únicos de fallo; clasifica gravedad y propone pruebas.'};
 const env=(k:string)=>process.env[k]||'';
@@ -10,6 +11,14 @@ async function llm(provider:string,model:string,system:string,prompt:string){
  const key=env(provider==='openrouter'?'OPENROUTER_API_KEY':provider==='gemini'?'NEXUS_GEMINI_API_KEY':provider==='groq'?'NEXUS_GROQ_API_KEY':provider==='mistral'?'NEXUS_MISTRAL_API_KEY':provider==='kimi'?'NEXUS_KIMI_API_KEY':'NEXUS_OPENAI_API_KEY');
  if(!key) throw Error('Falta la clave de '+provider+'.');
  if(provider==='openrouter'){
+  // Netlify AI Gateway injects OPENROUTER_BASE_URL and provider credentials at runtime.
+  // Use the official SDK so the gateway base URL is honored; fall back to direct OpenRouter only when a user key is configured.
+  if(env('OPENROUTER_BASE_URL')){
+   const client=new OpenRouter();
+   const result=await client.chat.send({chatRequest:{model,temperature:0.2,messages:[{role:'system',content:system},{role:'user',content:prompt}]}});
+   const content=result.choices?.[0]?.message?.content;
+   return typeof content==='string'?content:Array.isArray(content)?content.map((part:any)=>part.text||'').join(''):'';
+  }
   const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{Authorization:'Bearer '+key,'Content-Type':'application/json','HTTP-Referer':'https://nexus-ai-hub-wfrk.netlify.app','X-Title':'Nexus AI Hub'},body:JSON.stringify({model,temperature:0.2,messages:[{role:'system',content:system},{role:'user',content:prompt}]})});
   const d=JSON.parse(await r.text());if(!r.ok)throw Error('OpenRouter HTTP '+r.status);return d.choices?.[0]?.message?.content||'';
  }
@@ -61,7 +70,7 @@ export const handler:Handler=async(event)=>{
   const b=event.body?JSON.parse(event.body):{};
   const provider=b.provider==='core'?'openrouter':b.provider||'openrouter';const selectedModel=b.provider==='core'?'openai/gpt-5':(b.model||'openai/gpt-5');
 
-  if(event.httpMethod==='GET'&&p==='/status')return{statusCode:200,body:JSON.stringify({status:'ready',providers:{core:!!env('OPENROUTER_API_KEY'),openrouter:!!env('OPENROUTER_API_KEY'),openai:!!env('NEXUS_OPENAI_API_KEY'),groq:!!env('NEXUS_GROQ_API_KEY'),mistral:!!env('NEXUS_MISTRAL_API_KEY'),kimi:!!env('NEXUS_KIMI_API_KEY'),gemini:!!env('NEXUS_GEMINI_API_KEY'),tavily:!!env('TAVILY_API_KEY'),firecrawl:!!env('FIRECRAWL_API_KEY'),firecrawlKeyConfigured:!!env('FIRECRAWL_API_KEY')}})};
+  if(event.httpMethod==='GET'&&p==='/status')return{statusCode:200,body:JSON.stringify({status:'ready',providers:{core:!!env('OPENROUTER_API_KEY'),openrouter:!!(env('OPENROUTER_API_KEY')||env('OPENROUTER_BASE_URL')),openrouterGateway:!!env('OPENROUTER_BASE_URL'),openai:!!env('NEXUS_OPENAI_API_KEY'),groq:!!env('NEXUS_GROQ_API_KEY'),mistral:!!env('NEXUS_MISTRAL_API_KEY'),kimi:!!env('NEXUS_KIMI_API_KEY'),gemini:!!env('NEXUS_GEMINI_API_KEY'),tavily:!!env('TAVILY_API_KEY'),firecrawl:!!env('FIRECRAWL_API_KEY'),firecrawlKeyConfigured:!!env('FIRECRAWL_API_KEY')}})};
   if(event.httpMethod==='GET'&&p==='/_healthcheck')return{statusCode:200,body:JSON.stringify({ok:true,service:'nexus'})};
   if(event.httpMethod==='GET'&&p==='/mcp/servers'){const q=event.queryStringParameters?.search||'';const r=await fetch('https://registry.modelcontextprotocol.io/v0.1/servers?limit=20&version=latest'+(q?'&search='+encodeURIComponent(q):''));return{statusCode:r.ok?200:502,body:await r.text()}};
   if(event.httpMethod==='POST'&&p==='/chat'){let input;try{input=validateChatInput(b)}catch(e){return{statusCode:400,body:JSON.stringify({error:e instanceof Error?e.message:'Invalid chat input'})}}const context=input.webContext?'\n\nContexto web: '+input.webContext:'';return{statusCode:200,body:JSON.stringify({text:await llm(input.provider,input.model,roles[input.role]+context,input.prompt),provider:input.displayProvider,model:input.model})}};
