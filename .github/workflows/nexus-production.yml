@@ -105,7 +105,7 @@ jobs:
         if: steps.credentials.outputs.ready == 'true'
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_SITE_ID: ca7c5fbb-b630-4dea-b838-20e6b11899fe
         run: npx --yes netlify-cli@latest deploy --build --prod --site "$NETLIFY_SITE_ID"
       - name: Run live frontend, API, and five-model smoke tests
         if: steps.credentials.outputs.ready == 'true'
