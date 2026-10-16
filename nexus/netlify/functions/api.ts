@@ -1,4 +1,4 @@
-import { validatePublicHttpUrl } from '../../security/url-guard.js';
+import { readTextLimited, validatePublicHttpUrl } from '../../security/url-guard.js';
 import type { Handler } from '@netlify/functions';
 
 const roles:Record<string,string>={general:'Eres Nexus: directo, preciso, honesto y práctico. No inventes datos.',coder:'Eres ingeniero de código. Propón una implementación concreta, archivos afectados, riesgos y pruebas; no afirmes haber ejecutado código.',architect:'Eres el arquitecto de Nexus. Divide problemas en capas, dependencias, riesgos y pruebas verificables.',analyst:'Eres analista técnico. Separa hechos, supuestos, incertidumbres y riesgos.',critic:'Eres revisor crítico de seguridad y calidad. Busca vulnerabilidades, errores de lógica, regresiones, supuestos débiles y puntos únicos de fallo; clasifica gravedad y propone pruebas.'};
@@ -44,13 +44,15 @@ async function webSearch(q:string){
  }
 }
 
-async function firecrawlScrape(url:string){
- const r=await fetch('https://api.firecrawl.dev/v2/scrape',{method:'POST',headers:firecrawlHeaders(),body:JSON.stringify({url,formats:['markdown']})});
- const d=JSON.parse(await r.text());if(!r.ok||d.success===false)throw Error('Firecrawl Scrape HTTP '+r.status);
- const data=d.data||d;return{title:data.metadata?.title||url,text:data.markdown||data.html||'',status:200,engine:'firecrawl'};
+async function scrape(input:string){
+ const url=await validatePublicHttpUrl(input);
+ const r=await fetch(url.toString(),{headers:{'user-agent':'Nexus/1.0'},redirect:'error',signal:AbortSignal.timeout(10000)});
+ if(!r.ok)throw Error('El sitio remoto respondió HTTP '+r.status+'.');
+ const t=await readTextLimited(r);
+ const title=(t.match(/<title[^>]*>([\\s\\S]*?)<\\/title>/i)?.[1]||url.toString()).replace(/<[^>]+>/g,'').trim();
+ const text=t.replace(/<script[\\s\\S]*?<\\/script>/gi,' ').replace(/<style[\\s\\S]*?<\\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/&nbsp;/g,' ').replace(/&amp;/g,'&').replace(/\\s+/g,' ').trim();
+ return{title,text:text.slice(0,30000),status:r.status,engine:'direct'};
 }
-
-async function scrape(input:string){const url=await validatePublicHttpUrl(input);return await firecrawlScrape(url.toString())}
 
 export const handler:Handler=async(event)=>{
  try{
