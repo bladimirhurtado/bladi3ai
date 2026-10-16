@@ -12,7 +12,8 @@ Solicitud del usuario
 Backend Nexus (/api/team)
        |---- Arquitectura ---- Claude vía OpenRouter
        |---- Investigación --- Gemini vía OpenRouter
-       |---- Crítica --------- DeepSeek vía OpenRouter
+       |---- Programación ---- GPT-5.3-Codex vía OpenRouter
+       |---- Crítica de seguridad/calidad -- DeepSeek vía OpenRouter
        |---- Síntesis -------- GPT vía OpenRouter
        |
        v
@@ -24,6 +25,7 @@ Los nombres son valores predeterminados de configuración, no una garantía de d
 - `OPENROUTER_API_KEY`: clave solo del lado servidor.
 - `NEXUS_TEAM_ARCHITECT_MODEL`: por defecto `~anthropic/claude-sonnet-latest`.
 - `NEXUS_TEAM_RESEARCHER_MODEL`: por defecto `~google/gemini-flash-latest`.
+- `NEXUS_TEAM_CODER_MODEL`: por defecto `openai/gpt-5.3-codex`.
 - `NEXUS_TEAM_CRITIC_MODEL`: por defecto `~deepseek/deepseek-flash-latest`.
 - `NEXUS_TEAM_SYNTHESIS_MODEL`: por defecto `~openai/gpt-latest`.
 
@@ -35,7 +37,7 @@ Los nombres son valores predeterminados de configuración, no una garantía de d
 5. Revisar los errores parciales; no interpretar un nombre de modelo configurado como prueba de que respondió correctamente.
 
 ## Coste y privacidad
-El modo Equipo realiza hasta cuatro llamadas de modelo por ejecución, más búsqueda web opcional. Esto puede costar más que una conversación normal. Cada llamada recibe el prompt y el contexto web proporcionado; no enviar secretos ni información sensible. La app no almacena la clave en el navegador. No hay llamada real demostrada hasta probar el despliegue con una clave válida.
+El modo Equipo realiza hasta cinco llamadas de modelo por ejecución (cuatro colaboradores en paralelo y una síntesis si responden al menos tres), más búsqueda web opcional. Esto puede costar más que una conversación normal. Cada llamada recibe el prompt y el contexto web proporcionado; no enviar secretos ni información sensible. La app no almacena la clave en el navegador. No hay llamada real demostrada hasta probar el despliegue con una clave válida.
 
 ## Límites
 - No se copian ni descargan los pesos de Claude, Gemini, DeepSeek o GPT. Nexus los consume por API.
