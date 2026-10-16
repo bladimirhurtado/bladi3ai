@@ -10,10 +10,9 @@ The repository root `netlify.toml` configures the `nexus` base directory, `npm r
 
 In GitHub, open **Settings → Secrets and variables → Actions** and create:
 
-- `NETLIFY_AUTH_TOKEN`: a Netlify personal access token. Keep it private; do not commit it or paste it into source files.
-- `NETLIFY_SITE_ID`: `ca7c5fbb-b630-4dea-b838-20e6b11899fe`.
+- `NETLIFY_AUTH_TOKEN`: a Netlify personal access token. Keep it private; do not commit it or paste it into source files. The target site ID is already configured in the workflow.
 
-After adding both secrets, open **Actions → Nexus build, security checks, and production deploy → Run workflow**, select branch `main`, set `deploy_production` to `true`, and run it. The workflow builds and runs static contracts before deploying. If credentials are absent, it reports that deployment was skipped rather than pretending production was published.
+After adding both secrets, open **Actions → Nexus build, security checks, and production deploy → Run workflow**, select branch `main`, set `deploy_production` to `true`, and run it. The workflow builds and runs static contracts before deploying. It then checks the frontend, health route, provider-status route, and a real Nexus team request using the four collaborators plus synthesis (five model calls). Live calls can consume credits. If the token is absent, it reports that deployment was skipped rather than pretending production was published.
 
 ## Post-deploy smoke tests
 
@@ -23,7 +22,7 @@ Check the following routes on the public site:
 - `/api/_healthcheck` — JSON includes `{"ok":true,"service":"nexus"}`.
 - `/api/status` — returns provider-configuration booleans only (never secrets).
 - `POST /api/chat` with a short prompt — verifies a real model response.
-- `POST /api/team` with a short prompt — verifies all four collaborators and the synthesis model; check returned `statuses` and `warnings` instead of assuming success from HTTP 200.
+- `POST /api/team` with a short prompt — verifies all four collaborators and the synthesis model; check returned `statuses` and `warnings` instead of assuming success from HTTP 200. The CI workflow runs this smoke test automatically after a successful production deploy.
 
 Live model tests can consume provider credits. Start with short prompts and verify model names and response content. A missing API key, disabled AI Gateway, or invalid model must be reported as a failure, not marked as working.
 
