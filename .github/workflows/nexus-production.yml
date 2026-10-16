@@ -51,6 +51,9 @@ jobs:
       - name: Validate team routing and provider contracts
         working-directory: nexus
         run: node scripts/validate-team-routing.mjs
+      - name: Validate live smoke test syntax
+        working-directory: nexus
+        run: node --check scripts/smoke-test-deployed.mjs
       - name: Build production frontend
         working-directory: nexus
         run: npm run build
@@ -78,16 +81,16 @@ jobs:
         id: credentials
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_SITE_ID: ca7c5fbb-b630-4dea-b838-20e6b11899fe
         shell: bash
         run: |
-          if [[ -z "$NETLIFY_AUTH_TOKEN" || -z "$NETLIFY_SITE_ID" ]]; then
+          if [[ -z "$NETLIFY_AUTH_TOKEN" ]]; then
             echo "ready=false" >> "$GITHUB_OUTPUT"
             {
               echo "## Production deployment not started"
-              echo "The build passed, but the repository is missing one or both Actions secrets:"
+              echo "The build passed, but the repository is missing the required Actions secret:"
               echo "- NETLIFY_AUTH_TOKEN"
-              echo "- NETLIFY_SITE_ID (expected site: nexus-ai-hub-wfrk)"
+              echo "The target site ID is configured in the workflow; no site-ID secret is needed."
               echo "Add them in GitHub Settings → Secrets and variables → Actions, then run this workflow with deploy_production=true."
             } >> "$GITHUB_STEP_SUMMARY"
           else
@@ -105,8 +108,11 @@ jobs:
         if: steps.credentials.outputs.ready == 'true'
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          NETLIFY_SITE_ID: ca7c5fbb-b630-4dea-b838-20e6b11899fe
         run: npx --yes netlify-cli@latest deploy --build --prod --site "$NETLIFY_SITE_ID"
-      - name: Confirm deploy step ran
+      - name: Run live frontend, API, and five-model smoke tests
         if: steps.credentials.outputs.ready == 'true'
-        run: echo "Netlify CLI completed. Verify the public site and API with live smoke tests."
+        env:
+          NEXUS_SMOKE_TEST_URL: https://nexus-ai-hub-wfrk.netlify.app
+        run: node nexus/scripts/smoke-test-deployed.mjs
+
