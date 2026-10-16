@@ -42,5 +42,6 @@ assert.ok(vercel.includes('readTextLimited(r)'), 'Vercel scrape must enforce a r
 assert.ok(netlify.includes("redirect:'error'"), 'Netlify scrape must not follow unvalidated redirects');
 assert.ok(netlify.includes('AbortSignal.timeout(10000)'), 'Netlify scrape must have a request timeout');
 assert.ok(netlify.includes('readTextLimited(r)'), 'Netlify scrape must enforce a response-size limit');
+assert.ok(netlify.includes("firecrawl:!!env('FIRECRAWL_API_KEY')"), 'Netlify status must not claim Firecrawl is active without a key');
 console.log('OK: Vercel and Netlify team/chat contracts and scrape security guards are aligned.');
 console.log('Note: this is a static contract check; it does not make paid API calls.');
