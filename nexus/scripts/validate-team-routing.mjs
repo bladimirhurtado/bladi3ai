@@ -23,6 +23,7 @@ for (const source of [vercel, netlify]) {
     'Missing team endpoint');
   assert.ok(source.includes('statuses:'), 'Team endpoint must report collaborator status');
   assert.ok(source.includes('warnings'), 'Team endpoint must report partial failures');
+  assert.ok(source.includes('validateChatInput(b)'), 'Chat endpoint must validate provider/model/role and input sizes');
 }
 
 assert.ok(vercel.includes("provider==='openrouter'?'OPENROUTER_API_KEY'"),
@@ -41,5 +42,5 @@ assert.ok(vercel.includes('readTextLimited(r)'), 'Vercel scrape must enforce a r
 assert.ok(netlify.includes("redirect:'error'"), 'Netlify scrape must not follow unvalidated redirects');
 assert.ok(netlify.includes('AbortSignal.timeout(10000)'), 'Netlify scrape must have a request timeout');
 assert.ok(netlify.includes('readTextLimited(r)'), 'Netlify scrape must enforce a response-size limit');
-console.log('OK: Vercel and Netlify team contracts and scrape security guards are aligned.');
+console.log('OK: Vercel and Netlify team/chat contracts and scrape security guards are aligned.');
 console.log('Note: this is a static contract check; it does not make paid API calls.');
