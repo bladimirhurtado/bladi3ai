@@ -51,6 +51,9 @@ jobs:
       - name: Validate team routing and provider contracts
         working-directory: nexus
         run: node scripts/validate-team-routing.mjs
+      - name: Validate live smoke test syntax
+        working-directory: nexus
+        run: node --check scripts/smoke-test-deployed.mjs
       - name: Build production frontend
         working-directory: nexus
         run: npm run build
