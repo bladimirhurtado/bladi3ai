@@ -93,6 +93,8 @@ jobs:
               echo "The target site ID is configured in the workflow; no site-ID secret is needed."
               echo "Add them in GitHub Settings → Secrets and variables → Actions, then run this workflow with deploy_production=true."
             } >> "$GITHUB_STEP_SUMMARY"
+            echo "Deployment blocked: configure NETLIFY_AUTH_TOKEN in GitHub Actions secrets." >&2
+            exit 1
           else
             echo "ready=true" >> "$GITHUB_OUTPUT"
           fi
