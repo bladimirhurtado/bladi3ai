@@ -18,8 +18,8 @@ function isPublicIPv4(address) {
 function isPublicIPv6(address) {
   const value = address.toLowerCase();
   if (value === '::' || value === '::1' || value.startsWith('fc') || value.startsWith('fd') ||
-      /^fe[89ab]/.test(value) || value.startsWith('ff') || value.startsWith('2001:db8:') ||
-      value.startsWith('2001:10:') || value.startsWith('2001:20:') || value.startsWith('2002:')) return false;
+      /^fe[89ab]/.test(value) || value.startsWith('ff') || value.startsWith('2001:db8:') || value.startsWith('2001:0:') ||
+      value.startsWith('2001:2:') || value.startsWith('2001:10:') || value.startsWith('2001:20:') || value.startsWith('2002:')) return false;
   const mapped = value.match(/::ffff:(\d+\.\d+\.\d+\.\d+)$/);
   if (mapped) return isPublicIPv4(mapped[1]);
   // IPv4-mapped addresses may use hexadecimal notation; reject them unless they are normalized upstream.
