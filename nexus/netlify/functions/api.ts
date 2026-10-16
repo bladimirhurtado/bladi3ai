@@ -1,3 +1,4 @@
+import { validatePublicHttpUrl } from '../../security/url-guard.js';
 import type { Handler } from '@netlify/functions';
 
 const roles:Record<string,string>={general:'Eres Nexus: directo, preciso, honesto y práctico. No inventes datos.',coder:'Eres ingeniero de código. Propón una implementación concreta, archivos afectados, riesgos y pruebas; no afirmes haber ejecutado código.',architect:'Eres el arquitecto de Nexus. Divide problemas en capas, dependencias, riesgos y pruebas verificables.',analyst:'Eres analista técnico. Separa hechos, supuestos, incertidumbres y riesgos.',critic:'Eres revisor crítico de seguridad y calidad. Busca vulnerabilidades, errores de lógica, regresiones, supuestos débiles y puntos únicos de fallo; clasifica gravedad y propone pruebas.'};
@@ -49,7 +50,7 @@ async function firecrawlScrape(url:string){
  const data=d.data||d;return{title:data.metadata?.title||url,text:data.markdown||data.html||'',status:200,engine:'firecrawl'};
 }
 
-async function scrape(url:string){return await firecrawlScrape(url)}
+async function scrape(input:string){const url=await validatePublicHttpUrl(input);return await firecrawlScrape(url.toString())}
 
 export const handler:Handler=async(event)=>{
  try{
