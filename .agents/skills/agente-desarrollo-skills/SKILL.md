@@ -10,6 +10,37 @@ Convertir tareas de desarrollo en cambios pequeños, revisables y verificables. 
 
 Esta skill es el coordinador operativo. El CLI complementario en scripts/dev_agent.py ayuda con inventario, revisión heurística, planificación y clonación; no sustituye el juicio técnico ni ejecuta refactorizaciones automáticas.
 
+## Inicio rápido: probar la skill ahora
+
+Cuando el usuario pida trabajar con un proyecto, identifica primero el objetivo y selecciona el modo apropiado. No ejecutes los tres modos por rutina.
+
+- **Clonar:** cuando se necesite una copia independiente. Confirma origen y destino; nunca sobrescribas el destino.
+- **Reconstruir:** cuando se necesite reorganizar, modernizar o refactorizar un proyecto existente.
+- **Revisar errores:** cuando haya un fallo concreto, una regresión o sospecha de defectos.
+- **Inspección inicial:** si el alcance aún no está claro, empieza por inventariar y leer; no modifiques nada.
+
+### Secuencia mínima de una prueba
+
+1. Declara el modo elegido y el alcance en una frase.
+2. Comprueba qué herramientas están realmente disponibles en el entorno actual. No supongas que el CLI está instalado ni que puedes acceder al sistema de archivos del usuario.
+3. Registra el estado inicial y conserva el original.
+4. Ejecuta solo las comprobaciones seguras necesarias para el objetivo. Antes de instalar dependencias, ejecutar código desconocido, publicar, desplegar, borrar datos o incurrir en costes, solicita autorización cuando corresponda.
+5. Entrega evidencias concretas: archivos leídos o modificados, comandos realmente ejecutados, resultados y limitaciones.
+6. Si falta una capacidad (por ejemplo, ejecución local), no simules el resultado: continúa con la verificación disponible y explica qué falta.
+
+### Comandos de comprobación del paquete
+
+Desde la raíz del repositorio Bladi 3AI, si Python y los archivos están disponibles localmente:
+
+    python3 scripts/dev_agent.py --help
+    python3 scripts/dev_agent.py inspect . --json
+    python3 scripts/dev_agent.py review . --json
+    python3 scripts/dev_agent.py plan . --json
+    python3 -m unittest discover -s tests -v
+    python3 scripts/validate-skills.py
+
+Para una prueba de clonación, usa únicamente un repositorio autorizado y un destino temporal nuevo. No hace falta clonar nada para probar los modos inspect, review o plan.
+
 ## Reglas fundamentales
 - Inspecciona AGENTS.md, el catálogo de skills, el estado del repositorio, la rama y las pruebas antes de modificar archivos.
 - Preserva el origen. Trabaja en una rama o copia nueva; no sobrescribas ni elimines datos existentes sin autorización explícita.
