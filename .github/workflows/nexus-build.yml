@@ -33,3 +33,9 @@ jobs:
         run: npm install
       - name: Build frontend
         run: npm run build
+      - name: Parse serverless backends
+        run: |
+          npx esbuild netlify/functions/api.ts --bundle --platform=node --external:@netlify/functions --outfile=/tmp/nexus-netlify-api.js
+          npx esbuild api/index.ts --bundle --platform=node --outfile=/tmp/nexus-vercel-api.js
+      - name: Validate multi-AI team contract
+        run: node scripts/validate-team-routing.mjs
