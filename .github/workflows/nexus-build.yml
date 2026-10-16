@@ -1,0 +1,49 @@
+name: Build Nexus AI Hub
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - "nexus/**"
+      - ".github/workflows/nexus-build.yml"
+  push:
+    branches: [main]
+    paths:
+      - "nexus/**"
+      - ".github/workflows/nexus-build.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: nexus
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install
+      - name: Build frontend
+        run: npm run build
+      - name: Summarize dependency advisories
+        run: |
+          npm audit --json > /tmp/nexus-npm-audit.json || true
+          node -e "const a=require('/tmp/nexus-npm-audit.json'); console.log('Audit summary:', JSON.stringify(a.metadata?.vulnerabilities || {})); for (const [name,v] of Object.entries(a.vulnerabilities || {})) console.log(name + ': ' + v.severity + '; direct=' + v.isDirect + '; fix=' + JSON.stringify(v.fixAvailable) + '; advisories=' + (v.via || []).map(x => typeof x === 'string' ? x : x.title).join(', '));"
+      - name: Parse serverless backends
+        run: |
+          npx esbuild netlify/functions/api.ts --bundle --platform=node --external:@netlify/functions --outfile=/tmp/nexus-netlify-api.js
+          npx esbuild api/index.ts --bundle --platform=node --outfile=/tmp/nexus-vercel-api.js
+      - name: Test security boundaries
+        run: node scripts/validate-security-boundaries.mjs
+      - name: Test chat input validation
+        run: node scripts/validate-chat-input.mjs
+      - name: Validate multi-AI team contract
+        run: node scripts/validate-team-routing.mjs

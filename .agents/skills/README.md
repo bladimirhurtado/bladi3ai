@@ -7,6 +7,8 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 | Skill | Úsala cuando... |
 |---|---|
 | `investigacion-herramientas` | Hay que descubrir, comparar o validar una herramienta o recurso. |
+| `agente-desarrollo-skills` | Hay que clonar repositorios, revisar errores o coordinar una refactorización verificable. Incluye CLI estándar en `scripts/dev_agent.py`. |
+| `orquestador-multi-ia` | Hay que coordinar modelos de varios proveedores, asignar roles independientes y sintetizar resultados con verificación y límites de coste. |
 | `ingenieria-software` | Hay que implementar, depurar o probar código. |
 | `auditoria-ia-aegis-hydra` | Hay que evaluar seguridad, privacidad y supervisión de un sistema de IA. |
 | `integracion-sistemas` | Hay que conectar APIs, servicios, webhooks o autenticación. |
@@ -20,7 +22,7 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 | `analisis-datos-metricas` | Hay que validar, analizar o comunicar datos y métricas. |
 | `despliegue-configuracion` | Hay que preparar entornos, configuración o lanzamientos. |
 | `seguridad-auditoria-ataque` | Hay que hacer pruebas de seguridad con autorización y alcance definido. |
-| `ingenieria-inversa-educativa` | Hay que estudiar sistemas/código con finalidad educativa y autorización. |
+| `ingenieria-inversa-educativa` | Hay que estudiar código fuente y comportamiento con finalidad educativa y autorización. |
 | `refactorizacion-codigo` | Hay que mejorar estructura sin cambiar comportamiento accidentalmente. |
 | `gestion-dependencias-parches` | Hay que actualizar o auditar dependencias y parches. |
 | `diseno-bases-datos` | Hay que diseñar esquemas, consultas o migraciones. |
@@ -28,6 +30,21 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 | `anatomia-agentes-ia` | Hay que analizar arneses, bucles, herramientas y memoria de agentes. |
 | `analizador-pro-movil` | Hay que revisar código fuente y realizar una inspección preliminar y local de APKs sin ejecutarlos. |
 | `anatomy` (upstream) | Hay que usar el paquete original de Anatomy para trabajos de visualización/explicación técnica según sus propias instrucciones. |
+
+## Equipo multi-IA
+
+- Skill operativa: `.agents/skills/orquestador-multi-ia/SKILL.md`
+- Arquitectura/configuración: `docs/multi-ai-team/README.md`
+- El modo Equipo de Nexus utiliza modelos distintos mediante OpenRouter; los nombres configurados no garantizan que cada modelo esté disponible. La disponibilidad real debe probarse con la clave del entorno.
+
+## Agente de Desarrollo
+
+- Skill operativa: `.agents/skills/agente-desarrollo-skills/SKILL.md`
+- Guía y comandos: `docs/development-agent/README.md`
+- CLI estándar: `scripts/dev_agent.py`
+- Pruebas: `python3 -m unittest discover -s tests -v`
+
+La CLI ofrece inventario (`inspect`), clonación explícita a destino nuevo (`clone`), revisión heurística de archivos de texto (`review`) y planificación sin escritura (`plan`). No ejecuta código de los proyectos inspeccionados ni instala dependencias automáticamente.
 
 ## Cómo usarlas
 1. Lee el `SKILL.md` de la skill más pertinente antes de iniciar el trabajo.
@@ -41,4 +58,4 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 Desde la raíz del repositorio ejecuta:
 `python3 scripts/validate-skills.py`
 
-Estado: las 21 skills solicitadas tienen guías operativas iniciales. Deben considerarse **versión inicial** hasta que se validen en tareas reales; no son certificaciones ni evidencia de que proyectos concretos funcionen. El paquete upstream Anatomy se conserva intacto y se incluye como base original complementaria para la skill de anatomía de agentes.
+Estado: las 23 skills del catálogo tienen guías operativas iniciales. Deben considerarse **versión inicial** hasta que se validen en tareas reales; no son certificaciones ni evidencia de que proyectos concretos funcionen. El paquete upstream Anatomy se conserva intacto y se incluye como base original complementaria para la skill de anatomía de agentes.

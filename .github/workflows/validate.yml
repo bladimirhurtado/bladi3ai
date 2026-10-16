@@ -33,3 +33,7 @@ jobs:
           test "$(grep -o "id:'web'" index.html | wc -l)" -eq 1
           test "$(grep -o "id:'android'" index.html | wc -l)" -eq 1
           test "$(grep -o "id:'ia'" index.html | wc -l)" -eq 1
+      - name: Validate reusable skills
+        run: python3 scripts/validate-skills.py
+      - name: Test development agent
+        run: python3 -m unittest discover -s tests -v
