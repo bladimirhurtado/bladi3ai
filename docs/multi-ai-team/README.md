@@ -1,0 +1,43 @@
+# Equipo multi-IA de Nexus
+
+## Objetivo
+Nexus ya tenía un modo Equipo, pero sus cuatro etapas llamaban al mismo modelo OpenRouter. Esta mejora asigna modelos distintos a arquitectura, investigación, crítica y síntesis para conseguir una segunda opinión real, manteniendo una clave de API en el backend.
+
+## Arquitectura
+
+```text
+Solicitud del usuario
+       |
+       v
+Backend Nexus (/api/team)
+       |---- Arquitectura ---- Claude vía OpenRouter
+       |---- Investigación --- Gemini vía OpenRouter
+       |---- Crítica --------- DeepSeek vía OpenRouter
+       |---- Síntesis -------- GPT vía OpenRouter
+       |
+       v
+Respuesta + atribución de modelos + advertencias
+```
+
+Los nombres son valores predeterminados de configuración, no una garantía de disponibilidad del catálogo. Se pueden cambiar sin editar código mediante estas variables de entorno:
+
+- `OPENROUTER_API_KEY`: clave solo del lado servidor.
+- `NEXUS_TEAM_ARCHITECT_MODEL`: por defecto `anthropic/claude-sonnet-4`.
+- `NEXUS_TEAM_RESEARCHER_MODEL`: por defecto `google/gemini-2.5-flash`.
+- `NEXUS_TEAM_CRITIC_MODEL`: por defecto `deepseek/deepseek-chat`.
+- `NEXUS_TEAM_SYNTHESIS_MODEL`: por defecto `openai/gpt-5`.
+
+## Ejecución
+1. Configurar `OPENROUTER_API_KEY` en las variables de entorno del proveedor de despliegue (Netlify o Vercel); no añadirla a Git.
+2. Confirmar que la cuenta de OpenRouter tiene acceso a los modelos configurados y que hay saldo/límites apropiados.
+3. Desplegar desde la rama de trabajo.
+4. Abrir Nexus, seleccionar **Equipo Nexus**, enviar una tarea no sensible y comprobar que la salida atribuye cada rol al modelo configurado.
+5. Revisar los errores parciales; no interpretar un nombre de modelo configurado como prueba de que respondió correctamente.
+
+## Coste y privacidad
+El modo Equipo realiza hasta cuatro llamadas de modelo por ejecución, más búsqueda web opcional. Esto puede costar más que una conversación normal. Cada llamada recibe el prompt y el contexto web proporcionado; no enviar secretos ni información sensible. La app no almacena la clave en el navegador. No hay llamada real demostrada hasta probar el despliegue con una clave válida.
+
+## Límites
+- No se copian ni descargan los pesos de Claude, Gemini, DeepSeek o GPT. Nexus los consume por API.
+- El código puede pasar CI sin que eso demuestre que las credenciales o el acceso a modelos funcionen.
+- Las salidas son sugerencias de modelos; el coordinador debe verificarlas con código, fuentes y pruebas.
