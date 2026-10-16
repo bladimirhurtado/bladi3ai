@@ -9,7 +9,7 @@ function isPublicIPv4(address) {
   if (a === 100 && b >= 64 && b <= 127) return false;
   if (a === 169 && b === 254) return false;
   if (a === 172 && b >= 16 && b <= 31) return false;
-  if (a === 192 && (b === 168 || (b === 0 && c === 0) || (b === 88 && c === 99))) return false;
+  if (a === 192 && (b === 168 || (b === 0 && c === 0) || (b === 0 && c === 2) || (b === 88 && c === 99))) return false;
   if (a === 198 && (b === 18 || b === 19 || (b === 51 && c === 100))) return false;
   if (a === 203 && b === 0 && c === 113) return false;
   return true;
@@ -19,7 +19,7 @@ function isPublicIPv6(address) {
   const value = address.toLowerCase();
   if (value === '::' || value === '::1' || value.startsWith('fc') || value.startsWith('fd') ||
       /^fe[89ab]/.test(value) || value.startsWith('ff') || value.startsWith('2001:db8:') ||
-      value.startsWith('2001:10:') || value.startsWith('2002:')) return false;
+      value.startsWith('2001:10:') || value.startsWith('2001:20:') || value.startsWith('2002:')) return false;
   const mapped = value.match(/::ffff:(\d+\.\d+\.\d+\.\d+)$/);
   if (mapped) return isPublicIPv4(mapped[1]);
   // IPv4-mapped addresses may use hexadecimal notation; reject them unless they are normalized upstream.
