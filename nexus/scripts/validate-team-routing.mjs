@@ -32,6 +32,8 @@ assert.ok(app.includes('d.models?.architect'), 'UI must attribute model names');
 assert.ok(app.includes('d.models?.coder'), 'UI must attribute the Codex coding role');
 
 assert.ok(vercel.includes('validatePublicHttpUrl(input)'), 'Vercel scrape must validate public URL targets');
+assert.ok(vercel.includes("env('NEXUS_ALLOWED_ORIGINS')"), 'Vercel API must use a configurable CORS origin allowlist');
+assert.ok(!vercel.includes("setHeader('Access-Control-Allow-Origin','*')"), 'Vercel API must not use wildcard CORS');
 assert.ok(netlify.includes('validatePublicHttpUrl(input)'), 'Netlify scrape must validate public URL targets');
 assert.ok(vercel.includes("redirect:'error'"), 'Vercel scrape must not follow unvalidated redirects');
 assert.ok(vercel.includes('AbortSignal.timeout(10000)'), 'Vercel scrape must have a request timeout');
