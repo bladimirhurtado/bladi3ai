@@ -7,7 +7,7 @@ const fakeMixedResolver = async () => [
   { address: '127.0.0.1', family: 4 },
 ];
 
-for (const address of ['127.0.0.1', '10.0.0.1', '172.16.0.1', '192.168.1.1', '169.254.169.254', '0.0.0.0', '224.0.0.1', '::1', 'fc00::1', 'fe80::1', 'ff02::1']) {
+for (const address of ['127.0.0.1', '10.0.0.1', '172.16.0.1', '192.168.1.1', '192.0.2.1', '198.51.100.1', '203.0.113.1', '169.254.169.254', '0.0.0.0', '224.0.0.1', '::1', 'fc00::1', 'fe80::1', 'ff02::1']) {
   assert.equal(isPublicAddress(address), false, `must reject non-public address: ${address}`);
 }
 for (const address of ['8.8.8.8', '93.184.216.34', '2606:4700:4700::1111']) {
