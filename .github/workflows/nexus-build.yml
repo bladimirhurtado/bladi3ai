@@ -43,3 +43,5 @@ jobs:
           npx esbuild api/index.ts --bundle --platform=node --outfile=/tmp/nexus-vercel-api.js
       - name: Validate multi-AI team contract
         run: node scripts/validate-team-routing.mjs
+      - name: Test security boundaries
+        run: node scripts/validate-security-boundaries.mjs
