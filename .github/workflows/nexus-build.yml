@@ -33,6 +33,10 @@ jobs:
         run: npm install
       - name: Build frontend
         run: npm run build
+      - name: Summarize dependency advisories
+        run: |
+          npm audit --json > /tmp/nexus-npm-audit.json || true
+          node -e "const a=require('/tmp/nexus-npm-audit.json'); console.log('Audit summary:', JSON.stringify(a.metadata?.vulnerabilities || {})); for (const [name,v] of Object.entries(a.vulnerabilities || {})) console.log(name + ': ' + v.severity + '; direct=' + v.isDirect + '; fix=' + JSON.stringify(v.fixAvailable) + '; advisories=' + (v.via || []).map(x => typeof x === 'string' ? x : x.title).join(', '));"
       - name: Parse serverless backends
         run: |
           npx esbuild netlify/functions/api.ts --bundle --platform=node --external:@netlify/functions --outfile=/tmp/nexus-netlify-api.js
