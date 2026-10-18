@@ -517,7 +517,14 @@
         "draft": true,
         "base": "aegis-competition-v0.3",
         "head": "aegis-competition-v0.4",
-        "mergeable": true
+        "mergeable": true,
+        "ci_evidence": [
+          {
+            "run": 38081823391,
+            "workflow": "AEGIS synthetic and scope-gate tests",
+            "conclusion": "success"
+          }
+        ]
       },
       {
         "number": 2,
@@ -526,7 +533,25 @@
         "draft": true,
         "base": "aegis-competition-v0.4",
         "head": "aegis-live-model-v0.1",
-        "mergeable": true
+        "mergeable": true,
+        "ci_evidence": [
+          {
+            "run": 38437533541,
+            "workflow": "AEGIS synthetic and scope-gate tests",
+            "conclusion": "success"
+          },
+          {
+            "run": 38437533535,
+            "workflow": "AEGIS Live Model Harness Checks",
+            "conclusion": "success"
+          },
+          {
+            "run": 38437533553,
+            "workflow": "AEGIS CodeQL Security Scan",
+            "conclusion": "success",
+            "note": "CodeQL run still reported parse diagnostics in the pre-existing Nexus file; success is not a zero-findings certification."
+          }
+        ]
       },
       {
         "number": 6,
@@ -538,7 +563,19 @@
         "mergeable": false,
         "blocker": "diverged from main; do not merge until conflicts and CI are resolved",
         "ahead_by": 34,
-        "behind_by": 11
+        "behind_by": 11,
+        "ci_evidence": [
+          {
+            "run": 38663085434,
+            "workflow": "Validate Bladi 3AI",
+            "conclusion": "success"
+          },
+          {
+            "run": 38663085392,
+            "workflow": "Validate reusable skills",
+            "conclusion": "success"
+          }
+        ]
       },
       {
         "number": 8,
@@ -550,7 +587,14 @@
         "mergeable": true,
         "dependency": "PR #6",
         "ahead_by": 19,
-        "behind_by": 0
+        "behind_by": 0,
+        "ci_evidence": [
+          {
+            "run": 38814925156,
+            "workflow": "Validate reusable skills",
+            "conclusion": "success"
+          }
+        ]
       },
       {
         "number": 10,
@@ -562,7 +606,14 @@
         "mergeable": true,
         "dependency": "PR #8",
         "ahead_by": 3,
-        "behind_by": 0
+        "behind_by": 0,
+        "ci_evidence": [
+          {
+            "run": 38815004239,
+            "workflow": "Validate reusable skills",
+            "conclusion": "success"
+          }
+        ]
       },
       {
         "number": 15,
@@ -574,7 +625,19 @@
         "mergeable": false,
         "blocker": "diverged from main and missing OPENROUTER_API_KEY",
         "ahead_by": 2,
-        "behind_by": 6
+        "behind_by": 6,
+        "ci_evidence": [
+          {
+            "run": 38931067189,
+            "workflow": "Validate Bladi 3AI",
+            "conclusion": "success"
+          },
+          {
+            "run": 38931067199,
+            "workflow": "Validate reusable skills",
+            "conclusion": "success"
+          }
+        ]
       }
     ]
   },
