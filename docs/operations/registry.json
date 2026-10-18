@@ -360,8 +360,8 @@
     {
       "priority": "P0",
       "task": "Recheck live state of open/stacked pull requests and branch dependencies",
-      "status": "completed_snapshot_2026-10-18",
-      "evidence": "PR #16, #17 and #18 merged after successful CI; open PR snapshot documented in ESTADO-AUDITORIA-2026-10-18.md. Recheck live state again before future merges."
+      "status": "completed_snapshot_2026-10-18_with_known_blockers",
+      "evidence": "Current live PR metadata captured in registry.current_open_prs. PR #6 and #15 are non-mergeable; #8 depends on #6 and #10 depends on #8. PRs #1/#2 are a separate draft AEGIS chain. Recheck before any future merge."
     },
     {
       "priority": "P1",
@@ -495,6 +495,66 @@
         "external_providers_selected": 0,
         "configured_secret_names": [],
         "limitation": "This verifies the integrated Nexus Core path only; it does not verify OpenAI/Groq/Mistral/Kimi/Gemini or the Netlify production deployment."
+      }
+    ],
+    "current_open_prs": [
+      {
+        "number": 1,
+        "title": "AEGIS v0.4 scoped competition runner",
+        "state": "open",
+        "draft": true,
+        "base": "aegis-competition-v0.3",
+        "head": "aegis-competition-v0.4",
+        "mergeable": true
+      },
+      {
+        "number": 2,
+        "title": "AEGIS live-model evaluation harness v0.1",
+        "state": "open",
+        "draft": true,
+        "base": "aegis-competition-v0.4",
+        "head": "aegis-live-model-v0.1",
+        "mergeable": true
+      },
+      {
+        "number": 6,
+        "title": "reverse engineering workbench",
+        "state": "open",
+        "draft": false,
+        "base": "main",
+        "head": "feat/reverse-engineering-workbench",
+        "mergeable": false,
+        "blocker": "branch/base requires conflict and CI review before merge"
+      },
+      {
+        "number": 8,
+        "title": "APK static inspector and controlled red team",
+        "state": "open",
+        "draft": false,
+        "base": "feat/reverse-engineering-workbench",
+        "head": "feat/ark-apk-static-inspector",
+        "mergeable": true,
+        "dependency": "PR #6"
+      },
+      {
+        "number": 10,
+        "title": "reusable research/analysis/code skill",
+        "state": "open",
+        "draft": false,
+        "base": "feat/ark-apk-static-inspector",
+        "head": "feat/skill-investigacion-analisis-codigo-v2",
+        "mergeable": true,
+        "dependency": "PR #8"
+      },
+      {
+        "number": 15,
+        "title": "multi-AI orchestration operationalization",
+        "state": "open",
+        "draft": false,
+        "base": "main",
+        "head": "feat/team-arena-orchestrator-operational",
+        "mergeable": false,
+        "blocker": "missing provider secret; base SHA predates current main"
       }
     ]
   }
