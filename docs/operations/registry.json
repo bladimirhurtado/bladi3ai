@@ -4,7 +4,7 @@
   "audit_snapshot_date": "2026-10-18",
   "repository": "bladimirhurtado/bladi3ai",
   "default_branch": "main",
-  "status": "active_audit_registry_merged_followup_in_progress",
+  "status": "audit_registry_merged_with_ci_verified_followups",
   "inventory_snapshot": {
     "chatgpt_tool_operations": 1918,
     "tool_groups_or_namespaces": 63,
@@ -359,14 +359,14 @@
     {
       "priority": "P0",
       "task": "Recheck live state of open/stacked pull requests and branch dependencies",
-      "status": "completed_2026-10-18",
-      "evidence": "PR #16 merged; live open-PR snapshot checked. Remaining open PRs and dependency chains are documented in ESTADO-AUDITORIA-2026-10-18.md."
+      "status": "completed_snapshot_2026-10-18",
+      "evidence": "PR #16, #17 and #18 merged after successful CI; open PR snapshot documented in ESTADO-AUDITORIA-2026-10-18.md. Recheck live state again before future merges."
     },
     {
       "priority": "P1",
       "task": "Run skill validator and development-agent tests against current main",
-      "status": "ci_passed_on_pr_head_2026-10-18",
-      "evidence": "GitHub Actions run 39150470118; Validate Bladi 3AI succeeded, including Validate reusable skills and Test development agent. Local runner execution unavailable because github.com DNS resolution failed."
+      "status": "ci_passed_on_pr_heads_2026-10-18",
+      "evidence": "Runs 39150470118, 39151240372 and 39151274416 succeeded; each included Validate reusable skills and Test development agent."
     },
     {
       "priority": "P1",
@@ -376,8 +376,8 @@
     {
       "priority": "P1",
       "task": "Exercise clone command against temporary local Git repositories and unsafe destinations",
-      "status": "pending_functional_positive_clone_test",
-      "evidence": "Existing CI test suite covers unsafe schemes, embedded credentials, and existing destination preservation; a successful clone of a temporary local Git repo still needs a dedicated test."
+      "status": "ci_passed_on_pr_head_2026-10-18",
+      "evidence": "PR #18 merged; GitHub Actions run 39151274416 succeeded. Added test_clones_a_local_git_repository_without_running_project_code, which creates a local temporary Git repo, clones it to a new destination, verifies content and Git metadata, and checks that project code/dependencies were not executed/installed."
     },
     {
       "priority": "P1",
@@ -411,20 +411,36 @@
   ],
   "last_verification": {
     "date": "2026-10-18",
-    "registry_pr": 16,
-    "registry_pr_status": "merged",
-    "merge_commit": "8e78062b8af20d730ded0a5e757521c23ce9d15c",
-    "ci_evidence": {
-      "run_id": 39150470118,
-      "workflow": "Validate Bladi 3AI",
-      "conclusion": "success",
-      "successful_steps": [
-        "Validate required files",
-        "Validate course count",
-        "Validate reusable skills",
-        "Test development agent"
-      ]
-    },
-    "local_execution": "Attempted git clone for local test execution, but this runtime could not resolve github.com; tests were verified through GitHub Actions instead."
+    "main_head_after_audit": "fd5ff7cada84a1f4252acba77e48ebbd272cf0cc",
+    "completed_pull_requests": [
+      {
+        "number": 16,
+        "status": "merged",
+        "merge_commit": "8e78062b8af20d730ded0a5e757521c23ce9d15c",
+        "ci_run": 39150470118,
+        "ci": "success"
+      },
+      {
+        "number": 18,
+        "status": "merged",
+        "merge_commit": "ab79592c20820c14db0c97abd456ca2c77bf1eec",
+        "ci_run": 39151274416,
+        "ci": "success"
+      },
+      {
+        "number": 17,
+        "status": "merged",
+        "merge_commit": "fd5ff7cada84a1f4252acba77e48ebbd272cf0cc",
+        "ci_run": 39151240372,
+        "ci": "success"
+      }
+    ],
+    "successful_ci_steps": [
+      "Validate required files",
+      "Validate course count",
+      "Validate reusable skills",
+      "Test development agent"
+    ],
+    "local_execution": "Direct local clone/test attempt could not start because this runtime failed DNS resolution for github.com. The repository's GitHub Actions runs completed successfully on the relevant PR heads."
   }
 }
