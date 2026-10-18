@@ -129,11 +129,9 @@ El registro y los catálogos están creados y la CI de la instantánea pasa. No 
 - Se comprobó en vivo que el formulario anterior de `OPENROUTER_API_KEY` había expirado; no se encontró ningún valor configurado en TEAM ARENA LAB.
 - Se generó un nuevo formulario seguro de un solo uso para el propietario. El enlace/token no se escribe en Git ni en el registro.
 - Estado AppDeploy consultado de nuevo: TEAM ARENA LAB y Nexus AI Hub están `ready`, sin errores listados de frontend/red/backend; TEAM ARENA LAB no tiene secretos configurados.
-- PR #27, cabeza `5a3a5049fce217d917fc6f101f96351615687ed6`: GitHub Actions run #156 (`39152776017`) terminó en `success`; pasaron los pasos de archivos requeridos, recuento de cursos, validación de skills y tests del agente de desarrollo.
-- PR #27 sigue sin fusionarse. Se mantiene la regla de no fusionar sin autorización explícita.
+- PR #27, documentación de continuidad: fusionada como squash en `2ce619e4ab958893d37c59e3499d898f8202a972`. El run #160 (`39178310822`) pasó en el head final de la PR; el run #161 (`39178336711`) también pasó en `main` después de la fusión. Se añadieron `docs/operations/CIERRE-AUDITORIA-2026-10-18.md` y la actualización de registro.
 - **Bloqueo que permanece:** las llamadas reales a proveedores externos y la validación funcional completa de las 23 skills no pueden declararse terminadas con la evidencia actual. Para probar OpenRouter, el propietario debe completar el formulario seguro y después se ejecutará una llamada real no sensible, verificando modelo, respuesta y coste.
 
 
 ### CI posterior a la actualización anterior
-- El nuevo head anterior de PR #27 `9bd46f759b7778f70f10153155818252ac123389` pasó GitHub Actions run #157 (`39178254567`) con éxito.
-- Se registró ese resultado para no dejar como referencia principal únicamente el run #156. Los commits de documentación posteriores generan su propio CI; se comprobará el run correspondiente antes de considerar la actualización validada.
+- Las ejecuciones de CI posteriores de la PR #27 pasaron: run #157 (`39178254567`), #160 (`39178310822`) y el run post-merge en `main` #161 (`39178336711`). La actualización posterior del registro y de este documento activa nuevos runs en `main`, que deben terminar antes de afirmar que el head más reciente está validado.
