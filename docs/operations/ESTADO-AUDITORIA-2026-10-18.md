@@ -123,3 +123,12 @@ Estos resultados son checks automatizados de los SHA indicados; no equivalen a p
 
 ## Estado de cierre
 El registro y los catálogos están creados y la CI de la instantánea pasa. No se declara terminada la auditoría funcional de las 23 skills: la matriz de aceptación existe, pero las pruebas específicas de tarea y las cadenas de colaboración siguen pendientes. Tampoco se declara validada la orquestación multi-proveedor sin la clave y llamadas reales.
+
+
+## Actualización verificada — cierre de continuidad (2026-10-18)
+- Se comprobó en vivo que el formulario anterior de `OPENROUTER_API_KEY` había expirado; no se encontró ningún valor configurado en TEAM ARENA LAB.
+- Se generó un nuevo formulario seguro de un solo uso para el propietario. El enlace/token no se escribe en Git ni en el registro.
+- Estado AppDeploy consultado de nuevo: TEAM ARENA LAB y Nexus AI Hub están `ready`, sin errores listados de frontend/red/backend; TEAM ARENA LAB no tiene secretos configurados.
+- PR #27, cabeza `5a3a5049fce217d917fc6f101f96351615687ed6`: GitHub Actions run #156 (`39152776017`) terminó en `success`; pasaron los pasos de archivos requeridos, recuento de cursos, validación de skills y tests del agente de desarrollo.
+- PR #27 sigue sin fusionarse. Se mantiene la regla de no fusionar sin autorización explícita.
+- **Bloqueo que permanece:** las llamadas reales a proveedores externos y la validación funcional completa de las 23 skills no pueden declararse terminadas con la evidencia actual. Para probar OpenRouter, el propietario debe completar el formulario seguro y después se ejecutará una llamada real no sensible, verificando modelo, respuesta y coste.
