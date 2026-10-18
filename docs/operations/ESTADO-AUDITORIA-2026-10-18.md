@@ -111,3 +111,29 @@ Estos resultados son checks automatizados de los SHA indicados; no equivalen a p
 - GitHub Actions run `39151934668` terminó en success, incluidos `Validate required files`, `Validate course count`, `Validate reusable skills` y `Test development agent`.
 - Se verificó que `tool-catalog-snapshot.json` contiene 1.918 nombres únicos en 64 namespaces, `skill-catalog-snapshot.json` contiene 253 URIs únicos y `SKILL-VALIDATION-MATRIX.md` contiene 23 filas de skills propias.
 - Estos archivos están en `main`; el inventario está guardado y disponible para retomar en otro chat. Las pruebas funcionales por skill y la conexión externa siguen diferenciadas como pendientes/bloqueadas en el registro.
+
+
+## Consolidación final de esta sesión (2026-10-18)
+- Catálogos completos de herramientas y skills ya están en `main`: `tool-catalog-snapshot.json` (1.918 operaciones/64 namespaces) y `skill-catalog-snapshot.json` (253 definiciones expuestas).
+- La validación de CI para el commit de catálogo terminó con éxito: run #155, ID `39152625394`, incluidos validador de skills y tests del agente de desarrollo.
+- PR #26 se cerró sin fusionar porque los catálogos ya estaban en `main` y la rama contenía documentación antigua. No se perdió el catálogo vigente.
+- Nexus Core sigue verificado con una respuesta real de prueba; los proveedores externos siguen bloqueados hasta que el propietario envíe una clave válida de OpenRouter por el formulario seguro de AppDeploy.
+- Estado del formulario: `pending_value`; el valor de la clave no se almacena en este repositorio ni debe pegarse en el chat.
+- Fuente de continuidad para futuros chats: este archivo, junto con `registry.json`, `REGISTRO-MAESTRO-HERRAMIENTAS-SKILLS.md` y `SKILL-VALIDATION-MATRIX.md`.
+
+## Estado de cierre
+El registro y los catálogos están creados y la CI de la instantánea pasa. No se declara terminada la auditoría funcional de las 23 skills: la matriz de aceptación existe, pero las pruebas específicas de tarea y las cadenas de colaboración siguen pendientes. Tampoco se declara validada la orquestación multi-proveedor sin la clave y llamadas reales.
+
+
+## Actualización verificada — cierre de continuidad (2026-10-18)
+- Se comprobó en vivo que el formulario anterior de `OPENROUTER_API_KEY` había expirado; no se encontró ningún valor configurado en TEAM ARENA LAB.
+- Se generó un nuevo formulario seguro de un solo uso para el propietario. El enlace/token no se escribe en Git ni en el registro.
+- Estado AppDeploy consultado de nuevo: TEAM ARENA LAB y Nexus AI Hub están `ready`, sin errores listados de frontend/red/backend; TEAM ARENA LAB no tiene secretos configurados.
+- PR #27, cabeza `5a3a5049fce217d917fc6f101f96351615687ed6`: GitHub Actions run #156 (`39152776017`) terminó en `success`; pasaron los pasos de archivos requeridos, recuento de cursos, validación de skills y tests del agente de desarrollo.
+- PR #27 sigue sin fusionarse. Se mantiene la regla de no fusionar sin autorización explícita.
+- **Bloqueo que permanece:** las llamadas reales a proveedores externos y la validación funcional completa de las 23 skills no pueden declararse terminadas con la evidencia actual. Para probar OpenRouter, el propietario debe completar el formulario seguro y después se ejecutará una llamada real no sensible, verificando modelo, respuesta y coste.
+
+
+### CI posterior a la actualización anterior
+- El nuevo head anterior de PR #27 `9bd46f759b7778f70f10153155818252ac123389` pasó GitHub Actions run #157 (`39178254567`) con éxito.
+- Se registró ese resultado para no dejar como referencia principal únicamente el run #156. Los commits de documentación posteriores generan su propio CI; se comprobará el run correspondiente antes de considerar la actualización validada.
