@@ -450,6 +450,13 @@
         "merge_commit": "e61c2dafb46b14ccb4bd02ed6d95144f423bc366",
         "ci_run": 39151553448,
         "ci": "success"
+      },
+      {
+        "number": 21,
+        "status": "merged",
+        "merge_commit": "939b376ecc0881bfc5ef7bc494e8838c529dbd67",
+        "ci_run": 39151755220,
+        "ci": "success"
       }
     ],
     "successful_ci_steps": [
