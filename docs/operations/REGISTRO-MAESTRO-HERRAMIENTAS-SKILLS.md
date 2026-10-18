@@ -25,7 +25,7 @@
 
 Instantánea tomada el 2026-10-18 desde los catálogos visibles en esta sesión:
 
-- **1.918 operaciones de herramientas** inventariadas en 63 grupos/namespaces.
+- **1.918 operaciones de herramientas** inventariadas en 64 grupos/namespaces.
 - **253 definiciones de skills** expuestas por el catálogo de skills en esa consulta.
 - Estas cifras son una instantánea del entorno, no una promesa de disponibilidad permanente ni un recuento de cuentas conectadas.
 - La biblioteca de skills de ChatGPT y las skills propias versionadas en este repositorio son inventarios distintos.
