@@ -628,6 +628,6 @@
   "catalog_artifacts": {
     "tool_index": "docs/operations/tool-catalog-snapshot.json",
     "skill_index": "docs/operations/skill-catalog-snapshot.json",
-    "note": "Both are dated runtime snapshots of exposed names and descriptions, not connectivity or functional-readiness attestations."
+    "note": "Dated runtime snapshots; not proof of connectivity or functional readiness."
   }
 }
