@@ -3,7 +3,7 @@
 > **Propósito:** ser el índice operativo para localizar capacidades antes de iniciar cualquier trabajo.  
 > **Última auditoría de inventario:** 2026-10-18.  
 > **Repositorio:** `bladimirhurtado/bladi3ai`.  
-> **Estado de este documento:** registro maestro fusionado en `main`; auditoría de seguimiento actualizada tras fusionar PR #16, #17 y #18 el 2026-10-18.
+> **Estado de este documento:** registro maestro fusionado en `main`; auditoría y matriz de validación actualizadas el 2026-10-18 tras las PR #16–#19.
 
 ## 1. Reglas de uso
 
@@ -25,7 +25,7 @@
 
 Instantánea tomada el 2026-10-18 desde los catálogos visibles en esta sesión:
 
-- **1.918 operaciones de herramientas** inventariadas en 63 grupos/namespaces.
+- **1.918 operaciones de herramientas** inventariadas en 64 grupos/namespaces.
 - **253 definiciones de skills** expuestas por el catálogo de skills en esa consulta.
 - Estas cifras son una instantánea del entorno, no una promesa de disponibilidad permanente ni un recuento de cuentas conectadas.
 - La biblioteca de skills de ChatGPT y las skills propias versionadas en este repositorio son inventarios distintos.
@@ -156,7 +156,14 @@ No asignar un nivel superior sin evidencia enlazada (commit, ejecución, log san
 
 Los estados, evidencias y limitaciones detallados se mantienen en el JSON para facilitar automatización.
 
-## 8. Mantenimiento del registro
+## 8. Estado verificado de aplicaciones y validación de skills
+
+- PR #19 consolidó la evidencia de CI y la prueba positiva de clonación; se fusionó en `main` como commit `2ffef460ff977969a9592b9b265b275a6dd04db5` después de que el run `39151388013` terminara con éxito.
+- AppDeploy: `team-arena-lab-qkz2uh` aparece `ready`; su última instantánea no lista errores frontend, de red ni backend, pero no tiene nombres de secretos configurados. Esto no demuestra llamadas reales a modelos.
+- AppDeploy: `nexus-ai-hub-t0xi3v` aparece `ready`; su última instantánea tampoco lista errores frontend, de red ni backend y la lista de nombres de secretos está vacía. Es una aplicación distinta del despliegue Netlify de Nexus.
+- La matriz `SKILL-VALIDATION-MATRIX.md` define una prueba de aceptación por cada una de las 23 skills propias. No convierte las pruebas pendientes en aprobadas: las pruebas de tarea deben ejecutarse y enlazarse antes de elevar la madurez.
+
+## 9. Mantenimiento del registro
 
 - Actualizar este archivo cuando se agregue, retire o cambie de función una skill, agente o integración.
 - Actualizar la instantánea del catálogo solo después de volver a consultar el entorno; no asumir que los conteos siguen iguales.
