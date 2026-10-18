@@ -160,8 +160,9 @@ Los estados, evidencias y limitaciones detallados se mantienen en el JSON para f
 
 - PR #19 consolidó la evidencia de CI y la prueba positiva de clonación; se fusionó en `main` como commit `2ffef460ff977969a9592b9b265b275a6dd04db5` después de que el run `39151388013` terminara con éxito.
 - AppDeploy: `team-arena-lab-qkz2uh` aparece `ready`; su última instantánea no lista errores frontend, de red ni backend, pero no tiene nombres de secretos configurados. Esto no demuestra llamadas reales a modelos.
-- AppDeploy: `nexus-ai-hub-t0xi3v` aparece `ready`; su última instantánea tampoco lista errores frontend, de red ni backend y la lista de nombres de secretos está vacía. Es una aplicación distinta del despliegue Netlify de Nexus.
+- AppDeploy: `nexus-ai-hub-t0xi3v` aparece `ready`; su última instantánea tampoco lista errores frontend, de red ni backend y la lista de nombres de secretos está vacía. Además, una prueba de humo en vivo del 2026-10-18 respondió correctamente con `Nexus Core` / `nexus-core` al prompt de prueba. Esto valida el núcleo integrado, no los proveedores externos ni el despliegue Netlify de Nexus.
 - La matriz `SKILL-VALIDATION-MATRIX.md` define una prueba de aceptación por cada una de las 23 skills propias. No convierte las pruebas pendientes en aprobadas: las pruebas de tarea deben ejecutarse y enlazarse antes de elevar la madurez.
+- PR #20 se fusionó como `e61c2dafb46b14ccb4bd02ed6d95144f423bc366`; CI run `39151553448` pasó.
 
 ## 9. Mantenimiento del registro
 
