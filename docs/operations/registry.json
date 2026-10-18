@@ -4,7 +4,7 @@
   "audit_snapshot_date": "2026-10-18",
   "repository": "bladimirhurtado/bladi3ai",
   "default_branch": "main",
-  "status": "audit_registry_merged_with_ci_verified_followups",
+  "status": "audit_registry_merged_with_core_smoke_verified",
   "inventory_snapshot": {
     "chatgpt_tool_operations": 1918,
     "tool_groups_or_namespaces": 64,
@@ -384,8 +384,8 @@
     {
       "priority": "P1",
       "task": "Verify Nexus multi-AI provider calls, real model attribution, partial failure behavior, and cost",
-      "status": "blocked_missing_provider_secret_confirmed_in_appdeploy",
-      "evidence": "Live AppDeploy inspection on 2026-10-18: team-arena-lab-qkz2uh is ready with no listed frontend/network/backend errors, but its configured secret-name list is empty. nexus-ai-hub-t0xi3v is also ready with empty secret-name list. No real model calls are claimed."
+      "status": "core_smoke_passed_external_provider_calls_blocked",
+      "evidence": "Live smoke test on 2026-10-18: AppDeploy Nexus AI Hub (app nexus-ai-hub-t0xi3v) returned the exact requested response via Nexus Core/nexus-core; run a1c24028-104e-428c-941a-976f5ef8e58c. No external providers were selected and no provider secrets are configured, so external-provider attribution, partial failures and costs remain unverified."
     },
     {
       "priority": "P2",
@@ -413,7 +413,7 @@
   ],
   "last_verification": {
     "date": "2026-10-18",
-    "main_head_after_audit": "2ffef460ff977969a9592b9b265b275a6dd04db5",
+    "main_head_after_audit": "e61c2dafb46b14ccb4bd02ed6d95144f423bc366",
     "completed_pull_requests": [
       {
         "number": 16,
@@ -441,6 +441,13 @@
         "status": "merged",
         "merge_commit": "2ffef460ff977969a9592b9b265b275a6dd04db5",
         "ci_run": 39151388013,
+        "ci": "success"
+      },
+      {
+        "number": 20,
+        "status": "merged",
+        "merge_commit": "e61c2dafb46b14ccb4bd02ed6d95144f423bc366",
+        "ci_run": 39151553448,
         "ci": "success"
       }
     ],
@@ -473,6 +480,22 @@
       "tool_namespaces": 64,
       "chatgpt_skill_definitions": 253,
       "bladi3ai_first_party_skill_packages": 23
-    }
+    },
+    "live_smoke_tests": [
+      {
+        "date": "2026-10-18",
+        "app_id": "nexus-ai-hub-t0xi3v",
+        "environment": "AppDeploy prototype",
+        "run_id": "a1c24028-104e-428c-941a-976f5ef8e58c",
+        "provider": "Nexus Core",
+        "model": "nexus-core",
+        "result": "success",
+        "prompt": "Responde únicamente: NEXUS CORE OK",
+        "observed_response": "Responde únicamente: NEXUS CORE OK",
+        "external_providers_selected": 0,
+        "configured_secret_names": [],
+        "limitation": "This verifies the integrated Nexus Core path only; it does not verify OpenAI/Groq/Mistral/Kimi/Gemini or the Netlify production deployment."
+      }
+    ]
   }
 }
