@@ -18,11 +18,11 @@
 - Intento de ejecutar `git clone` para correr pruebas en este entorno: falló antes de empezar por resolución DNS de `github.com`. No se interpreta como fallo del código; tampoco se afirma que las pruebas locales se hayan ejecutado.
 
 ## Estado de PR y dependencias detectadas en la consulta del 2026-10-18
-- **#15 — orquestación multi-IA:** abierta. La documentación de la PR indica que falta el secreto de servidor `OPENROUTER_API_KEY`; las llamadas reales a modelos y síntesis de extremo a extremo siguen bloqueadas. No imprimir ni almacenar claves.
-- **#6 — reverse engineering workbench:** abierta; base de la cadena de trabajo de ingeniería inversa. Revisar conflictos y CI antes de considerar fusión.
-- **#8 — inspector APK / red team controlado:** abierta y dependiente de la rama `feat/reverse-engineering-workbench`; no confundir análisis estático con veredicto de malware.
-- **#10 — skill de investigación/análisis/código:** abierta y construida sobre `feat/ark-apk-static-inspector`; comprobar la cadena #6 → #8 → #10 y no reorientar bases automáticamente.
-- **#1 y #2 — AEGIS:** abiertas en ramas aisladas de competencia. Mantenerlas separadas de Nexus; no ejecutar pruebas externas sin autorización y alcance explícitos. #2 conserva el riesgo histórico de divulgación parcial de canary descrito en su PR.
+- **#15 — orquestación multi-IA:** abierta, `mergeable=false`, base `main` con SHA anterior a la cabeza actual. La documentación de la PR indica que falta el secreto de servidor `OPENROUTER_API_KEY`; las llamadas externas reales y síntesis multi-proveedor siguen bloqueadas. No imprimir ni almacenar claves.
+- **#6 — reverse engineering workbench:** abierta, base `main`, `mergeable=false`; cabeza `feat/reverse-engineering-workbench` (`05be051d…`). Resolver divergencia/conflictos y revisar CI antes de considerar fusión.
+- **#8 — inspector APK / red team controlado:** abierta, `mergeable=true`, base `feat/reverse-engineering-workbench` exactamente en la cabeza de PR #6; rama `feat/ark-apk-static-inspector` (`db07ae57…`). No confundir análisis estático con veredicto de malware.
+- **#10 — skill de investigación/análisis/código:** abierta, `mergeable=true`, base `feat/ark-apk-static-inspector` exactamente en la cabeza de PR #8; rama `feat/skill-investigacion-analisis-codigo-v2` (`0d8dbb97…`). Mantener la cadena #6 → #8 → #10; no reorientar bases automáticamente.
+- **#1 y #2 — AEGIS:** abiertas y en borrador, `mergeable=true`, cadena separada: #1 base `aegis-competition-v0.3` → head `aegis-competition-v0.4`; #2 base `aegis-competition-v0.4` → head `aegis-live-model-v0.1`. Mantenerlas separadas de Nexus; no ejecutar pruebas externas sin autorización y alcance explícitos. #2 conserva el riesgo histórico de divulgación parcial de canary descrito en su PR.
 - PR #11–#14 constaban cerradas/fusionadas en la búsqueda de PR cerradas; volver a consultar si se va a desplegar o cambiar producción.
 - PR #16 ya no está pendiente: fusionada como se indica arriba.
 - **PR #19 — consolidación del registro y evidencia:** fusionada como `2ffef460ff977969a9592b9b265b275a6dd04db5`; CI run `39151388013` pasó.
@@ -41,6 +41,13 @@
 - Run de navegador: `a1c24028-104e-428c-941a-976f5ef8e58c`.
 - No se seleccionaron proveedores externos; el recuento visible fue `External Providers: 0`, `Claves activas: 0`. Por tanto, esto prueba el núcleo integrado, no las llamadas reales a OpenAI/Groq/Mistral/Kimi/Gemini ni el despliegue Netlify.
 - La aplicación TEAM ARENA LAB sigue sin `OPENROUTER_API_KEY` configurada y debe bloquear las llamadas externas, según su código y pruebas descritas en su snapshot.
+
+## Snapshot de metadatos GitHub (2026-10-18)
+- #6: no mergeable; es el bloqueo de la cadena de ingeniería inversa.
+- #8: mergeable, pero su base apunta a la cabeza de #6; no fusionar aislada a `main`.
+- #10: mergeable, pero su base apunta a la cabeza de #8; no fusionar aislada a `main`.
+- #15: no mergeable; además, no hay secreto de proveedor configurado en AppDeploy para TEAM ARENA LAB.
+- #1/#2: drafts independientes para AEGIS, ambas mergeable dentro de su cadena; no fusionar a `main`.
 
 ## Próximas acciones
 1. **Completado:** prueba positiva de `dev_agent.py clone`; CI run `39151274416` pasó y PR #18 quedó fusionada.
