@@ -7,10 +7,10 @@
   "status": "audit_registry_merged_with_ci_verified_followups",
   "inventory_snapshot": {
     "chatgpt_tool_operations": 1918,
-    "tool_groups_or_namespaces": 63,
+    "tool_groups_or_namespaces": 64,
     "chatgpt_skill_definitions": 253,
     "bladi3ai_first_party_skill_packages": 23,
-    "note": "Counts are session snapshots, not guarantees of permanent availability, connection, authorization, or functional readiness."
+    "note": "Counts are session snapshots from 2026-10-18 (1,918 tool definitions, 64 namespaces, 253 skill definitions); they are not guarantees of permanent availability, connection, authorization, or functional readiness."
   },
   "maturity_scale": {
     "M0": "catalogued_only",
@@ -466,6 +466,13 @@
       "nexus_backend_errors": 0,
       "nexus_configured_secret_names": [],
       "note": "AppDeploy readiness confirms the prototype is deployed and its latest QA snapshot showed no listed errors; empty secret lists mean real provider/API execution is not proven."
+    },
+    "current_catalog_snapshot": {
+      "date": "2026-10-18",
+      "tool_definitions": 1918,
+      "tool_namespaces": 64,
+      "chatgpt_skill_definitions": 253,
+      "bladi3ai_first_party_skill_packages": 23
     }
   }
 }
