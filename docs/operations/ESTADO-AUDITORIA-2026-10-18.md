@@ -132,3 +132,8 @@ El registro y los catálogos están creados y la CI de la instantánea pasa. No 
 - PR #27, cabeza `5a3a5049fce217d917fc6f101f96351615687ed6`: GitHub Actions run #156 (`39152776017`) terminó en `success`; pasaron los pasos de archivos requeridos, recuento de cursos, validación de skills y tests del agente de desarrollo.
 - PR #27 sigue sin fusionarse. Se mantiene la regla de no fusionar sin autorización explícita.
 - **Bloqueo que permanece:** las llamadas reales a proveedores externos y la validación funcional completa de las 23 skills no pueden declararse terminadas con la evidencia actual. Para probar OpenRouter, el propietario debe completar el formulario seguro y después se ejecutará una llamada real no sensible, verificando modelo, respuesta y coste.
+
+
+### CI posterior a la actualización anterior
+- El nuevo head anterior de PR #27 `9bd46f759b7778f70f10153155818252ac123389` pasó GitHub Actions run #157 (`39178254567`) con éxito.
+- Se registró ese resultado para no dejar como referencia principal únicamente el run #156. Los commits de documentación posteriores generan su propio CI; se comprobará el run correspondiente antes de considerar la actualización validada.
