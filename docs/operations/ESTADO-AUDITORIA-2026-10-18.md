@@ -104,3 +104,10 @@ Estos recuentos describen la instantánea de esta sesión, no una garantía de c
 - PR #2 head `59f90e73…`: AEGIS synthetic/scope-gate run 38437533541, live-model-harness checks run 38437533535 y CodeQL run 38437533553, todos success. El resultado de CodeQL conserva diagnósticos de parseo en el archivo Nexus preexistente; éxito no equivale a certificación de seguridad. La PR documenta además una divulgación parcial intermitente de canary en una ejecución histórica.
 
 Estos resultados son checks automatizados de los SHA indicados; no equivalen a pruebas de proveedor en producción ni se transfieren automáticamente a commits posteriores.
+
+
+## Cierre de inventario completo — PR #22
+- PR #22 quedó fusionada en `main` como `c9af07d3d6e9064e23f622d9adfe062ec4637fc7`.
+- GitHub Actions run `39151934668` terminó en success, incluidos `Validate required files`, `Validate course count`, `Validate reusable skills` y `Test development agent`.
+- Se verificó que `tool-catalog-snapshot.json` contiene 1.918 nombres únicos en 64 namespaces, `skill-catalog-snapshot.json` contiene 253 URIs únicos y `SKILL-VALIDATION-MATRIX.md` contiene 23 filas de skills propias.
+- Estos archivos están en `main`; el inventario está guardado y disponible para retomar en otro chat. Las pruebas funcionales por skill y la conexión externa siguen diferenciadas como pendientes/bloqueadas en el registro.
