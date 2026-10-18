@@ -395,7 +395,8 @@
     {
       "priority": "P2",
       "task": "Record real connector connection/permission state for commonly used external tools without storing credentials",
-      "status": "pending"
+      "status": "partial_appdeploy_snapshot_recorded_2026-10-18",
+      "evidence": "AppDeploy app status and secret-name lists were checked for TEAM ARENA LAB and Nexus prototype; the broader external connector permission audit remains task-specific and pending."
     },
     {
       "priority": "P3",
@@ -413,7 +414,7 @@
   ],
   "last_verification": {
     "date": "2026-10-18",
-    "main_head_after_audit": "e61c2dafb46b14ccb4bd02ed6d95144f423bc366",
+    "main_head_after_audit": "939b376ecc0881bfc5ef7bc494e8838c529dbd67",
     "completed_pull_requests": [
       {
         "number": 16,
@@ -479,7 +480,11 @@
       "tool_definitions": 1918,
       "tool_namespaces": 64,
       "chatgpt_skill_definitions": 253,
-      "bladi3ai_first_party_skill_packages": 23
+      "bladi3ai_first_party_skill_packages": 23,
+      "files": [
+        "docs/operations/tool-catalog-snapshot.json",
+        "docs/operations/skill-catalog-snapshot.json"
+      ]
     },
     "live_smoke_tests": [
       {
@@ -524,7 +529,9 @@
         "base": "main",
         "head": "feat/reverse-engineering-workbench",
         "mergeable": false,
-        "blocker": "branch/base requires conflict and CI review before merge"
+        "blocker": "diverged from main; do not merge until conflicts and CI are resolved",
+        "ahead_by": 34,
+        "behind_by": 11
       },
       {
         "number": 8,
@@ -534,7 +541,9 @@
         "base": "feat/reverse-engineering-workbench",
         "head": "feat/ark-apk-static-inspector",
         "mergeable": true,
-        "dependency": "PR #6"
+        "dependency": "PR #6",
+        "ahead_by": 19,
+        "behind_by": 0
       },
       {
         "number": 10,
@@ -544,7 +553,9 @@
         "base": "feat/ark-apk-static-inspector",
         "head": "feat/skill-investigacion-analisis-codigo-v2",
         "mergeable": true,
-        "dependency": "PR #8"
+        "dependency": "PR #8",
+        "ahead_by": 3,
+        "behind_by": 0
       },
       {
         "number": 15,
@@ -554,8 +565,15 @@
         "base": "main",
         "head": "feat/team-arena-orchestrator-operational",
         "mergeable": false,
-        "blocker": "missing provider secret; base SHA predates current main"
+        "blocker": "diverged from main and missing OPENROUTER_API_KEY",
+        "ahead_by": 2,
+        "behind_by": 6
       }
     ]
+  },
+  "catalog_artifacts": {
+    "tool_index": "docs/operations/tool-catalog-snapshot.json",
+    "skill_index": "docs/operations/skill-catalog-snapshot.json",
+    "note": "Both are dated runtime snapshots of exposed names and descriptions, not connectivity or functional-readiness attestations."
   }
 }
