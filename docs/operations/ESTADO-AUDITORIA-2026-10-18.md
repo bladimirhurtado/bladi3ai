@@ -111,3 +111,18 @@ Estos resultados son checks automatizados de los SHA indicados; no equivalen a p
 - GitHub Actions run `39151934668` terminó en success, incluidos `Validate required files`, `Validate course count`, `Validate reusable skills` y `Test development agent`.
 - Se verificó que `tool-catalog-snapshot.json` contiene 1.918 nombres únicos en 64 namespaces, `skill-catalog-snapshot.json` contiene 253 URIs únicos y `SKILL-VALIDATION-MATRIX.md` contiene 23 filas de skills propias.
 - Estos archivos están en `main`; el inventario está guardado y disponible para retomar en otro chat. Las pruebas funcionales por skill y la conexión externa siguen diferenciadas como pendientes/bloqueadas en el registro.
+
+
+## Índices completos del catálogo (2026-10-18)
+- `docs/operations/tool-catalog-snapshot.json`: 1.918 nombres/descripciones resumidas de operaciones expuestas en 64 namespaces.
+- `docs/operations/skill-catalog-snapshot.json`: 253 URIs y descripciones de skills expuestas.
+- `docs/operations/SKILL-VALIDATION-MATRIX.md`: 23 pruebas de aceptación propuestas para las 23 skills propias.
+- Son snapshots de sesión, no garantías de conexión, permisos o eficacia funcional.
+
+## Bloqueos de ramas verificados
+- PR #6: divergente frente a `main`, 34 ahead / 11 behind, no mergeable.
+- PR #8: 19 commits ahead de la base PR #6; depende de #6.
+- PR #10: 3 commits ahead de la base PR #8; depende de #8.
+- PR #15: 2 ahead / 6 behind `main`, no mergeable y sin `OPENROUTER_API_KEY` configurada en TEAM ARENA LAB.
+- PR #1/#2 son una cadena AEGIS separada, en borrador.
+- La entrada segura temporal para `OPENROUTER_API_KEY` está pendiente de que se introduzca el valor por el formulario de un solo uso; no se guarda ningún secreto en Git.
