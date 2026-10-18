@@ -414,7 +414,7 @@
   ],
   "last_verification": {
     "date": "2026-10-18",
-    "main_head_after_audit": "939b376ecc0881bfc5ef7bc494e8838c529dbd67",
+    "main_head_after_audit": "c9af07d3d6e9064e23f622d9adfe062ec4637fc7",
     "completed_pull_requests": [
       {
         "number": 16,
@@ -456,6 +456,13 @@
         "status": "merged",
         "merge_commit": "939b376ecc0881bfc5ef7bc494e8838c529dbd67",
         "ci_run": 39151755220,
+        "ci": "success"
+      },
+      {
+        "number": 22,
+        "status": "merged",
+        "merge_commit": "c9af07d3d6e9064e23f622d9adfe062ec4637fc7",
+        "ci_run": 39151934668,
         "ci": "success"
       }
     ],
@@ -639,7 +646,26 @@
           }
         ]
       }
-    ]
+    ],
+    "catalog_verification": {
+      "tool_catalog": {
+        "path": "docs/operations/tool-catalog-snapshot.json",
+        "count": 1918,
+        "unique_names": 1918,
+        "namespaces": 64,
+        "valid_json": true
+      },
+      "skill_catalog": {
+        "path": "docs/operations/skill-catalog-snapshot.json",
+        "count": 253,
+        "unique_uris": 253,
+        "valid_json": true
+      },
+      "own_skill_validation_matrix": {
+        "path": "docs/operations/SKILL-VALIDATION-MATRIX.md",
+        "rows": 23
+      }
+    }
   },
   "catalog_artifacts": {
     "tool_index": "docs/operations/tool-catalog-snapshot.json",
