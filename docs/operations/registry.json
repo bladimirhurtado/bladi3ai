@@ -4,7 +4,7 @@
   "audit_snapshot_date": "2026-10-18",
   "repository": "bladimirhurtado/bladi3ai",
   "default_branch": "main",
-  "status": "audit_registry_merged_with_core_smoke_verified",
+  "status": "audit_registry_updated_ci_passed_external_provider_validation_blocked_pending_secret",
   "inventory_snapshot": {
     "chatgpt_tool_operations": 1918,
     "tool_groups_or_namespaces": 64,
@@ -667,16 +667,17 @@
       }
     },
     "latest_ci_evidence": {
-      "run_id": 39152625394,
-      "run_number": 155,
-      "commit": "056f10933065767f1972e60d500198dcaa396f13",
+      "run_id": 39152776017,
+      "run_number": 156,
+      "commit": "5a3a5049fce217d917fc6f101f96351615687ed6",
       "result": "success",
       "steps": [
         "Validate required files",
         "Validate course count",
         "Validate reusable skills",
         "Test development agent"
-      ]
+      ],
+      "note": "This run validates the PR #27 head; it is not a functional test of all 23 skills or external model providers."
     },
     "closed_redundant_prs": [
       {
@@ -691,7 +692,7 @@
       "app_id": "team-arena-lab-qkz2uh",
       "secret_name": "OPENROUTER_API_KEY",
       "status": "pending_value",
-      "note": "User must submit the key through AppDeploy's one-time secure form. No secret value is stored in Git or chat."
+      "note": "Previous one-time entry expired and was replaced on 2026-10-18. A fresh secure form is available in the current conversation; its URL/token is deliberately not stored in Git. AppDeploy currently lists no configured secrets."
     }
   },
   "catalog_artifacts": {
