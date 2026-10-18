@@ -76,7 +76,7 @@ Estos recuentos describen la instantánea de esta sesión, no una garantía de c
 
 
 ## Índices completos del catálogo (2026-10-18)
-- `docs/operations/tool-catalog-snapshot.json`: 1.918 nombres/descriciones resumidas de operaciones expuestas en 64 namespaces.
+- `docs/operations/tool-catalog-snapshot.json`: 1.918 nombres/descripciones resumidas de operaciones expuestas en 64 namespaces.
 - `docs/operations/skill-catalog-snapshot.json`: 253 URIs y descripciones de skills expuestas.
 - `docs/operations/SKILL-VALIDATION-MATRIX.md`: 23 pruebas de aceptación propuestas para las 23 skills propias.
 - Los índices son snapshots y no prueban conexión, permisos ni eficacia funcional.
@@ -88,3 +88,8 @@ Estos recuentos describen la instantánea de esta sesión, no una garantía de c
 - PR #15: 2 commits ahead / 6 behind de `main`, `mergeable=false`, y sin `OPENROUTER_API_KEY` configurada en TEAM ARENA LAB.
 - PR #1 y #2 son una cadena AEGIS separada y en borrador; mantenerla separada de Nexus.
 - Se creó una entrada segura temporal para `OPENROUTER_API_KEY` en AppDeploy app `team-arena-lab-qkz2uh`; el estado consultado fue `pending_value`. El enlace de un solo uso se mantiene en la conversación y no se guarda en Git.
+
+
+## Fusión de PR #21
+- PR #21 quedó fusionada en `main` como `939b376ecc0881bfc5ef7bc494e8838c529dbd67` tras CI run `39151755220` exitoso.
+- Esa PR registra la prueba de humo en vivo de Nexus Core y los bloqueos externos; no implica que se hayan configurado proveedores externos.
