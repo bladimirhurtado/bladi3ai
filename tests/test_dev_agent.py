@@ -1,5 +1,7 @@
 """Tests for the standard-library development agent CLI."""
 import json
+import shutil
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -122,6 +124,47 @@ class CloneSafetyTests(unittest.TestCase):
         with self.assertRaises(dev_agent.AgentError):
             dev_agent.clone_repository(str(self.repo), str(destination))
         self.assertEqual(sentinel.read_text(encoding="utf-8"), "keep")
+
+    def test_clones_a_local_git_repository_without_running_project_code(self):
+        if not shutil.which("git"):
+            self.skipTest("Git is not available in this environment")
+
+        source = self.root / "valid-source"
+        source.mkdir()
+        subprocess.run(
+            ["git", "init", "-b", "main", str(source)],
+            check=True, capture_output=True, text=True,
+        )
+        subprocess.run(
+            ["git", "-C", str(source), "config", "user.name", "CI Test"],
+            check=True, capture_output=True, text=True,
+        )
+        subprocess.run(
+            ["git", "-C", str(source), "config", "user.email", "ci-test@example.invalid"],
+            check=True, capture_output=True, text=True,
+        )
+        (source / "README.md").write_text("# Safe fixture\\n", encoding="utf-8")
+        subprocess.run(
+            ["git", "-C", str(source), "add", "README.md"],
+            check=True, capture_output=True, text=True,
+        )
+        subprocess.run(
+            ["git", "-C", str(source), "commit", "-m", "fixture"],
+            check=True, capture_output=True, text=True,
+        )
+
+        destination = self.root / "cloned"
+        result = dev_agent.clone_repository(str(source), str(destination))
+
+        self.assertTrue(result["success"])
+        self.assertFalse(result["project_code_executed"])
+        self.assertFalse(result["dependencies_installed"])
+        self.assertEqual((destination / "README.md").read_text(encoding="utf-8"), "# Safe fixture\\n")
+        probe = subprocess.run(
+            ["git", "-C", str(destination), "rev-parse", "--is-inside-work-tree"],
+            check=True, capture_output=True, text=True,
+        )
+        self.assertEqual(probe.stdout.strip(), "true")
 
 
 class CliTests(unittest.TestCase):
