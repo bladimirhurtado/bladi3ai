@@ -50,3 +50,12 @@
 - No fusionar cadenas de PR sin revisar bases, checks y alcance.
 - No desplegar producción ni incurrir en costes adicionales fuera de las autorizaciones existentes.
 - Al retomar en otro chat: leer este archivo y el registro JSON, consultar PR/CI en vivo y continuar desde el primer pendiente.
+
+
+## Instantánea del catálogo de ChatGPT (2026-10-18)
+- 1.918 definiciones de herramientas.
+- 64 namespaces de herramientas.
+- 253 definiciones de skills.
+- 23 skills propias en Bladi 3AI, comprobadas contra el validador del repositorio.
+
+Estos recuentos describen la instantánea de esta sesión, no una garantía de conexión o disponibilidad funcional.
