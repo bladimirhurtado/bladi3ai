@@ -73,3 +73,18 @@
 - 23 skills propias en Bladi 3AI, comprobadas contra el validador del repositorio.
 
 Estos recuentos describen la instantánea de esta sesión, no una garantía de conexión o disponibilidad funcional.
+
+
+## Índices completos del catálogo (2026-10-18)
+- `docs/operations/tool-catalog-snapshot.json`: 1.918 nombres/descriciones resumidas de operaciones expuestas en 64 namespaces.
+- `docs/operations/skill-catalog-snapshot.json`: 253 URIs y descripciones de skills expuestas.
+- `docs/operations/SKILL-VALIDATION-MATRIX.md`: 23 pruebas de aceptación propuestas para las 23 skills propias.
+- Los índices son snapshots y no prueban conexión, permisos ni eficacia funcional.
+
+## Diferencias y bloqueos de PR verificados
+- PR #6: divergente frente a `main`, 34 commits ahead / 11 behind, `mergeable=false`; no fusionar sin resolver conflictos y repetir CI.
+- PR #8: 19 commits ahead / 0 behind de su base PR #6; sigue dependiendo de esa rama.
+- PR #10: 3 commits ahead / 0 behind de su base PR #8; sigue dependiendo de esa rama.
+- PR #15: 2 commits ahead / 6 behind de `main`, `mergeable=false`, y sin `OPENROUTER_API_KEY` configurada en TEAM ARENA LAB.
+- PR #1 y #2 son una cadena AEGIS separada y en borrador; mantenerla separada de Nexus.
+- Se creó una entrada segura temporal para `OPENROUTER_API_KEY` en AppDeploy app `team-arena-lab-qkz2uh`; el estado consultado fue `pending_value`. El enlace de un solo uso se mantiene en la conversación y no se guarda en Git.
