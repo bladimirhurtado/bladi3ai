@@ -23,6 +23,8 @@
 
 ## 2. Inventario de ChatGPT disponible en la auditoría
 
+Los índices completos de nombres y descripciones de la instantánea están en [`tool-catalog-snapshot.json`](tool-catalog-snapshot.json) (todas las operaciones expuestas) y [`skill-catalog-snapshot.json`](skill-catalog-snapshot.json) (todas las definiciones de skills expuestas). Son snapshots fechados: antes de usar una herramienta, inspeccionar su esquema en vivo y comprobar permisos/conexión.
+
 Instantánea tomada el 2026-10-18 desde los catálogos visibles en esta sesión:
 
 - **1.918 operaciones de herramientas** inventariadas en 64 grupos/namespaces.

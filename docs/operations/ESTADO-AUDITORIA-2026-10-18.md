@@ -73,3 +73,34 @@
 - 23 skills propias en Bladi 3AI, comprobadas contra el validador del repositorio.
 
 Estos recuentos describen la instantánea de esta sesión, no una garantía de conexión o disponibilidad funcional.
+
+
+## Índices completos del catálogo (2026-10-18)
+- `docs/operations/tool-catalog-snapshot.json`: 1.918 nombres/descripciones resumidas de operaciones expuestas en 64 namespaces.
+- `docs/operations/skill-catalog-snapshot.json`: 253 URIs y descripciones de skills expuestas.
+- `docs/operations/SKILL-VALIDATION-MATRIX.md`: 23 pruebas de aceptación propuestas para las 23 skills propias.
+- Los índices son snapshots y no prueban conexión, permisos ni eficacia funcional.
+
+## Diferencias y bloqueos de PR verificados
+- PR #6: divergente frente a `main`, 34 commits ahead / 11 behind, `mergeable=false`; no fusionar sin resolver conflictos y repetir CI.
+- PR #8: 19 commits ahead / 0 behind de su base PR #6; sigue dependiendo de esa rama.
+- PR #10: 3 commits ahead / 0 behind de su base PR #8; sigue dependiendo de esa rama.
+- PR #15: 2 commits ahead / 6 behind de `main`, `mergeable=false`, y sin `OPENROUTER_API_KEY` configurada en TEAM ARENA LAB.
+- PR #1 y #2 son una cadena AEGIS separada y en borrador; mantenerla separada de Nexus.
+- Se creó una entrada segura temporal para `OPENROUTER_API_KEY` en AppDeploy app `team-arena-lab-qkz2uh`; el estado consultado fue `pending_value`. El enlace de un solo uso se mantiene en la conversación y no se guarda en Git.
+
+
+## Fusión de PR #21
+- PR #21 quedó fusionada en `main` como `939b376ecc0881bfc5ef7bc494e8838c529dbd67` tras CI run `39151755220` exitoso.
+- Esa PR registra la prueba de humo en vivo de Nexus Core y los bloqueos externos; no implica que se hayan configurado proveedores externos.
+
+
+## CI de las PR abiertas (últimos heads consultados el 2026-10-18)
+- PR #6 head `05be051d…`: `Validate Bladi 3AI` run 38663085434 y `Validate reusable skills` run 38663085392, ambos success. La PR sigue no-mergeable por divergencia/conflictos con `main`.
+- PR #8 head `db07ae57…`: `Validate reusable skills` run 38814925156, success. Depende de PR #6.
+- PR #10 head `0d8dbb97…`: `Validate reusable skills` run 38815004239, success. Depende de PR #8.
+- PR #15 head `5fdba2f5…`: `Validate Bladi 3AI` run 38931067189 y `Validate reusable skills` run 38931067199, ambos success. No demuestra llamadas reales a proveedores; PR #15 sigue no-mergeable y falta el secreto OpenRouter en TEAM ARENA LAB.
+- PR #1 head `bb08850c…`: AEGIS synthetic/scope-gate run 38081823391, success.
+- PR #2 head `59f90e73…`: AEGIS synthetic/scope-gate run 38437533541, live-model-harness checks run 38437533535 y CodeQL run 38437533553, todos success. El resultado de CodeQL conserva diagnósticos de parseo en el archivo Nexus preexistente; éxito no equivale a certificación de seguridad. La PR documenta además una divulgación parcial intermitente de canary en una ejecución histórica.
+
+Estos resultados son checks automatizados de los SHA indicados; no equivalen a pruebas de proveedor en producción ni se transfieren automáticamente a commits posteriores.
