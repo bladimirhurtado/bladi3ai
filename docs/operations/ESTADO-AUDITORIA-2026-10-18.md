@@ -35,12 +35,19 @@
 - `nexus-ai-hub-t0xi3v`: estado `ready`; sin errores listados de frontend, red o backend; lista de nombres de secretos vacía.
 - Esto confirma que las dos apps están desplegadas en AppDeploy, no que sus llamadas a modelos funcionen. El entorno necesita secretos de proveedor configurados mediante un flujo seguro antes de probar modelos reales.
 
+## Prueba en vivo de Nexus Core (2026-10-18)
+- Se abrió el Nexus AI Hub de AppDeploy y se envió una única petición no sensible: `Responde únicamente: NEXUS CORE OK`.
+- Resultado: la interfaz mostró backend `ONLINE`, estado `LISTO`, proveedor `Nexus Core`, modelo `nexus-core` y la respuesta exacta solicitada. No hubo errores visibles.
+- Run de navegador: `a1c24028-104e-428c-941a-976f5ef8e58c`.
+- No se seleccionaron proveedores externos; el recuento visible fue `External Providers: 0`, `Claves activas: 0`. Por tanto, esto prueba el núcleo integrado, no las llamadas reales a OpenAI/Groq/Mistral/Kimi/Gemini ni el despliegue Netlify.
+- La aplicación TEAM ARENA LAB sigue sin `OPENROUTER_API_KEY` configurada y debe bloquear las llamadas externas, según su código y pruebas descritas en su snapshot.
+
 ## Próximas acciones
 1. **Completado:** prueba positiva de `dev_agent.py clone`; CI run `39151274416` pasó y PR #18 quedó fusionada.
 2. **Documentado:** matriz de validación para las 23 skills en `SKILL-VALIDATION-MATRIX.md`; las pruebas de tarea pendientes siguen marcadas como pendientes.
 2. **Completado en CI:** validación de skills y suite del agente de desarrollo en runs `39150470118`, `39151240372` y `39151274416`.
 3. Revisar PR #6/#8/#10 en vivo, incluyendo bases, mergeabilidad y checks; conservar la cadena de dependencias.
-4. Desbloquear Nexus solo cuando el propietario configure el secreto de proveedor en el entorno correcto. Después, probar cada rol con un prompt no sensible, comprobar atribución real de modelo, fallo parcial y costes; no hacer pasar simulaciones por llamadas reales.
+4. El núcleo integrado de Nexus ya pasó una prueba de humo. Para completar la validación multi-IA, configurar los secretos de proveedor en el entorno correcto mediante un flujo seguro y probar cada rol con un prompt no sensible; comprobar atribución real de modelo, fallo parcial y costes. No hacer pasar simulaciones por llamadas reales.
 5. Diseñar pruebas de tarea para QA, integración y seguridad. Las skills son instrucciones y no se consideran funcionalmente verificadas solo por tener metadatos válidos.
 6. Auditar permisos/conexiones de conectores externos solo cuando sea necesario para una tarea real; nunca copiar secretos al repositorio.
 
