@@ -667,9 +667,9 @@
       }
     },
     "latest_ci_evidence": {
-      "run_id": 39152776017,
-      "run_number": 156,
-      "commit": "5a3a5049fce217d917fc6f101f96351615687ed6",
+      "run_id": 39178254567,
+      "run_number": 157,
+      "commit": "9bd46f759b7778f70f10153155818252ac123389",
       "result": "success",
       "steps": [
         "Validate required files",
@@ -677,7 +677,7 @@
         "Validate reusable skills",
         "Test development agent"
       ],
-      "note": "This run validates the PR #27 head; it is not a functional test of all 23 skills or external model providers."
+      "note": "Successful CI for the previous PR #27 head; later documentation commits must be validated by their own CI run."
     },
     "closed_redundant_prs": [
       {
