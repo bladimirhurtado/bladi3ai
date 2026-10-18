@@ -3,7 +3,7 @@
 > **Propósito:** ser el índice operativo para localizar capacidades antes de iniciar cualquier trabajo.  
 > **Última auditoría de inventario:** 2026-10-18.  
 > **Repositorio:** `bladimirhurtado/bladi3ai`.  
-> **Estado de este documento:** registro maestro fusionado en `main` mediante PR #16; seguimiento de auditoría actualizado el 2026-10-18.
+> **Estado de este documento:** registro maestro fusionado en `main`; auditoría de seguimiento actualizada tras fusionar PR #16, #17 y #18 el 2026-10-18.
 
 ## 1. Reglas de uso
 
@@ -139,14 +139,16 @@ No asignar un nivel superior sin evidencia enlazada (commit, ejecución, log san
 ### Completado en esta revisión (2026-10-18)
 
 - PR #16 fusionada en `main` como commit `8e78062b8af20d730ded0a5e757521c23ce9d15c`.
-- GitHub Actions run `39150470118` pasó: `Validate required files`, `Validate course count`, `Validate reusable skills` y `Test development agent`.
+- GitHub Actions runs `39150470118`, `39151240372` y `39151274416` pasaron; los tres incluyeron `Validate reusable skills` y `Test development agent`.
+- PR #18 añadió una prueba positiva de clonación local y se fusionó tras CI exitoso. La prueba crea un repositorio Git temporal, lo clona a un destino nuevo y verifica contenido/metadatos sin ejecutar código del proyecto.
+- PR #17 actualizó la evidencia y añadió el documento de continuidad; también se fusionó tras CI exitoso.
 - Se revisó el estado actual de las PR abiertas y las cadenas de ramas; el detalle se conserva en `ESTADO-AUDITORIA-2026-10-18.md`.
-- Se intentó ejecutar una clonación local para correr pruebas en este entorno, pero el runtime no pudo resolver `github.com`; no se presenta eso como una prueba ejecutada.
+- El intento de ejecutar Git localmente en este runtime no pudo empezar porque falló la resolución DNS de `github.com`; las pruebas se verificaron mediante GitHub Actions, no mediante una ejecución local.
 
 ### Pendiente / bloqueado
 
 1. **P1:** ampliar pruebas funcionales de skills propias, empezando por QA, agente de desarrollo, integración y seguridad.
-2. **P1:** añadir una prueba positiva de clonación sobre un repositorio Git temporal local; las pruebas actuales sí cubren esquemas inseguros, credenciales incrustadas y protección de destinos existentes.
+2. **Completado:** añadir una prueba positiva de clonación sobre un repositorio Git temporal local; PR #18 y CI run `39151274416` pasaron.
 3. **P1 bloqueado:** probar Nexus multi-IA con una llamada no sensible por rol. La PR #15 informa que falta `OPENROUTER_API_KEY` en el entorno de destino; no afirmar llamadas reales ni síntesis verificada.
 4. **P2:** probar cadenas de colaboración (investigación → arquitectura → implementación → QA).
 5. **P2:** registrar conexiones y permisos de herramientas externas realmente utilizadas, sin guardar credenciales.
