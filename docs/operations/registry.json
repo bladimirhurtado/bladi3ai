@@ -464,6 +464,14 @@
         "merge_commit": "c9af07d3d6e9064e23f622d9adfe062ec4637fc7",
         "ci_run": 39151934668,
         "ci": "success"
+      },
+      {
+        "number": 27,
+        "status": "merged",
+        "merge_commit": "2ce619e4ab958893d37c59e3499d898f8202a972",
+        "ci_run": 39178310822,
+        "ci": "success",
+        "note": "Documentation-only audit continuity PR; post-merge main CI run 39178336711 also passed."
       }
     ],
     "successful_ci_steps": [
@@ -667,9 +675,9 @@
       }
     },
     "latest_ci_evidence": {
-      "run_id": 39178254567,
-      "run_number": 157,
-      "commit": "9bd46f759b7778f70f10153155818252ac123389",
+      "run_id": 39178336711,
+      "run_number": 161,
+      "commit": "2ce619e4ab958893d37c59e3499d898f8202a972",
       "result": "success",
       "steps": [
         "Validate required files",
@@ -677,7 +685,7 @@
         "Validate reusable skills",
         "Test development agent"
       ],
-      "note": "Successful CI for the previous PR #27 head; later documentation commits must be validated by their own CI run."
+      "note": "Post-merge main CI for PR #27 documentation snapshot; further changes trigger their own CI."
     },
     "closed_redundant_prs": [
       {
@@ -692,7 +700,7 @@
       "app_id": "team-arena-lab-qkz2uh",
       "secret_name": "OPENROUTER_API_KEY",
       "status": "pending_value",
-      "note": "Previous one-time entry expired and was replaced on 2026-10-18. A fresh secure form is available in the current conversation; its URL/token is deliberately not stored in Git. AppDeploy currently lists no configured secrets."
+      "note": "The previous one-time entry expired. A replacement one-time secure form was issued on 2026-10-18 and remains pending user submission. Never store the URL/token or key in Git."
     }
   },
   "catalog_artifacts": {
