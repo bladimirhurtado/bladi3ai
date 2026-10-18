@@ -93,3 +93,14 @@ Estos recuentos describen la instantánea de esta sesión, no una garantía de c
 ## Fusión de PR #21
 - PR #21 quedó fusionada en `main` como `939b376ecc0881bfc5ef7bc494e8838c529dbd67` tras CI run `39151755220` exitoso.
 - Esa PR registra la prueba de humo en vivo de Nexus Core y los bloqueos externos; no implica que se hayan configurado proveedores externos.
+
+
+## CI de las PR abiertas (últimos heads consultados el 2026-10-18)
+- PR #6 head `05be051d…`: `Validate Bladi 3AI` run 38663085434 y `Validate reusable skills` run 38663085392, ambos success. La PR sigue no-mergeable por divergencia/conflictos con `main`.
+- PR #8 head `db07ae57…`: `Validate reusable skills` run 38814925156, success. Depende de PR #6.
+- PR #10 head `0d8dbb97…`: `Validate reusable skills` run 38815004239, success. Depende de PR #8.
+- PR #15 head `5fdba2f5…`: `Validate Bladi 3AI` run 38931067189 y `Validate reusable skills` run 38931067199, ambos success. No demuestra llamadas reales a proveedores; PR #15 sigue no-mergeable y falta el secreto OpenRouter en TEAM ARENA LAB.
+- PR #1 head `bb08850c…`: AEGIS synthetic/scope-gate run 38081823391, success.
+- PR #2 head `59f90e73…`: AEGIS synthetic/scope-gate run 38437533541, live-model-harness checks run 38437533535 y CodeQL run 38437533553, todos success. El resultado de CodeQL conserva diagnósticos de parseo en el archivo Nexus preexistente; éxito no equivale a certificación de seguridad. La PR documenta además una divulgación parcial intermitente de canary en una ejecución histórica.
+
+Estos resultados son checks automatizados de los SHA indicados; no equivalen a pruebas de proveedor en producción ni se transfieren automáticamente a commits posteriores.
