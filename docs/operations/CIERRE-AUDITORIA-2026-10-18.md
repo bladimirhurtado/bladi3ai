@@ -4,8 +4,8 @@ Este documento complementa `ESTADO-AUDITORIA-2026-10-18.md` con las comprobacion
 
 ## Verificación en vivo más reciente
 
-- PR #27 (`docs/final-audit-status-2026-10-18`) sigue abierta y no fusionada. La comparación anterior a añadir este documento mostraba 4 commits ahead y 0 behind; el último commit añadió esta nota y activó una nueva ejecución de CI.
-- GitHub Actions run `39152776017` (run #156, workflow `Validate Bladi 3AI`) terminó con conclusión `success`.
+- PR #27 (`docs/final-audit-status-2026-10-18`) fue fusionada como documentación mediante squash: merge commit `2ce619e4ab958893d37c59e3499d898f8202a972`. Se verificó que este archivo está presente en `main`.
+- GitHub Actions runs #156 (`39152776017`) y #160 (`39178310822`) terminaron con `success` en la rama de la PR. La fusión disparó el run #161 (`39178336711`) sobre `main`, que estaba en cola al redactar esta actualización; verificar su conclusión antes de declarar CI de `main` verde.
 - PR #6 sigue no mergeable. PR #8 y #10 son mergeables solo dentro de su cadena de dependencias; no deben llevarse por separado a `main`. PR #15 sigue no mergeable y requiere resolver divergencia antes de valorar integración.
 - AppDeploy comprobado en vivo: TEAM ARENA LAB (`team-arena-lab-qkz2uh`) y Nexus AI Hub (`nexus-ai-hub-t0xi3v`) aparecen `ready`, sin errores frontend, backend o red listados en el snapshot actual. Esto no acredita que proveedores externos funcionen.
 - La entrada segura anterior de `OPENROUTER_API_KEY` expiró. Se generó una nueva entrada de un solo uso el 2026-10-18; el enlace se entregó directamente al usuario y NO se almacena en Git ni en esta documentación. La nueva entrada todavía necesita que el usuario introduzca el secreto mediante el formulario seguro. No solicitar ni pegar la clave en el chat.
