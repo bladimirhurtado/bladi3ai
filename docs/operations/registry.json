@@ -322,10 +322,11 @@
       "id": "nexus-multi-ai",
       "source_of_truth": ".agents/skills/orquestador-multi-ia/SKILL.md; docs/multi-ai-team/README.md",
       "verification_before_work": [
-        "check provider secret exists without exposing it",
+        "inspect provider secret names without reading or logging values",
         "verify configured model IDs",
         "test each role with non-sensitive prompt",
-        "record partial failures and cost"
+        "record partial failures and cost",
+        "AppDeploy snapshot 2026-10-18 showed the TEAM ARENA LAB and Nexus prototype ready but with no configured secret names"
       ]
     },
     {
@@ -371,7 +372,8 @@
     {
       "priority": "P1",
       "task": "Build functional test cases for all first-party skills, starting with QA, development, integration, and security",
-      "status": "pending"
+      "status": "matrix_documented_task_level_execution_pending",
+      "evidence": "See docs/operations/SKILL-VALIDATION-MATRIX.md. This matrix defines a concrete acceptance test for each of the 23 first-party skills; only the development-agent clone/inspection suite has current CI evidence at M2."
     },
     {
       "priority": "P1",
@@ -382,8 +384,8 @@
     {
       "priority": "P1",
       "task": "Verify Nexus multi-AI provider calls, real model attribution, partial failure behavior, and cost",
-      "status": "blocked_missing_provider_secret",
-      "evidence": "PR #15 reports OPENROUTER_API_KEY absent from the target app; no real provider call is claimed."
+      "status": "blocked_missing_provider_secret_confirmed_in_appdeploy",
+      "evidence": "Live AppDeploy inspection on 2026-10-18: team-arena-lab-qkz2uh is ready with no listed frontend/network/backend errors, but its configured secret-name list is empty. nexus-ai-hub-t0xi3v is also ready with empty secret-name list. No real model calls are claimed."
     },
     {
       "priority": "P2",
@@ -411,7 +413,7 @@
   ],
   "last_verification": {
     "date": "2026-10-18",
-    "main_head_after_audit": "fd5ff7cada84a1f4252acba77e48ebbd272cf0cc",
+    "main_head_after_audit": "2ffef460ff977969a9592b9b265b275a6dd04db5",
     "completed_pull_requests": [
       {
         "number": 16,
@@ -433,6 +435,13 @@
         "merge_commit": "fd5ff7cada84a1f4252acba77e48ebbd272cf0cc",
         "ci_run": 39151240372,
         "ci": "success"
+      },
+      {
+        "number": 19,
+        "status": "merged",
+        "merge_commit": "2ffef460ff977969a9592b9b265b275a6dd04db5",
+        "ci_run": 39151388013,
+        "ci": "success"
       }
     ],
     "successful_ci_steps": [
@@ -441,6 +450,22 @@
       "Validate reusable skills",
       "Test development agent"
     ],
-    "local_execution": "Direct local clone/test attempt could not start because this runtime failed DNS resolution for github.com. The repository's GitHub Actions runs completed successfully on the relevant PR heads."
+    "local_execution": "Direct local clone/test attempt could not start because this runtime failed DNS resolution for github.com. The repository's GitHub Actions runs completed successfully on the relevant PR heads.",
+    "appdeploy_snapshot": {
+      "date": "2026-10-18",
+      "team_arena_app_id": "team-arena-lab-qkz2uh",
+      "team_arena_status": "ready",
+      "team_arena_frontend_errors": 0,
+      "team_arena_network_errors": 0,
+      "team_arena_backend_errors": 0,
+      "team_arena_configured_secret_names": [],
+      "nexus_app_id": "nexus-ai-hub-t0xi3v",
+      "nexus_status": "ready",
+      "nexus_frontend_errors": 0,
+      "nexus_network_errors": 0,
+      "nexus_backend_errors": 0,
+      "nexus_configured_secret_names": [],
+      "note": "AppDeploy readiness confirms the prototype is deployed and its latest QA snapshot showed no listed errors; empty secret lists mean real provider/API execution is not proven."
+    }
   }
 }
