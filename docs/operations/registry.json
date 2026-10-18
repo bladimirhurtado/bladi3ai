@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0",
+  "registry_name": "Bladi 3AI Master Capability Registry",
+  "audit_snapshot_date": "2026-10-18",
+  "repository": "bladimirhurtado/bladi3ai",
+  "default_branch": "main",
+  "status": "initial_inventory_proposed_in_pull_request",
+  "inventory_snapshot": {
+    "chatgpt_tool_operations": 1918,
+    "tool_groups_or_namespaces": 63,
+    "chatgpt_skill_definitions": 253,
+    "bladi3ai_first_party_skill_packages": 23,
+    "note": "Counts are session snapshots, not guarantees of permanent availability, connection, authorization, or functional readiness."
+  },
+  "maturity_scale": {
+    "M0": "catalogued_only",
+    "M1": "documentation_location_requirements_and_permissions_inspected",
+    "M2": "isolated_reproducible_test_passed",
+    "M3": "integration_test_passed",
+    "M4": "end_to_end_verified_in_target_environment"
+  },
+  "first_party_skills": [
+    {"id":"investigacion-herramientas","purpose":"Research and compare tools using primary sources","maturity":"M1","functional_validation":"pending"},
+    {"id":"agente-desarrollo-skills","purpose":"Safe repository inspection, clone, review, and planning","maturity":"M2","functional_validation":"CI tests were reported passing for the relevant merged change; re-run against current commit before relying on it"},
+    {"id":"orquestador-multi-ia","purpose":"Coordinate model roles, handle partial failures, synthesize evidence","maturity":"M1","functional_validation":"live provider calls and production path require verification"},
+    {"id":"ingenieria-software","purpose":"Software implementation and debugging","maturity":"M1","functional_validation":"pending"},
+    {"id":"auditoria-ia-aegis-hydra","purpose":"AI system risk and control review","maturity":"M1","functional_validation":"pending"},
+    {"id":"integracion-sistemas","purpose":"Connect APIs, services, and components","maturity":"M1","functional_validation":"pending"},
+    {"id":"control-calidad-qa","purpose":"Acceptance criteria and reproducible testing","maturity":"M1","functional_validation":"pending"},
+    {"id":"arquitectura-sistemas","purpose":"System boundaries, components, and contracts","maturity":"M1","functional_validation":"pending"},
+    {"id":"seguridad-optimizacion","purpose":"Security and performance review","maturity":"M1","functional_validation":"pending"},
+    {"id":"gestion-documentacion","purpose":"Maintain technical documentation and evidence","maturity":"M1","functional_validation":"pending"},
+    {"id":"diseno-ui-ux","purpose":"Interface and user experience design","maturity":"M1","functional_validation":"pending"},
+    {"id":"gestion-errores-resiliencia","purpose":"Fault diagnosis and recovery design","maturity":"M1","functional_validation":"pending"},
+    {"id":"automatizacion-flujos","purpose":"Automate repeatable workflows","maturity":"M1","functional_validation":"pending"},
+    {"id":"analisis-datos-metricas","purpose":"Analyze data and metrics","maturity":"M1","functional_validation":"pending"},
+    {"id":"despliegue-configuracion","purpose":"Environment configuration and releases","maturity":"M1","functional_validation":"pending"},
+    {"id":"seguridad-auditoria-ataque","purpose":"Authorized security testing","maturity":"M1","functional_validation":"pending"},
+    {"id":"ingenieria-inversa-educativa","purpose":"Authorized educational reverse engineering","maturity":"M1","functional_validation":"pending"},
+    {"id":"refactorizacion-codigo","purpose":"Refactor while preserving behavior","maturity":"M1","functional_validation":"pending"},
+    {"id":"gestion-dependencias-parches","purpose":"Dependency and patch management","maturity":"M1","functional_validation":"pending"},
+    {"id":"diseno-bases-datos","purpose":"Database schema, query, and migration work","maturity":"M1","functional_validation":"pending"},
+    {"id":"clonacion-replicacion-entornos","purpose":"Safe repository/environment replication","maturity":"M1","functional_validation":"pending"},
+    {"id":"anatomia-agentes-ia","purpose":"Analyze AI agent architecture and flows","maturity":"M1","functional_validation":"pending"},
+    {"id":"analizador-pro-movil","purpose":"Mobile application static inspection","maturity":"M1","functional_validation":"pending"}
+  ],
+  "tool_families": [
+    {"id":"source-control-ci","examples":["GitHub"],"verification_needed":["permissions","branch/PR state","CI checks"]},
+    {"id":"app-development-deployment","examples":["Vercel","Netlify","AppDeploy","Replit","Lovable","Base44","Buildy","Wix"],"verification_needed":["project connection","environment","logs","deployed URL"]},
+    {"id":"backend-data-analytics","examples":["Supabase","Convex","Airtable","PostHog"],"verification_needed":["connected project","permissions","schema","test query"]},
+    {"id":"research-search","examples":["Exa","Firecrawl","Tavily","Parallel Search","TinyFish","HAPI MCP Registry"],"verification_needed":["primary sources","date","corroboration"]},
+    {"id":"scientific-literature","examples":["Consensus","SciSpace","Undermind"],"verification_needed":["DOI","full text access","source quality"]},
+    {"id":"documents-collaboration","examples":["Dropbox","Notion","Slack","Microsoft Outlook","monday.com","Granola","Structured"],"verification_needed":["connection","read/write scope","consent"]},
+    {"id":"design-media","examples":["Canva","MagicPath","tldraw","Cloudinary","HeyGen"],"verification_needed":["output review","rights","target format"]},
+    {"id":"security-privacy-infrastructure","examples":["Malwarebytes","AJAXX Data Scrubber","SentinelX"],"verification_needed":["authorized scope","safe environment","evidence"]},
+    {"id":"specialized-services","examples":["Binance","Blockscout","Shopify","Booking.com","Trip.com","LinkedIn","Indeed","Resend"],"verification_needed":["connected account","permissions","fresh data","action limits"]}
+  ],
+  "projects": [
+    {"id":"bladi3ai","source_of_truth":"repository root and .agents/skills/","verification_before_work":["read local instructions","check current branch","inspect CI and PR state"]},
+    {"id":"development-agent","source_of_truth":"scripts/dev_agent.py; tests/test_dev_agent.py; docs/development-agent/README.md","verification_before_work":["check Python and files in target environment","run tests","do not execute unknown project code"]},
+    {"id":"nexus-multi-ai","source_of_truth":".agents/skills/orquestador-multi-ia/SKILL.md; docs/multi-ai-team/README.md","verification_before_work":["check provider secret exists without exposing it","verify configured model IDs","test each role with non-sensitive prompt","record partial failures and cost"]},
+    {"id":"nexus-ai-hub-router-lab","source_of_truth":"project-specific repository branches and PRs","verification_before_work":["confirm branch and commit","provider status and budget","limits and actual end-to-end test"]},
+    {"id":"apk-inspection-lab","source_of_truth":"related PRs/branches and generated static reports","verification_before_work":["confirm PR/branch state","authorized scope","static-first inspection","never execute unknown APK by default"]},
+    {"id":"planeta-z","source_of_truth":"project context and server documents","verification_before_work":["confirm current rules/prices before publishing"]}
+  ],
+  "audit_backlog": [
+    {"priority":"P0","task":"Recheck live state of open/stacked pull requests and branch dependencies","status":"pending"},
+    {"priority":"P1","task":"Run skill validator and development-agent tests against current main","status":"pending"},
+    {"priority":"P1","task":"Build functional test cases for all first-party skills, starting with QA, development, integration, and security","status":"pending"},
+    {"priority":"P1","task":"Exercise clone command against temporary local Git repositories and unsafe destinations","status":"pending"},
+    {"priority":"P1","task":"Verify Nexus multi-AI provider calls, real model attribution, partial failure behavior, and cost","status":"pending"},
+    {"priority":"P2","task":"Test skill collaboration chains from research through QA","status":"pending"},
+    {"priority":"P2","task":"Record real connector connection/permission state for commonly used external tools without storing credentials","status":"pending"},
+    {"priority":"P3","task":"Automate periodic registry and verification updates","status":"pending"}
+  ],
+  "operating_rules": [
+    "Never infer connected status from catalog presence.",
+    "Never claim a test passed unless it was executed and evidence is available.",
+    "Keep secrets out of Git and logs.",
+    "Use isolated branches or copies and preserve originals.",
+    "Do not merge, deploy, publish, delete, or incur costs without appropriate authorization.",
+    "Update maturity only with evidence and a verification date."
+  ]
+}
