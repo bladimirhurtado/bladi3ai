@@ -384,8 +384,8 @@
     {
       "priority": "P1",
       "task": "Verify Nexus multi-AI provider calls, real model attribution, partial failure behavior, and cost",
-      "status": "core_smoke_passed_external_provider_calls_blocked",
-      "evidence": "Live smoke test on 2026-10-18: AppDeploy Nexus AI Hub (app nexus-ai-hub-t0xi3v) returned the exact requested response via Nexus Core/nexus-core; run a1c24028-104e-428c-941a-976f5ef8e58c. No external providers were selected and no provider secrets are configured, so external-provider attribution, partial failures and costs remain unverified."
+      "status": "core_smoke_passed_external_provider_calls_blocked_pending_user_secret",
+      "evidence": "Nexus Core live smoke test passed on 2026-10-18. TEAM ARENA LAB has a secure AppDeploy secret entry for OPENROUTER_API_KEY in pending_value state; external provider calls cannot be honestly validated until the owner submits a valid key."
     },
     {
       "priority": "P2",
@@ -665,6 +665,33 @@
         "path": "docs/operations/SKILL-VALIDATION-MATRIX.md",
         "rows": 23
       }
+    },
+    "latest_ci_evidence": {
+      "run_id": 39152625394,
+      "run_number": 155,
+      "commit": "056f10933065767f1972e60d500198dcaa396f13",
+      "result": "success",
+      "steps": [
+        "Validate required files",
+        "Validate course count",
+        "Validate reusable skills",
+        "Test development agent"
+      ]
+    },
+    "closed_redundant_prs": [
+      {
+        "number": 26,
+        "title": "docs: add full tool and skill catalog snapshots",
+        "status": "closed_not_merged",
+        "reason": "Catalog snapshots already exist in main; branch contained stale audit-doc changes and was closed to prevent regression.",
+        "url": "https://github.com/bladimirhurtado/bladi3ai/pull/26"
+      }
+    ],
+    "secret_entry_status": {
+      "app_id": "team-arena-lab-qkz2uh",
+      "secret_name": "OPENROUTER_API_KEY",
+      "status": "pending_value",
+      "note": "User must submit the key through AppDeploy's one-time secure form. No secret value is stored in Git or chat."
     }
   },
   "catalog_artifacts": {
