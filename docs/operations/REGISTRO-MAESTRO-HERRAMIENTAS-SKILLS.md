@@ -3,7 +3,7 @@
 > **Propósito:** ser el índice operativo para localizar capacidades antes de iniciar cualquier trabajo.  
 > **Última auditoría de inventario:** 2026-10-18.  
 > **Repositorio:** `bladimirhurtado/bladi3ai`.  
-> **Estado de este documento:** primera versión; cambios propuestos en una rama separada, no fusionados automáticamente.
+> **Estado de este documento:** registro maestro fusionado en `main` mediante PR #16; seguimiento de auditoría actualizado el 2026-10-18.
 
 ## 1. Reglas de uso
 
@@ -134,16 +134,25 @@ Aplicar a cada herramienta, skill, agente o integración:
 
 No asignar un nivel superior sin evidencia enlazada (commit, ejecución, log saneado, resultado o informe). Añadir fecha de última verificación y persona/entorno responsable.
 
-## 7. Backlog inicial de auditoría
+## 7. Estado de auditoría y backlog
 
-1. **Prioridad P0:** confirmar estados en vivo de PRs y ramas encadenadas; no fusionar automáticamente.
-2. **P1:** ejecutar el validador de skills y pruebas de `dev_agent.py` en el commit actual.
-3. **P1:** crear pruebas funcionales pequeñas para cada skill propia, empezando por QA, agente de desarrollo, integración y seguridad.
-4. **P1:** probar clonación en un repositorio Git temporal local, incluyendo destinos existentes, rutas inseguras y errores.
-5. **P1:** verificar Nexus multi-IA con una llamada no sensible por rol, comprobando modelo real, fallos parciales y costes.
-6. **P2:** probar cadenas de colaboración (investigación → arquitectura → implementación → QA).
-7. **P2:** registrar conexiones y permisos de herramientas externas que realmente se usan; no almacenar credenciales.
-8. **P3:** automatizar un informe periódico de cambios de catálogo, estado de pruebas y deuda técnica.
+### Completado en esta revisión (2026-10-18)
+
+- PR #16 fusionada en `main` como commit `8e78062b8af20d730ded0a5e757521c23ce9d15c`.
+- GitHub Actions run `39150470118` pasó: `Validate required files`, `Validate course count`, `Validate reusable skills` y `Test development agent`.
+- Se revisó el estado actual de las PR abiertas y las cadenas de ramas; el detalle se conserva en `ESTADO-AUDITORIA-2026-10-18.md`.
+- Se intentó ejecutar una clonación local para correr pruebas en este entorno, pero el runtime no pudo resolver `github.com`; no se presenta eso como una prueba ejecutada.
+
+### Pendiente / bloqueado
+
+1. **P1:** ampliar pruebas funcionales de skills propias, empezando por QA, agente de desarrollo, integración y seguridad.
+2. **P1:** añadir una prueba positiva de clonación sobre un repositorio Git temporal local; las pruebas actuales sí cubren esquemas inseguros, credenciales incrustadas y protección de destinos existentes.
+3. **P1 bloqueado:** probar Nexus multi-IA con una llamada no sensible por rol. La PR #15 informa que falta `OPENROUTER_API_KEY` en el entorno de destino; no afirmar llamadas reales ni síntesis verificada.
+4. **P2:** probar cadenas de colaboración (investigación → arquitectura → implementación → QA).
+5. **P2:** registrar conexiones y permisos de herramientas externas realmente utilizadas, sin guardar credenciales.
+6. **P3:** automatizar un informe periódico de cambios de catálogo, pruebas y deuda técnica.
+
+Los estados, evidencias y limitaciones detallados se mantienen en el JSON para facilitar automatización.
 
 ## 8. Mantenimiento del registro
 
