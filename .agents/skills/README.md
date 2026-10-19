@@ -59,3 +59,13 @@ Desde la raíz del repositorio ejecuta:
 `python3 scripts/validate-skills.py`
 
 Estado: las 23 skills del catálogo tienen guías operativas iniciales. Deben considerarse **versión inicial** hasta que se validen en tareas reales; no son certificaciones ni evidencia de que proyectos concretos funcionen. El paquete upstream Anatomy se conserva intacto y se incluye como base original complementaria para la skill de anatomía de agentes.
+
+## Workbench de ingeniería inversa reutilizable
+
+- Skill portátil independiente: `.agents/skills/reverse-engineering/SKILL.md`.
+- Skill educativa integrada: `.agents/skills/ingenieria-inversa-educativa/SKILL.md`.
+- Especificación, plan, guía de uso e informe: `docs/reverse-engineering/`.
+- CLI local de solo lectura: `python3 scripts/re_triage.py <archivo> [--json]`.
+- Pruebas sintéticas: `python3 -m unittest discover -s tests -v`.
+
+El analizador calcula SHA-256, tamaño, firmas e indicios de formato y lee metadatos limitados de ZIP/APK sin ejecutar ni extraer entradas. Es una primera pasada estática; no determina por sí solo si un archivo es malicioso. Ghidra, JADX, Frida y Wireshark se documentan como opciones, no como herramientas instaladas o validadas en este entorno.
