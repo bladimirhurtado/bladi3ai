@@ -7,6 +7,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1] / ".agents" / "skills"
 EXPECTED = {
     "investigacion-herramientas", "agente-desarrollo-skills", "orquestador-multi-ia", "ingenieria-software",
+    "codex-ingenieria-codigo-conectividad",
     "auditoria-ia-aegis-hydra", "integracion-sistemas", "control-calidad-qa",
     "arquitectura-sistemas", "seguridad-optimizacion", "gestion-documentacion",
     "diseno-ui-ux", "gestion-errores-resiliencia", "automatizacion-flujos",
