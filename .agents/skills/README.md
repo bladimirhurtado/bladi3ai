@@ -10,6 +10,7 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 | `agente-desarrollo-skills` | Hay que clonar repositorios, revisar errores o coordinar una refactorización verificable. Incluye CLI estándar en `scripts/dev_agent.py`. |
 | `orquestador-multi-ia` | Hay que coordinar modelos de varios proveedores, asignar roles independientes y sintetizar resultados con verificación y límites de coste. |
 | `ingenieria-software` | Hay que implementar, depurar o probar código. |
+| `codex-ingenieria-codigo-conectividad` | Hay que crear/descodificar código y datos, analizar protocolos o preparar pruebas Bluetooth Classic/BLE autorizadas. |
 | `auditoria-ia-aegis-hydra` | Hay que evaluar seguridad, privacidad y supervisión de un sistema de IA. |
 | `integracion-sistemas` | Hay que conectar APIs, servicios, webhooks o autenticación. |
 | `control-calidad-qa` | Hay que demostrar que un entregable cumple sus requisitos. |
@@ -30,6 +31,13 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 | `anatomia-agentes-ia` | Hay que analizar arneses, bucles, herramientas y memoria de agentes. |
 | `analizador-pro-movil` | Hay que revisar código fuente y realizar una inspección preliminar y local de APKs sin ejecutarlos. |
 | `anatomy` (upstream) | Hay que usar el paquete original de Anatomy para trabajos de visualización/explicación técnica según sus propias instrucciones. |
+
+## CODEX — Ingeniería de Código y Conectividad
+
+- Skill: `.agents/skills/codex-ingenieria-codigo-conectividad/SKILL.md`
+- Guías: `references/bluetooth-lab.md` y `references/encoding-decoding.md`
+- Distingue Bluetooth Classic de BLE, hardware real de simulación y resultados observados de hipótesis.
+- Es una skill de instrucciones reutilizable: no activa por sí sola el adaptador Bluetooth ni concede acceso a dispositivos.
 
 ## Equipo multi-IA
 
@@ -58,4 +66,4 @@ La CLI ofrece inventario (`inspect`), clonación explícita a destino nuevo (`cl
 Desde la raíz del repositorio ejecuta:
 `python3 scripts/validate-skills.py`
 
-Estado: las 23 skills del catálogo tienen guías operativas iniciales. Deben considerarse **versión inicial** hasta que se validen en tareas reales; no son certificaciones ni evidencia de que proyectos concretos funcionen. El paquete upstream Anatomy se conserva intacto y se incluye como base original complementaria para la skill de anatomía de agentes.
+El catálogo contiene skills con guías operativas iniciales. Deben considerarse **versión inicial** hasta que se validen en tareas reales; no son certificaciones ni evidencia de que proyectos concretos funcionen. El paquete upstream Anatomy se conserva intacto y se incluye como base original complementaria para la skill de anatomía de agentes.
