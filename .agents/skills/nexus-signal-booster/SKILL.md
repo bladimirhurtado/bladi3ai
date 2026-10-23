@@ -44,6 +44,7 @@ Consultar `references/tools-and-verification.md` antes de instalar herramientas 
 - `references/ark-mobile-network.md`: aislar fallos de ARK del resto de la red.
 - `references/contingency-plan.md`: Plan B por categoría de bloqueo o resultado adverso.
 - `references/tools-and-verification.md`: selección mínima de herramientas y criterios de verificación.
+- `tools/README.md` y `tools/nexus_signal_monitor.py`: monitor HTTPS opcional para Android/Termux que registra respuesta y tiempo de dos destinos; usar solo si aporta evidencia y explicar sus límites.
 
 ## Criterio de éxito
 Una mejora solo se considera validada si es repetible, observable y no depende de una afirmación no verificada. Se considera buen resultado también descartar rápidamente una solución falsa y ahorrar tiempo/dinero.
