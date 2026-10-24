@@ -41,7 +41,16 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 
 El analizador es una primera pasada estática: calcula hash, detecta indicios de formato y resume metadatos limitados de ZIP/APK sin ejecutar ni extraer. No sustituye un descompilador ni determina por sí solo si un archivo es malicioso.
 
-## Google Workbench (Gmail primero, Drive después)\n\n- MVP Gmail local: `tools/google-workbench/gmail-client/README.md`\n- Arquitectura visual: `docs/google-workbench/gmail-architecture.svg`\n- Plan y límites de acceso: `docs/google-workbench/README.md`\n- CI: `.github/workflows/google-workbench-gmail.yml`\n- El cliente usa OAuth oficial y no puede reactivar ni eludir conectores deshabilitados por administración. La cuenta real, la configuración OAuth y el acceso directo desde ChatGPT todavía requieren pasos y pruebas explícitos.\n\n## Cómo usarlas
+## Google Workbench (Gmail y Drive)
+
+- MVP Gmail local: `tools/google-workbench/gmail-client/README.md`
+- MVP Drive local: `tools/google-workbench/drive-client/README.md`
+- Arquitecturas visuales: `docs/google-workbench/gmail-architecture.svg` y `docs/google-workbench/drive-architecture.svg`
+- Plan y límites de acceso: `docs/google-workbench/README.md`
+- CI: `.github/workflows/google-workbench-gmail.yml`
+- Los clientes usan OAuth oficial y no pueden reactivar ni eludir conectores deshabilitados por administración. La cuenta real, la configuración OAuth y el acceso directo desde ChatGPT todavía requieren pasos y pruebas explícitos.
+
+## Cómo usarlas
 1. Lee el `SKILL.md` de la skill más pertinente antes de iniciar el trabajo.
 2. Para tareas grandes, combina skills complementarias (por ejemplo, ingeniería de software + QA + seguridad).
 3. No cargues todas las skills por defecto: selecciona las necesarias para el objetivo.
