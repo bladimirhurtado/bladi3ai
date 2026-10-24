@@ -13,5 +13,6 @@ test("limits query length", () => {
 
 test("uses read-only Drive scope", () => {
   assert.deepEqual(SCOPES, ["https://www.googleapis.com/auth/drive.readonly"]);
-  assert.equal(SCOPES.some((scope) => /drive\\.(file|metadata|appdata)|drive$/.test(scope)), false);
+  assert.equal(SCOPES.length, 1);
+  assert.equal(SCOPES[0].endsWith("/drive.readonly"), true);
 });
