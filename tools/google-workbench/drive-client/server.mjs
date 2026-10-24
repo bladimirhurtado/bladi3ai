@@ -125,7 +125,7 @@ async function handle(req, res) {
       const params = new URLSearchParams({ mimeType: "text/plain" });
       result = await drive(`files/${encodeURIComponent(textMatch[1])}/export?${params}`);
     } else {
-      const supportedText = /^text\\//.test(meta.mimeType || "") || ["application/json", "application/xml", "application/csv", "application/rtf"].includes(meta.mimeType || "");
+      const supportedText = (meta.mimeType || "").startsWith("text/") || ["application/json", "application/xml", "application/csv", "application/rtf"].includes(meta.mimeType || "");
       if (!supportedText) { json(res, 415, { error: "La vista previa está limitada a documentos de Google Workspace y archivos de texto; este formato no se convierte a texto." }); return; }
       result = await drive(`files/${encodeURIComponent(textMatch[1])}?alt=media`);
     }
