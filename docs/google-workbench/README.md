@@ -20,8 +20,12 @@ Not yet established:
 - A real end-to-end account test.
 - A supported, deployed MCP/tool adapter that would let ChatGPT call the app directly.
 
-## Phase 2 — Google Drive
-After the Gmail MVP is reviewed, add a separate Drive adapter using the official Drive API and least-privilege scopes. Begin with listing/searching and reading metadata; add file download/upload or modification only with explicit scope and confirmation design. Keep Gmail and Drive authorization, errors, and tests independently isolated.
+## Phase 2 — Google Drive MVP (implemented in code)
+Implementation: `tools/google-workbench/drive-client/README.md`
+
+Included: separate local OAuth session, read-only Drive API scope, file listing/search by name, metadata, Google Workspace text export, bounded text previews, and rejection of unsupported binary previews. No file creation, update, or deletion is exposed.
+
+Remaining: complete OAuth configuration, test against an authorized real account, verify export behavior by file type, implement pagination, and assess Google verification requirements. Gmail and Drive sessions run as separate local processes/ports.
 
 ## Architecture (current design)
 1. Browser UI at loopback.
