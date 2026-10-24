@@ -1,0 +1,11 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="color-scheme" content="light dark"><title>Drive Workbench · Bladi 3AI</title><link rel="stylesheet" href="/styles.css"></head>
+<body>
+<header class="topbar"><div><p class="eyebrow">BLADI 3AI · HERRAMIENTA INDEPENDIENTE</p><h1>Drive Workbench</h1><p class="subtitle">Búsqueda y lectura de archivos con autorización de Google.</p></div><div class="status-wrap"><span id="dot" class="dot"></span><span id="status">Comprobando conexión…</span></div></header>
+<main>
+<section class="notice"><strong>Privacidad primero.</strong> Sesión OAuth en memoria, servidor local y permisos de solo lectura. No se modifican ni eliminan archivos.</section>
+<section class="toolbar"><button id="connect" class="primary">Conectar Google Drive</button><button id="disconnect" class="secondary" hidden>Desconectar</button><form id="search"><label for="query">Buscar por nombre</label><input id="query" placeholder="nombre del archivo" autocomplete="off"><button>Buscar</button></form><button id="refresh" class="secondary">Actualizar</button></section>
+<section class="layout"><article class="panel"><div class="panel-heading"><h2>Archivos</h2><span id="count" class="count">0</span></div><p id="help" class="muted">Conecta tu cuenta para listar archivos.</p><div id="files" class="files"></div></article><article class="panel"><div class="panel-heading"><h2 id="detail-title">Vista del archivo</h2><span id="detail-type" class="muted"></span></div><div id="detail" class="detail empty">Selecciona un archivo para ver sus metadatos o una vista previa de texto.</div></article></section>
+<footer>Prototipo local · Google Drive API oficial · Solo lectura · No afiliado a Google.</footer>
+</main><script src="/app.js" defer></script></body></html>
