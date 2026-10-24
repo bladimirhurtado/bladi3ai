@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 560" role="img" aria-labelledby="title desc">
+<title id="title">Gmail Workbench architecture</title>
+<desc id="desc">A technical cutaway-style map of the local browser, Node server, in-memory OAuth session, Google OAuth, and Gmail API. Arrows show the intended authorized request flow; a legend distinguishes implemented design from unverified account access.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0b1728"/><stop offset="1" stop-color="#1d3553"/></linearGradient>
+  <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#eaf1fa"/><stop offset="1" stop-color="#9aacc4"/></linearGradient>
+  <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#244669"/><stop offset="1" stop-color="#132943"/></linearGradient>
+  <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#66d6b0"/></marker>
+  <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#000" flood-opacity=".25"/></filter>
+</defs>
+<rect width="1100" height="560" rx="24" fill="url(#bg)"/>
+<text x="42" y="48" fill="#b8d6ff" font-family="system-ui,sans-serif" font-size="12" font-weight="700" letter-spacing="3">BLADI 3AI · ANATOMY / SYSTEM MAP</text>
+<text x="42" y="82" fill="#fff" font-family="system-ui,sans-serif" font-size="28" font-weight="750">Gmail Workbench</text>
+<text x="42" y="107" fill="#c5d4e7" font-family="system-ui,sans-serif" font-size="14">Flujo autorizado diseñado · la conexión real todavía requiere consentimiento y prueba</text>
+<g filter="url(#shadow)">
+  <path d="M48 170 L255 170 L285 195 L285 370 L48 370 Z" fill="url(#metal)" stroke="#fff" stroke-opacity=".65"/>
+  <path d="M48 170 L255 170 L285 195 L77 195 Z" fill="#fff" fill-opacity=".65"/>
+  <rect x="69" y="215" width="194" height="125" rx="10" fill="#13233b"/>
+  <rect x="82" y="230" width="168" height="20" rx="4" fill="#2c4b71"/>
+  <circle cx="94" cy="240" r="3" fill="#66d6b0"/><rect x="104" y="237" width="75" height="6" rx="3" fill="#bdd2ee"/>
+  <rect x="82" y="260" width="168" height="22" rx="4" fill="#213a5a"/><rect x="92" y="268" width="94" height="5" rx="3" fill="#a8c1e4"/>
+  <rect x="82" y="291" width="168" height="35" rx="4" fill="#213a5a"/><rect x="92" y="300" width="115" height="5" rx="3" fill="#a8c1e4"/><rect x="92" y="311" width="86" height="4" rx="2" fill="#7f9bbc"/>
+  <text x="166" y="397" fill="#fff" font-family="system-ui,sans-serif" font-size="18" font-weight="700" text-anchor="middle">Interfaz local</text>
+  <text x="166" y="418" fill="#b9cce4" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle">Navegador · 127.0.0.1</text>
+</g>
+<g filter="url(#shadow)">
+  <path d="M380 160 L620 160 L648 187 L648 383 L380 383 Z" fill="url(#panel)" stroke="#6f92ba" stroke-width="2"/>
+  <path d="M380 160 L620 160 L648 187 L408 187 Z" fill="#3c6088"/>
+  <rect x="400" y="205" width="207" height="48" rx="8" fill="#102039" stroke="#5279a5"/>
+  <text x="503" y="225" fill="#fff" font-family="system-ui,sans-serif" font-size="13" font-weight="700" text-anchor="middle">Servidor Node.js</text>
+  <text x="503" y="242" fill="#c4d8ef" font-family="system-ui,sans-serif" font-size="11" text-anchor="middle">OAuth callback · Gmail API</text>
+  <path d="M410 276 H602" stroke="#66d6b0" stroke-width="3"/>
+  <rect x="400" y="290" width="207" height="58" rx="8" fill="#122d3e" stroke="#66d6b0"/>
+  <text x="503" y="311" fill="#9df2d4" font-family="system-ui,sans-serif" font-size="13" font-weight="700" text-anchor="middle">Tokens en memoria</text>
+  <text x="503" y="330" fill="#d1e8e4" font-family="system-ui,sans-serif" font-size="11" text-anchor="middle">Sin persistencia en disco</text>
+  <text x="514" y="412" fill="#fff" font-family="system-ui,sans-serif" font-size="18" font-weight="700" text-anchor="middle">Límite de confianza local</text>
+  <text x="514" y="432" fill="#b9cce4" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle">Scopes mínimos · estado OAuth</text>
+</g>
+<g filter="url(#shadow)">
+  <path d="M770 180 L1007 180 L1035 207 L1035 300 L770 300 Z" fill="url(#metal)" stroke="#fff" stroke-opacity=".65"/>
+  <path d="M770 180 L1007 180 L1035 207 L798 207 Z" fill="#fff" fill-opacity=".65"/>
+  <rect x="792" y="222" width="219" height="57" rx="8" fill="#13233b"/>
+  <circle cx="820" cy="250" r="13" fill="#4285f4"/><text x="820" y="255" fill="#fff" font-family="system-ui,sans-serif" font-size="14" font-weight="800" text-anchor="middle">G</text>
+  <text x="905" y="246" fill="#fff" font-family="system-ui,sans-serif" font-size="14" font-weight="700" text-anchor="middle">Google OAuth</text>
+  <text x="905" y="264" fill="#c4d8ef" font-family="system-ui,sans-serif" font-size="11" text-anchor="middle">Consentimiento de usuario</text>
+  <text x="902" y="327" fill="#fff" font-family="system-ui,sans-serif" font-size="17" font-weight="700" text-anchor="middle">OAuth 2.0</text>
+  <text x="902" y="347" fill="#b9cce4" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle">Client ID + secreto local</text>
+  <path d="M792 367 H1012" stroke="#6f92ba" stroke-width="2"/>
+  <text x="902" y="389" fill="#ffcf8b" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle">Configuración externa pendiente</text>
+</g>
+<g fill="none" stroke="#66d6b0" stroke-width="3" marker-end="url(#arrow)">
+  <path d="M290 268 H370"/>
+  <path d="M650 236 H760"/>
+  <path d="M760 270 H655"/>
+</g>
+<text x="329" y="250" fill="#9df2d4" font-family="system-ui,sans-serif" font-size="11" text-anchor="middle">HTTPS local</text>
+<text x="706" y="218" fill="#9df2d4" font-family="system-ui,sans-serif" font-size="11" text-anchor="middle">OAuth</text>
+<g filter="url(#shadow)">
+  <path d="M770 452 L1006 452 L1027 472 L1027 520 L770 520 Z" fill="#172c43" stroke="#66d6b0" stroke-width="1.5"/>
+  <text x="790" y="475" fill="#9df2d4" font-family="system-ui,sans-serif" font-size="12" font-weight="700">SIGUIENTE SALTO API</text>
+  <text x="790" y="496" fill="#fff" font-family="system-ui,sans-serif" font-size="13">Gmail messages.list / get / send</text>
+  <text x="790" y="512" fill="#c4d8ef" font-family="system-ui,sans-serif" font-size="11">Solo lectura + envío</text>
+</g>
+<g>
+  <rect x="48" y="465" width="15" height="15" rx="3" fill="#66d6b0"/><text x="72" y="477" fill="#e5f3ff" font-family="system-ui,sans-serif" font-size="12">Implementado en el código</text>
+  <rect x="48" y="491" width="15" height="15" rx="3" fill="#ffcf8b"/><text x="72" y="503" fill="#e5f3ff" font-family="system-ui,sans-serif" font-size="12">Pendiente de verificar con cuenta real</text>
+  <text x="48" y="535" fill="#8da8c8" font-family="system-ui,sans-serif" font-size="10">El diagrama describe el diseño del MVP, no demuestra una sesión activa.</text>
+</g>
+</svg>
