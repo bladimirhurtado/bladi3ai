@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>Gmail Workbench · Bladi 3AI</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div><p class="eyebrow">BLADI 3AI · HERRAMIENTA INDEPENDIENTE</p><h1>Gmail Workbench</h1><p class="subtitle">Tu correo, bajo tu autorización. Sin el complemento bloqueado de ChatGPT.</p></div>
+    <div class="status-wrap"><span id="status-dot" class="dot"></span><span id="status-text">Comprobando conexión…</span></div>
+  </header>
+  <main>
+    <section class="notice"><strong>Privacidad primero.</strong> La sesión OAuth se mantiene en la memoria del proceso; no guardamos tokens ni mensajes en disco. El servidor escucha solo en tu equipo.</section>
+    <section class="toolbar">
+      <button id="connect" class="primary">Conectar cuenta Google</button>
+      <button id="disconnect" class="secondary" hidden>Desconectar</button>
+      <form id="search-form"><label for="query">Buscar en Gmail</label><input id="query" name="q" placeholder="from:alguien asunto:factura" autocomplete="off"><button type="submit">Buscar</button></form>
+      <button id="refresh" class="secondary">Actualizar</button>
+    </section>
+    <section class="layout">
+      <aside class="panel inbox"><div class="panel-heading"><h2>Mensajes</h2><span id="count" class="count">0</span></div><p id="list-help" class="muted">Conecta tu cuenta para cargar el correo.</p><div id="message-list" class="message-list"></div></aside>
+      <article class="panel reader"><div class="panel-heading"><h2 id="reader-title">Vista del mensaje</h2><span id="reader-date" class="muted"></span></div><div id="reader-content" class="reader-content empty">Selecciona un mensaje para leerlo.</div></article>
+    </section>
+    <section class="panel compose"><div class="panel-heading"><h2>Redactar mensaje</h2><span class="muted">El envío requiere confirmación.</span></div>
+      <form id="compose-form" class="compose-form">
+        <label>Para<input name="to" type="email" required autocomplete="email" placeholder="destinatario@ejemplo.com"></label>
+        <label>Asunto<input name="subject" required maxlength="998" placeholder="Asunto del mensaje"></label>
+        <label>Mensaje<textarea name="body" rows="5" maxlength="100000" required placeholder="Escribe tu mensaje…"></textarea></label>
+        <button class="primary" type="submit">Revisar y enviar</button><p id="send-status" class="muted" role="status"></p>
+      </form>
+    </section>
+    <footer>Prototipo local · Gmail API oficial · Permisos limitados a lectura y envío · No afiliado a Google.</footer>
+  </main>
+  <script src="/app.js" defer></script>
+</body>
+</html>
