@@ -101,6 +101,10 @@ class MainActivity : Activity() {
             buttonParams()
         )
         content.addView(
+            makeButton("CONFIGURAR ARK / PLAY GAMES", 0xFF89A8FF.toInt()) { showAppSettingsDialog() },
+            buttonParams()
+        )
+        content.addView(
             makeButton("COPIAR INFORME", 0xFF8CA6D8.toInt()) { copyReport() },
             buttonParams()
         )
@@ -226,6 +230,20 @@ class MainActivity : Activity() {
                 refreshNetworkStatus()
             }
         }
+    }
+
+
+    private fun showAppSettingsDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Evitar restricciones a ARK")
+            .setMessage(
+                "Este ajuste solo ayuda si Android está limitando la actividad en segundo plano; no aumenta la señal LTE. En la lista de aplicaciones, abre ARK Mobile 2.0 y Google Play Games. Si estas opciones existen, permite datos en segundo plano y pon el uso de batería en «Sin restricciones» durante la prueba. No borres datos ni desinstales nada."
+            )
+            .setPositiveButton("Abrir ajustes de aplicaciones") { _, _ ->
+                startActivity(Intent(Settings.ACTION_MANAGE_APPLICATIONS_SETTINGS))
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
     }
 
     private fun showRecoveryDialog() {
