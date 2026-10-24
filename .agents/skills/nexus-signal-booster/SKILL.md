@@ -48,3 +48,6 @@ Consultar `references/tools-and-verification.md` antes de instalar herramientas 
 
 ## Criterio de éxito
 Una mejora solo se considera validada si es repetible, observable y no depende de una afirmación no verificada. Se considera buen resultado también descartar rápidamente una solución falsa y ahorrar tiempo/dinero.
+
+## Herramienta Android práctica
+Existe una app nativa experimental en `projects/nexus-signal-helper/` que no exige Termux ni root. Muestra la conexión validada por Android, prueba dos destinos HTTPS bajo demanda y abre el panel nativo de Internet para facilitar una recuperación manual. El sistema Android impide que una app ordinaria cambie silenciosamente el estado de datos móviles. El APK solo se considera listo cuando el workflow de compilación termina con éxito; la mejora real de red requiere prueba en el TCL 605.
