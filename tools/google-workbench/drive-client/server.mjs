@@ -52,7 +52,27 @@ async function drive(pathname, retry = true) {
     throw Object.assign(new Error(data.error?.message || `Drive API respondió HTTP ${response.status}`), { status: response.status === 403 ? 403 : 502 });
   }
   if (type.includes("application/json")) return response.json();
-  return { content: await response.text(), contentType: type };
+  const reader = response.body?.getReader();
+  if (!reader) return { content: "", contentType: type, truncated: false };
+  const chunks = [];
+  let total = 0;
+  let truncated = false;
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    const remaining = 1_000_001 - total;
+    if (value.byteLength > remaining) {
+      chunks.push(value.slice(0, Math.max(0, remaining)));
+      total += Math.max(0, remaining);
+      truncated = true;
+      await reader.cancel();
+      break;
+    }
+    chunks.push(value);
+    total += value.byteLength;
+    if (total > 1_000_000) { truncated = true; await reader.cancel(); break; }
+  }
+  return { content: Buffer.concat(chunks.map((chunk) => Buffer.from(chunk))).toString("utf8"), contentType: type, truncated };
 }
 export function escapeDriveQuery(value = "") { return String(value).replace(/\\/g, "\\\\").replace(/'/g, "\\'").slice(0, 200); }
 async function handle(req, res) {
@@ -105,11 +125,12 @@ async function handle(req, res) {
       const params = new URLSearchParams({ mimeType: "text/plain" });
       result = await drive(`files/${encodeURIComponent(textMatch[1])}/export?${params}`);
     } else {
+      const supportedText = /^text\\//.test(meta.mimeType || "") || ["application/json", "application/xml", "application/csv", "application/rtf"].includes(meta.mimeType || "");
+      if (!supportedText) { json(res, 415, { error: "La vista previa está limitada a documentos de Google Workspace y archivos de texto; este formato no se convierte a texto." }); return; }
       result = await drive(`files/${encodeURIComponent(textMatch[1])}?alt=media`);
     }
-    const content = String(result.content || "");
-    if (Buffer.byteLength(content, "utf8") > 1_000_000) { json(res, 413, { error: "El contenido supera el límite de vista previa de 1 MB." }); return; }
-    json(res, 200, { name: meta.name, content: content.slice(0, 1_000_000), contentType: result.contentType || "text/plain" }); return;
+    if (result.truncated) { json(res, 413, { error: "El contenido supera el límite de vista previa de 1 MB." }); return; }
+    json(res, 200, { name: meta.name, content: String(result.content || ""), contentType: result.contentType || "text/plain" }); return;
   }
   json(res, 404, { error: "Ruta no encontrada." });
 }
