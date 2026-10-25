@@ -22,6 +22,7 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 | `seguridad-auditoria-ataque` | Hay que hacer pruebas de seguridad con autorización y alcance definido. |
 | `ingenieria-inversa-educativa` | Hay que estudiar sistemas/código con finalidad educativa dentro de Bladi 3AI. Incluye triage local y guías para análisis especializado. |
 | `reverse-engineering` | Hay que analizar software, APKs, binarios, archivos o comportamiento observable con evidencia reproducible y autorización. Skill independiente y reutilizable. |
+| `reverse-engineering-anatomy` | Hay que investigar un sistema autorizado y explicarlo con diagramas Anatomy vinculados a evidencias; separa hechos, inferencias e incógnitas. |
 | `refactorizacion-codigo` | Hay que mejorar estructura sin cambiar comportamiento accidentalmente. |
 | `gestion-dependencias-parches` | Hay que actualizar o auditar dependencias y parches. |
 | `diseno-bases-datos` | Hay que diseñar esquemas, consultas o migraciones. |
@@ -39,6 +40,15 @@ Este directorio reúne skills orientadas a tareas técnicas y de producto. Cada 
 - Pruebas: `python -m unittest discover -s tests -v`
 
 El analizador es una primera pasada estática: calcula hash, detecta indicios de formato y resume metadatos limitados de ZIP/APK sin ejecutar ni extraer. No sustituye un descompilador ni determina por sí solo si un archivo es malicioso.
+
+## Google Workbench (Gmail y Drive)
+
+- MVP Gmail local: `tools/google-workbench/gmail-client/README.md`
+- MVP Drive local: `tools/google-workbench/drive-client/README.md`
+- Arquitecturas visuales: `docs/google-workbench/gmail-architecture.svg` y `docs/google-workbench/drive-architecture.svg`
+- Plan y límites de acceso: `docs/google-workbench/README.md`
+- CI: `.github/workflows/google-workbench-gmail.yml`
+- Los clientes usan OAuth oficial y no pueden reactivar ni eludir conectores deshabilitados por administración. La cuenta real, la configuración OAuth y el acceso directo desde ChatGPT todavía requieren pasos y pruebas explícitos.
 
 ## Cómo usarlas
 1. Lee el `SKILL.md` de la skill más pertinente antes de iniciar el trabajo.

@@ -1,0 +1,46 @@
+name: Gmail Workbench
+on:
+  pull_request:
+    paths:
+      - "tools/google-workbench/gmail-client/**"
+      - "tools/google-workbench/drive-client/**"
+      - "tools/google-workbench/start.mjs"
+      - "tools/google-workbench/README.md"
+      - "docs/google-workbench/**"
+      - ".agents/skills/reverse-engineering-anatomy/**"
+      - ".github/workflows/google-workbench-gmail.yml"
+  push:
+    branches: [main]
+    paths:
+      - "tools/google-workbench/gmail-client/**"
+      - "tools/google-workbench/drive-client/**"
+      - "docs/google-workbench/**"
+      - ".agents/skills/reverse-engineering-anatomy/**"
+      - ".github/workflows/google-workbench-gmail.yml"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Check unified launcher syntax
+        run: node --check tools/google-workbench/start.mjs
+      - name: Check server syntax
+        run: node --check tools/google-workbench/gmail-client/server.mjs
+      - name: Check browser script syntax
+        run: node --check tools/google-workbench/gmail-client/app.js
+      - name: Check Drive server syntax
+        run: node --check tools/google-workbench/drive-client/server.mjs
+      - name: Check Drive browser script syntax
+        run: node --check tools/google-workbench/drive-client/app.js
+      - name: Run Gmail unit tests
+        working-directory: tools/google-workbench/gmail-client
+        run: node --test
+      - name: Run Drive unit tests
+        working-directory: tools/google-workbench/drive-client
+        run: node --test
