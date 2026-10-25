@@ -4,6 +4,8 @@ on:
     paths:
       - "tools/google-workbench/gmail-client/**"
       - "tools/google-workbench/drive-client/**"
+      - "tools/google-workbench/start.mjs"
+      - "tools/google-workbench/README.md"
       - "docs/google-workbench/**"
       - ".agents/skills/reverse-engineering-anatomy/**"
       - ".github/workflows/google-workbench-gmail.yml"
@@ -26,6 +28,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
+      - name: Check unified launcher syntax
+        run: node --check tools/google-workbench/start.mjs
       - name: Check server syntax
         run: node --check tools/google-workbench/gmail-client/server.mjs
       - name: Check browser script syntax
