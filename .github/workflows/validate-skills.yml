@@ -13,6 +13,9 @@ on:
     paths:
       - ".agents/skills/**"
       - "scripts/validate-skills.py"
+      - "scripts/re_triage.py"
+      - "tests/**"
+      - "docs/reverse-engineering/**"
       - ".github/workflows/validate-skills.yml"
 
 permissions:
