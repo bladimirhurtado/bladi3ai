@@ -48,6 +48,7 @@ class ReaBridgeTests(unittest.TestCase):
         with self.assertRaises(HTTPError) as caught:
             urlopen(req, timeout=2)
         self.assertEqual(caught.exception.code, 401)
+        caught.exception.close()
 
     def test_status_rejects_unapproved_origin(self):
         server = ThreadingHTTPServer(("127.0.0.1", 0), bridge.Handler)
@@ -62,6 +63,7 @@ class ReaBridgeTests(unittest.TestCase):
         with self.assertRaises(HTTPError) as caught:
             urlopen(req, timeout=2)
         self.assertEqual(caught.exception.code, 403)
+        caught.exception.close()
 
     def test_status_accepts_token_from_approved_origin(self):
         server = ThreadingHTTPServer(("127.0.0.1", 0), bridge.Handler)
