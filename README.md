@@ -25,6 +25,10 @@ Plataforma educativa web, móvil y offline-first para aprender programación, de
 3. Desarrollo de Apps Android con Kotlin — Intermedio
 4. IA y Machine Learning Práctico — Intermedio
 
+## REA desde Android
+
+Se añadió un menú de trabajo para Termux en [`rea.sh`](rea.sh). Instrucciones: [`docs/REA-MOVIL.md`](docs/REA-MOVIL.md). Desde la carpeta del repositorio, ejecuta `bash rea.sh`.
+
 ## Uso
 
 La aplicación no necesita dependencias externas. Abre `index.html` desde un servidor web para disponer del comportamiento PWA/offline completo. En GitHub Pages se sirve directamente desde el repositorio.
