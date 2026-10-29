@@ -27,6 +27,7 @@ while true; do
   echo "3) Crear plan de mejoras"
   echo "4) Analizar un archivo (solo lectura)"
   echo "5) Comprobar instalación de REA"
+  echo "6) Conectar Taller de herramientas (puente local, solo lectura)"
   echo "0) Salir"
   printf "Elige una opción: "
   IFS= read -r choice || exit 0
@@ -67,8 +68,15 @@ while true; do
         echo "No existe la carpeta tests."
       fi
       ;;
+    6)
+      if [ -f "$ROOT/scripts/rea_bridge.py" ]; then
+        "$PYTHON" "$ROOT/scripts/rea_bridge.py"
+      else
+        echo "FALTA $ROOT/scripts/rea_bridge.py. Actualiza el repositorio desde GitHub."
+      fi
+      ;;
     0) echo "REA cerrada."; exit 0 ;;
-    *) echo "Opción no válida. Elige 0, 1, 2, 3, 4 o 5." ;;
+    *) echo "Opción no válida. Elige 0, 1, 2, 3, 4, 5 o 6." ;;
   esac
   printf "\nPulsa Enter para volver al menú..."
   IFS= read -r _
