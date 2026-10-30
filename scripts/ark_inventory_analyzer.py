@@ -12,7 +12,7 @@ INTEREST = {
     "construccion": ("structure", "building", "foundation", "wall", "door"),
     "armas_y_combate": ("weapon", "ammo", "rifle", "bow", "spear", "grenade"),
     "logica_del_juego": ("gamemode", "gamestate", "primal", "blueprint", "coreai"),
-    "mapas_y_escenarios": ("\.umap", "dungeon", "cave", "landscape", "mobile"),
+    "mapas_y_escenarios": (".umap", "dungeon", "cave", "landscape", "mobile"),
 }
 GROUPS = {
     "paquetes_uasset": {".uasset"},
