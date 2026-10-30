@@ -28,6 +28,7 @@ while true; do
   echo "4) Analizar un archivo (solo lectura)"
   echo "5) Comprobar instalación de REA"
   echo "6) Conectar Taller de herramientas (puente local, solo lectura)"
+  echo "7) Analizar inventario ARK (CSV + informe TXT)"
   echo "0) Salir"
   printf "Elige una opción: "
   IFS= read -r choice || exit 0
@@ -75,8 +76,23 @@ while true; do
         echo "FALTA $ROOT/scripts/rea_bridge.py. Actualiza el repositorio desde GitHub."
       fi
       ;;
+    7)
+      printf "Ruta completa de ARK-inventario.csv: "
+      IFS= read -r csvfile
+      printf "Ruta completa de ARK-componentes.txt [Enter si no está disponible]: "
+      IFS= read -r components
+      if [ -n "$csvfile" ]; then
+        if [ -n "$components" ]; then
+          "$PYTHON" "$ROOT/scripts/ark_inventory_analyzer.py" "$csvfile" --components "$components"
+        else
+          "$PYTHON" "$ROOT/scripts/ark_inventory_analyzer.py" "$csvfile"
+        fi
+      else
+        echo "No se indicó el CSV."
+      fi
+      ;;
     0) echo "REA cerrada."; exit 0 ;;
-    *) echo "Opción no válida. Elige 0, 1, 2, 3, 4, 5 o 6." ;;
+    *) echo "Opción no válida. Elige 0, 1, 2, 3, 4, 5, 6 o 7." ;;
   esac
   printf "\nPulsa Enter para volver al menú..."
   IFS= read -r _
