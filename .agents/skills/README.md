@@ -79,3 +79,10 @@ Desde la raíz del repositorio ejecuta:
 `python3 scripts/validate-skills.py`
 
 El catálogo contiene skills con guías operativas iniciales. Deben considerarse **versión inicial** hasta que se validen en tareas reales; no son certificaciones ni evidencia de que proyectos concretos funcionen. El paquete upstream Anatomy se conserva intacto y se incluye como base original complementaria para la skill de anatomía de agentes.
+
+
+## Investigación documentada: Anatomy
+
+- Informe de continuidad: `.agents/skills/anatomy/INVESTIGATION-2026-10-31.md`
+- Resume propósito real, módulos y scripts inspeccionados, aportes posibles a ARK y REA, límites, estado de verificación y plan de pruebas pendiente.
+- Antes de usar Anatomy en un proyecto, leer el informe y el `.agents/skills/anatomy/SKILL.md`. No considerar las ejecuciones generales de GitHub Actions como pruebas de Anatomy.
