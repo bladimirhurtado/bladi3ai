@@ -29,6 +29,16 @@ Plataforma educativa web, móvil y offline-first para aprender programación, de
 
 Se añadió un menú de trabajo para Termux en [`rea.sh`](rea.sh). Instrucciones: [`docs/REA-MOVIL.md`](docs/REA-MOVIL.md). Desde la carpeta del repositorio, ejecuta `bash rea.sh`.
 
+## BLADI REPLICA ENGINE
+
+Se incorpora un motor modular de reconstrucción funcional clean-room con 11 etapas: reconocimiento, arquitectura, diseño, construcción, backend, pruebas, paridad, análisis de usuarios, identidad, lanzamiento y despliegue. No necesita dependencias externas ni claves API para su flujo local inicial.
+
+Documentación y comandos: [bladi_replica_engine/README.md](bladi_replica_engine/README.md).
+
+Ejemplo: `python -m bladi_replica_engine.cli init --workspace ./workspaces --name mi-app --target https://ejemplo.com`.
+
+La versión inicial genera paquetes de instrucciones portables, registra resultados y mantiene el estado del proyecto. Los adaptadores para conectar proveedores de IA se desarrollarán por separado; publicar, desplegar o usar servicios de pago siempre requiere autorización explícita.
+
 ## Uso
 
 La aplicación no necesita dependencias externas. Abre `index.html` desde un servidor web para disponer del comportamiento PWA/offline completo. En GitHub Pages se sirve directamente desde el repositorio.
