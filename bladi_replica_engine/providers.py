@@ -79,7 +79,7 @@ class OpenAICompatibleProvider(BaseProvider):
 
 def configured_providers(env=None) -> List[BaseProvider]:
     """Build adapters from environment; remote adapter is opt-in via URL + model."""
-    env = env or os.environ
+    env = os.environ if env is None else env
     timeout = int(env.get("BLADI_AI_TIMEOUT", "60"))
     providers: Dict[str, BaseProvider] = {}
     if env.get("BLADI_OLLAMA_MODEL", "llama3.2").strip().lower() not in ("", "off", "none"):
