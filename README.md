@@ -31,13 +31,13 @@ Se añadió un menú de trabajo para Termux en [`rea.sh`](rea.sh). Instrucciones
 
 ## BLADI REPLICA ENGINE
 
-Se incorpora un motor modular de reconstrucción funcional clean-room con 11 etapas: reconocimiento, arquitectura, diseño, construcción, backend, pruebas, paridad, análisis de usuarios, identidad, lanzamiento y despliegue. No necesita dependencias externas ni claves API para su flujo local inicial.
+Motor clean-room integrado con 11 etapas, adaptador local Ollama, adaptador para endpoints OpenAI-compatible, failover entre proveedores, memoria local y ejecución de etapas con borradores revisables. Versión **0.2.0**. No exige servicios de pago ni claves API para usar el modo local.
 
-Documentación y comandos: [bladi_replica_engine/README.md](bladi_replica_engine/README.md).
+Documentación, configuración y comandos: [`bladi_replica_engine/README.md`](bladi_replica_engine/README.md).
 
-Ejemplo: `python -m bladi_replica_engine.cli init --workspace ./workspaces --name mi-app --target https://ejemplo.com`.
+Inicio rápido: `python -m bladi_replica_engine.cli providers`.
 
-La versión inicial genera paquetes de instrucciones portables, registra resultados y mantiene el estado del proyecto. Los adaptadores para conectar proveedores de IA se desarrollarán por separado; publicar, desplegar o usar servicios de pago siempre requiere autorización explícita.
+Los proveedores remotos requieren configuración explícita y `--allow-remote`; las claves no se guardan en Git. El motor no ejecuta código generado ni publica/despliega sin autorización.
 
 ## Uso
 

@@ -40,12 +40,10 @@ def init_project(workspace, name, target=""):
     slug = _safe_project_name(name)
     root = Path(workspace).expanduser().resolve() / slug
     root.mkdir(parents=True, exist_ok=False)
-    state = {
-        "engine": "BLADI REPLICA ENGINE", "version": "0.1.0", "project": slug,
-        "target_reference": target.strip(), "created_at": _now(), "current_stage": "recon",
-        "completed": [], "status": "active",
-        "approval_required_for": ["backend_integrations", "deploy", "external_network_access"],
-    }
+    state = {"engine": "BLADI REPLICA ENGINE", "version": "0.2.0", "project": slug,
+             "target_reference": target.strip(), "created_at": _now(), "current_stage": "recon",
+             "completed": [], "status": "active",
+             "approval_required_for": ["backend_integrations", "deploy", "external_network_access"]}
     (root / "project.json").write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     _write_new(root / "features.csv", "id,name,priority,status,notes\nF001,Documentar flujo principal,must,not_started,\n")
     _write_new(root / "README.md", f"# {slug}\n\nProyecto de reconstrucción funcional clean-room.\n\nReferencia: {target or 'Pendiente'}\n")
@@ -67,11 +65,9 @@ def save_state(project_dir, state):
 
 def status(project_dir):
     state = load_state(project_dir)
-    return {
-        "project": state["project"], "status": state["status"],
-        "current_stage": state["current_stage"], "completed": list(state["completed"]),
-        "remaining": [s[0] for s in STAGES if s[0] not in state["completed"]],
-    }
+    return {"project": state["project"], "status": state["status"],
+            "current_stage": state["current_stage"], "completed": list(state["completed"]),
+            "remaining": [s[0] for s in STAGES if s[0] not in state["completed"]]}
 
 def prepare_stage(project_dir, stage=None):
     root = Path(project_dir).expanduser().resolve()
@@ -133,15 +129,11 @@ def complete_stage(project_dir, stage, result_file):
 def export_manifest(project_dir):
     root = Path(project_dir).expanduser().resolve()
     state = load_state(root)
-    manifest = {
-        "project": state["project"], "target_reference": state.get("target_reference", ""),
-        "stages": [
-            {"id": key, "name": title, "completed": key in state["completed"],
-             "prompt_exists": (root / "prompts" / f"{key}.md").is_file(),
-             "output_exists": (root / "outputs" / f"{key}.md").is_file()}
-            for key, title, _ in STAGES
-        ],
-    }
+    manifest = {"project": state["project"], "target_reference": state.get("target_reference", ""),
+                "stages": [{"id": key, "name": title, "completed": key in state["completed"],
+                            "prompt_exists": (root / "prompts" / f"{key}.md").is_file(),
+                            "output_exists": (root / "outputs" / f"{key}.md").is_file()}
+                           for key, title, _ in STAGES]}
     path = root / "manifest.json"
     path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return path
