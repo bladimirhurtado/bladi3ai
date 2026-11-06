@@ -87,7 +87,7 @@ def main(argv=None):
             draft_dir.mkdir(parents=True, exist_ok=True)
             draft_path = draft_dir / (stage + "-draft.md")
             draft_path.write_text("<!-- Borrador generado por {} / {}. Requiere revisión humana. -->\n\n{}\n".format(result["provider"], result["model"], result["text"]), encoding="utf-8")
-            append_memory(args.project_dir, "assistant", "Borrador de etapa {} guardado en {}".format(stage, draft_path.name), result["provider"])
+            append_memory(args.project_dir, "assistant", "Borrador de etapa {} guardado en {}\n\n{}".format(stage, draft_path.name, result["text"][:12000]), result["provider"])
             print("Borrador guardado: {}".format(draft_path))
             print("No se marca la etapa como completada: revisa el borrador y usa 'complete' cuando esté validado.")
     except (ProviderError, OSError, ValueError) as exc:
