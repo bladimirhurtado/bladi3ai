@@ -82,6 +82,8 @@ def prepare_stage(project_dir, stage=None):
     _, title, objective = STAGE_MAP[key]
     prompt = f"""# BLADI REPLICA ENGINE — {title}
 
+Flujo de reconstrucción clean-room.
+
 Proyecto: {state['project']}
 Referencia declarada: {state.get('target_reference') or 'No especificada'}
 
