@@ -2,9 +2,7 @@ import io
 import tempfile
 import unittest
 from contextlib import redirect_stdout
-from pathlib import Path
 from unittest.mock import patch
-
 from bladi_replica_engine.cli import main
 from bladi_replica_engine.engine import init_project, load_state
 from bladi_replica_engine.memory import read_memory
@@ -27,8 +25,7 @@ class CliTests(unittest.TestCase):
             self.assertIn("Borrador de prueba", draft.read_text(encoding="utf-8"))
             self.assertEqual(load_state(project)["completed"], [])
             self.assertEqual(load_state(project)["current_stage"], "recon")
-            self.assertEqual(len(read_memory(project)), 1)
-
+            self.assertIn("Borrador de prueba", read_memory(project)[0]["content"])
     def test_ask_save_writes_local_memory(self):
         with tempfile.TemporaryDirectory() as tmp:
             project = init_project(tmp, "ask-demo")
