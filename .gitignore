@@ -1,0 +1,9 @@
+# Local BLADI REPLICA ENGINE workspaces and private project memory
+workspaces/
+**/memory.jsonl
+
+# Python generated files
+__pycache__/
+*.py[cod]
+.venv/
+venv/
