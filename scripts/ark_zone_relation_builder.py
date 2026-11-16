@@ -81,7 +81,7 @@ def main() -> int:
                 inventory_hits.append({"line": line_no, "path": value, "zones": zones,
                                        "evidence": "inventory_path_name_candidate"})
 
-    graph = defaultdict(lambda: {"biome_strings": [], "spawn_strings": [], "inventory_paths": []})
+    graph = defaultdict(lambda: {"biome_strings": [], "spawns_strings": [], "inventory_paths": []})
     for item in records:
         key = item["source"] + "_strings"
         for zone in item["zones"]:
@@ -94,11 +94,12 @@ def main() -> int:
     output.parent.mkdir(parents=True, exist_ok=True)
     report = {
         "tool": "ARK Zone Relationship Builder",
-        "version": "0.1.0",
+        "version": "0.1.1",
         "mode": "read_only",
         "sources": {name: {"path": str(path.resolve()), "bytes": path.stat().st_size,
                            "sha256": sha256(path)} for name, path in sources.items()},
         "zones": dict(sorted(graph.items())),
+        "summary": {"zones_with_candidates": len(graph), "biome_string_candidates": sum(len(v["biome_strings"]) for v in graph.values()), "spawn_string_candidates": sum(len(v["spawns_strings"]) for v in graph.values()), "inventory_path_candidates": sum(len(v["inventory_paths"]) for v in graph.values())},
         "string_candidates": records,
         "inventory_candidates": inventory_hits,
         "limitations": [
