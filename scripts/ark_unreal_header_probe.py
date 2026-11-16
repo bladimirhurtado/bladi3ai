@@ -89,7 +89,7 @@ def main() -> int:
     if args.out:
         output = Path(args.out).expanduser()
         output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_text(rendered + "\\n", encoding="utf-8")
+        output.write_text(rendered + "\n", encoding="utf-8")
         print("JSON:", output.resolve())
     print(rendered)
     return 1 if any("error" in item for item in results) else 0
