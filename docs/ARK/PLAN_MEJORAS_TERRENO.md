@@ -45,3 +45,10 @@ Las pruebas se harán sobre copias y con hash antes/después. Nunca escribir sob
 
 ## Siguiente decisión técnica
 Si los 82 candidatos no incluyen geometría Landscape/heightmap, ampliar la búsqueda de nombres dentro del inventario existente y examinar subniveles/paquetes de mapa ya presentes. No reconstruir el inventario ni volver a ejecutar ARK MAP LAB.
+
+## Reglas técnicas de Landscape (referencia de Unreal; no asumir que el asset ARK ya está identificado)
+
+- Unreal documenta heightmaps de Landscape en escala de grises de 16 bits (PNG o R16), además de RAW con metadatos de dimensiones. Fuente: [Landscape heightmap import/export](https://dev.epicgames.com/documentation/unreal-engine/importing-and-exporting-landscape-heightmaps-in-unreal-engine).
+- Las dimensiones válidas dependen del tamaño de sección, subsecciones y número de componentes; los bordes entre componentes comparten vértices. Fuente: [Landscape Technical Guide](https://dev.epicgames.com/documentation/unreal-engine/landscape-technical-guide-in-unreal-engine).
+- Por tanto, no generar un heightmap sustituto ni fijar resolución/escala a ciegas. Primero hay que identificar la resolución real, escala, ubicación, orientación, capas de peso y referencias del Landscape original.
+- Esta documentación describe Unreal en general; no prueba por sí sola que el build de ARK móvil use el mismo esquema sin modificaciones.
