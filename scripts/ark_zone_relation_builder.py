@@ -51,7 +51,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="Reconstruye relaciones candidatas de zonas ARK; solo lectura.")
     ap.add_argument("--biomes", required=True, help="Archivo .umap o .uexp de Biomes")
     ap.add_argument("--spawns", required=True, help="Archivo .umap o .uexp de DinoSpawns")
-    ap.add_argument("--inventory", help="Inventario pakchunk*_lista.txt opcional")
+    ap.add_argument("--inventory", help="Inventario PAK ya existente (TXT, una ruta por línea)")
     ap.add_argument("--out", default="analisis/zonas_relaciones", help="Prefijo de salida")
     args = ap.parse_args()
 
@@ -94,7 +94,7 @@ def main() -> int:
     output.parent.mkdir(parents=True, exist_ok=True)
     report = {
         "tool": "ARK Zone Relationship Builder",
-        "version": "0.1.1",
+        "version": "0.2.0",
         "mode": "read_only",
         "sources": {name: {"path": str(path.resolve()), "bytes": path.stat().st_size,
                            "sha256": sha256(path)} for name, path in sources.items()},
@@ -124,7 +124,7 @@ def main() -> int:
                 writer.writerow({"zone": zone, "source": "inventory",
                                  "candidate": item["path"], "evidence": item["evidence"]})
 
-    print("ARK Zone Relationship Builder 0.1.1 — solo lectura")
+    print("ARK Zone Relationship Builder 0.2.0 — solo lectura")
     print("Zonas con candidatos:", len(graph))
     for zone, values in sorted(graph.items()):
         print(f"- {zone}: biomes={len(values['biomes_strings'])}, "
