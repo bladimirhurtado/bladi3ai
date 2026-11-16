@@ -81,7 +81,7 @@ def main() -> int:
                 inventory_hits.append({"line": line_no, "path": value, "zones": zones,
                                        "evidence": "inventory_path_name_candidate"})
 
-    graph = defaultdict(lambda: {"biome_strings": [], "spawns_strings": [], "inventory_paths": []})
+    graph = defaultdict(lambda: {"biomes_strings": [], "spawns_strings": [], "inventory_paths": []})
     for item in records:
         key = item["source"] + "_strings"
         for zone in item["zones"]:
@@ -99,7 +99,7 @@ def main() -> int:
         "sources": {name: {"path": str(path.resolve()), "bytes": path.stat().st_size,
                            "sha256": sha256(path)} for name, path in sources.items()},
         "zones": dict(sorted(graph.items())),
-        "summary": {"zones_with_candidates": len(graph), "biome_string_candidates": sum(len(v["biome_strings"]) for v in graph.values()), "spawn_string_candidates": sum(len(v["spawns_strings"]) for v in graph.values()), "inventory_path_candidates": sum(len(v["inventory_paths"]) for v in graph.values())},
+        "summary": {"zones_with_candidates": len(graph), "biome_string_candidates": sum(len(v["biomes_strings"]) for v in graph.values()), "spawn_string_candidates": sum(len(v["spawns_strings"]) for v in graph.values()), "inventory_path_candidates": sum(len(v["inventory_paths"]) for v in graph.values())},
         "string_candidates": records,
         "inventory_candidates": inventory_hits,
         "limitations": [
@@ -127,7 +127,7 @@ def main() -> int:
     print("ARK Zone Relationship Builder 0.1.0 — solo lectura")
     print("Zonas con candidatos:", len(graph))
     for zone, values in sorted(graph.items()):
-        print(f"- {zone}: biomes={len(values['biome_strings'])}, "
+        print(f"- {zone}: biomes={len(values['biomes_strings'])}, "
               f"spawns={len(values['spawns_strings'])}, inventory={len(values['inventory_paths'])}")
     print("JSON:", json_path.resolve())
     print("CSV:", csv_path.resolve())
