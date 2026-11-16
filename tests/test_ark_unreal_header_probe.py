@@ -27,14 +27,14 @@ class UnrealHeaderProbeTests(unittest.TestCase):
     def test_rejects_unknown_tag(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "bad.uasset"
-            path.write_bytes(b"BAD!" + b"\\x00" * 24)
+            path.write_bytes(b"BAD!" + bytes(24))
             with self.assertRaisesRegex(ValueError, "Tag Unreal no reconocido"):
                 module.inspect_prefix(path)
 
     def test_rejects_truncated_file(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "short.uasset"
-            path.write_bytes(b"\\x00" * 12)
+            path.write_bytes(bytes(12))
             with self.assertRaisesRegex(ValueError, "demasiado pequeño"):
                 module.inspect_prefix(path)
 
