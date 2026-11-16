@@ -39,6 +39,10 @@ Inicio rápido: `python -m bladi_replica_engine.cli providers`.
 
 Los proveedores remotos requieren configuración explícita y `--allow-remote`; las claves no se guardan en Git. El motor no ejecuta código generado ni publica/despliega sin autorización.
 
+## ARK — registro maestro
+
+Todo el trabajo, herramientas existentes, resultados ya obtenidos, compatibilidad de parsers y siguiente paso están centralizados en [`docs/ARK/ESTADO_MAESTRO.md`](docs/ARK/ESTADO_MAESTRO.md). **Consultar este documento antes de repetir comandos, inventarios, extracciones o análisis.** Actualizarlo tras cada avance para mantener continuidad entre chats.
+
 ## Uso
 
 La aplicación no necesita dependencias externas. Abre `index.html` desde un servidor web para disponer del comportamiento PWA/offline completo. En GitHub Pages se sirve directamente desde el repositorio.
