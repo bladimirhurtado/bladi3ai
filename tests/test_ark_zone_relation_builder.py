@@ -24,7 +24,7 @@ class ZoneRelationBuilderTests(unittest.TestCase):
         self.assertEqual(module.classify("PlayerCharacterStatusComponent"), [])
 
     def test_ascii_and_utf16_strings(self):
-        data = b"xx RedwoodForest yy\\x00" + "TheSouthernIslets".encode("utf-16-le")
+        data = b"xx RedwoodForest yy\x00" + "TheSouthernIslets".encode("utf-16-le")
         values = module.printable_strings(data)
         self.assertTrue(any("RedwoodForest" in x for x in values))
         self.assertTrue(any("TheSouthernIslets" in x for x in values))
@@ -35,8 +35,8 @@ class ZoneRelationBuilderTests(unittest.TestCase):
             biomes = root / "Biomes.uexp"
             spawns = root / "DinoSpawns.uexp"
             output = root / "out" / "redwood_relaciones"
-            biomes.write_bytes(b"TheRedwoodForests\\x00SouthernJungle")
-            spawns.write_bytes(b"DinoSpawnEntries_Redwoods\\x00DinoSpawnEntriesSwamp")
+            biomes.write_bytes(b"TheRedwoodForests\x00SouthernJungle")
+            spawns.write_bytes(b"DinoSpawnEntries_Redwoods\x00DinoSpawnEntriesSwamp")
             before = (module.sha256(biomes), module.sha256(spawns))
             argv = ["ark_zone_relation_builder.py", "--biomes", str(biomes),
                     "--spawns", str(spawns), "--out", str(output)]
