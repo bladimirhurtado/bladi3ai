@@ -149,3 +149,15 @@ No pedir de nuevo al usuario el inventario, las rutas ya listadas, ni los result
 
 ### Siguiente acción
 Ejecutar las pruebas del workflow sobre el nuevo commit y, en paralelo, avanzar al lector de cabecera Unreal de solo lectura sobre el spawner Redwood extraído. No repetir inventario ni extracción.
+
+## 9. Nuevo trabajo técnico — lector preliminar de cabecera Unreal
+
+- Se añadió `scripts/ark_unreal_header_probe.py` (v0.1.0): lectura de los primeros 20 bytes, validación del tag de paquete Unreal y extracción de los cuatro enteros iniciales del prefijo, junto con tamaño y SHA-256.
+- Se añadieron tres pruebas sintéticas: prefijo válido y fuente intacta, tag incorrecto y archivo truncado.
+- Se documentó la invocación sobre el spawner Redwood ya extraído en `docs/ARK/REDWOOD_PIPELINE.md`.
+- Límite explícito: no interpreta el FPackageFileSummary completo, custom versions, imports/exports, mappings ni propiedades. No deducir todavía versión exacta del motor ni compatibilidad de CUE4Parse a partir de esta herramienta.
+- Commits de esta fase: `5fcf564`, `a1e3a01`, `d44667b`, `5c0975d`, `03c9d4d`, `42e738f`, `80dce47`, `46de45c`.
+- Pruebas reales del nuevo lector: pendientes de ejecución en CI/Termux. No marcar como validadas hasta observar el resultado.
+
+### Próximo paso único
+Sincronizar esta rama y ejecutar una sola vez el probe contra el `.uasset` Redwood ya extraído. Compartir el JSON de salida; con esos valores se decide si ampliar el lector de summary o pasar directamente a un parser compatible. No reextraer el PAK ni rehacer el inventario.
