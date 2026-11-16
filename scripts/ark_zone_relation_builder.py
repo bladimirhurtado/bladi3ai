@@ -124,7 +124,7 @@ def main() -> int:
                 writer.writerow({"zone": zone, "source": "inventory",
                                  "candidate": item["path"], "evidence": item["evidence"]})
 
-    print("ARK Zone Relationship Builder 0.1.0 — solo lectura")
+    print("ARK Zone Relationship Builder 0.1.1 — solo lectura")
     print("Zonas con candidatos:", len(graph))
     for zone, values in sorted(graph.items()):
         print(f"- {zone}: biomes={len(values['biomes_strings'])}, "
