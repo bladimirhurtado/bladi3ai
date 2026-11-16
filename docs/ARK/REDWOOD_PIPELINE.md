@@ -48,3 +48,17 @@ Demuestra que podemos cruzar nombres/rutas del inventario con cadenas de zona y 
 ## Próxima fase técnica
 
 Construir un lector de cabecera/summary de paquetes Unreal, de solo lectura, para los archivos Redwood ya extraídos. Primero identificar package version, licensee version, custom versions, flags, offsets de name/import/export tables y si el paquete usa unversioned properties. No escribir ni reserializar archivos. Validar el lector con pruebas sintéticas y hashes antes/después.
+
+## Lector preliminar de cabecera Unreal
+
+Se añadió `scripts/ark_unreal_header_probe.py`, un probe conservador que lee solo los primeros 20 bytes del paquete, valida el tag `0x9E2A83C1` y reporta los cuatro enteros iniciales (legacy file, legacy UE3, UE4 y licensee UE4), tamaño y SHA-256. No intenta decodificar custom versions, imports/exports ni propiedades; no es todavía un parser completo.
+
+Cuando esté sincronizado el repositorio en Termux, ejecutar sobre las copias ya extraídas:
+
+```bash
+python scripts/ark_unreal_header_probe.py \
+  ~/ark/ARK_MAP_LAB/redwood_spawner/CoreBlueprints/Spawners/DinoSpawnEntriesRedwoods.uasset \
+  --out ark_work/zonas_secuoyas/redwood_header_probe.json
+```
+
+Si esa ruta concreta no coincide con la copia local, usar la ruta ya registrada del mismo archivo bajo `ARK_MAP_LAB/redwood_spawner/`; no extraerlo otra vez. El resultado real de esta prueba está pendiente: las pruebas sintéticas no demuestran que el encabezado del asset ARK tenga ese formato.
