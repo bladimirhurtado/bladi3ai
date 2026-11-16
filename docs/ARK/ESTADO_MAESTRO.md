@@ -135,3 +135,17 @@ No pedir de nuevo al usuario el inventario, las rutas ya listadas, ni los result
 - Prioridad: dejar de repetir trabajo entre chats. Consultar este archivo primero y actualizarlo tras cada avance.
 - El usuario quiere que el asistente organice el proyecto y avance sin pedirle comandos redundantes.
 - No afirmar que una herramienta es compatible con ARK hasta probarla con los archivos reales.
+
+
+## 8. Avance incorporado — 2026-11-16
+
+- Se reutilizó el Zone Relationship Builder existente; no se creó un segundo analizador.
+- Versión actual del builder: **0.2.0**. El parámetro `--inventory` ya existía en el CLI, pero la ejecución anterior no lo recibió; eso explica los ceros en `inventory_path_candidates`. Se aclaró su ayuda para indicar que debe recibir el TXT de inventario PAK ya generado.
+- Se añadió una prueba automatizada que pasa el inventario existente y exige detectar dos rutas Redwood conocidas (Spawner Redwood y WoodHarvestComponent_RedWood), excluir la ruta Swamp, registrar SHA-256 y comprobar que el inventario no se modifica.
+- Se creó `docs/ARK/REDWOOD_PIPELINE.md` con el flujo exacto para reutilizar inventario, Biomes, DinoSpawns y el integrador, sin reextraer el PAK.
+- Commits nuevos en esta rama: `07f0385` (versión/ayuda), `caa2c3d` (prueba de inventario), `fa894ff` (documentación de flujo).
+- PR existente: [#38](https://github.com/bladimirhurtado/bladi3ai/pull/38). No se abrió un PR duplicado. La actualización de esta fase queda en esa misma rama/PR.
+- Validación: la prueba local nueva aún no se ha ejecutado en Termux; GitHub Actions no devolvió una ejecución asociada a estos commits mediante la consulta disponible. **No declarar CI verde todavía.**
+
+### Siguiente acción
+Ejecutar las pruebas del workflow sobre el nuevo commit y, en paralelo, avanzar al lector de cabecera Unreal de solo lectura sobre el spawner Redwood extraído. No repetir inventario ni extracción.
