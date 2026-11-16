@@ -29,6 +29,37 @@ class ZoneRelationBuilderTests(unittest.TestCase):
         self.assertTrue(any("RedwoodForest" in x for x in values))
         self.assertTrue(any("TheSouthernIslets" in x for x in values))
 
+    def test_cli_includes_existing_inventory_paths(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            biomes = root / "Biomes.uexp"
+            spawns = root / "DinoSpawns.uexp"
+            inventory = root / "pakchunk1-Android_lista.txt"
+            output = root / "out" / "redwood"
+            biomes.write_bytes(b"TheRedwoodForests")
+            spawns.write_bytes(b"DinoSpawnEntriesRedwoods")
+            inventory.write_text(
+                "CoreBlueprints/Spawners/DinoSpawnEntriesRedwoods.uasset\\n"
+                "CoreBlueprints/HarvestComponents/WoodHarvestComponent_RedWood.uasset\\n"
+                "CoreBlueprints/Spawners/DinoSpawnEntriesSwamp.uasset\\n",
+                encoding="utf-8",
+            )
+            inventory_before = module.sha256(inventory)
+            argv = ["ark_zone_relation_builder.py", "--biomes", str(biomes),
+                    "--spawns", str(spawns), "--inventory", str(inventory),
+                    "--out", str(output)]
+            stdout = io.StringIO()
+            with patch("sys.argv", argv), contextlib.redirect_stdout(stdout):
+                self.assertEqual(module.main(), 0)
+            report = json.loads(output.with_suffix(".json").read_text(encoding="utf-8"))
+            redwood_paths = report["zones"]["redwood"]["inventory_paths"]
+            self.assertEqual(len(redwood_paths), 2)
+            self.assertTrue(any("DinoSpawnEntriesRedwoods.uasset" in x for x in redwood_paths))
+            self.assertEqual(report["summary"]["inventory_path_candidates"], 2)
+            self.assertEqual(report["sources"]["inventory"]["sha256"], inventory_before)
+            self.assertEqual(module.sha256(inventory), inventory_before)
+            self.assertIn("inventory=2", stdout.getvalue())
+
     def test_cli_builds_graph_and_keeps_sources_unchanged(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
