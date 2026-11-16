@@ -3,7 +3,7 @@
 Última revisión: 2026-11-16
 Repositorio: `bladimirhurtado/bladi3ai`
 Rama de trabajo: `ark/zone-relations-redwood-prototype`
-Último commit confirmado por el usuario en Termux: `bf430d8` (la rama avanzó desde `9378bc5`).
+Último commit confirmado por el usuario en Termux: `0826c53` (sincronizado el 2026-11-16).
 
 > Este documento es la fuente única de verdad operativa para continuar el trabajo ARK entre chats. Antes de pedir al usuario un comando, consultar este registro y el repositorio. No repetir tareas marcadas como completadas salvo que exista una razón técnica concreta y se explique.
 
@@ -161,3 +161,28 @@ Ejecutar las pruebas del workflow sobre el nuevo commit y, en paralelo, avanzar 
 
 ### Próximo paso único
 Sincronizar esta rama y ejecutar una sola vez el probe contra el `.uasset` Redwood ya extraído. Compartir el JSON de salida; con esos valores se decide si ampliar el lector de summary o pasar directamente a un parser compatible. No reextraer el PAK ni rehacer el inventario.
+
+
+## 10. Resultado real del probe Redwood — 2026-11-16
+
+El usuario ejecutó `scripts/ark_unreal_header_probe.py` sobre el asset ya extraído:
+- Archivo: `~/ark/ARK_MAP_LAB/redwood_spawner/CoreBlueprints/Spawners/DinoSpawnEntriesRedwoods.uasset`
+- Tamaño: 2.247 bytes.
+- SHA-256: `c019ca14e75b2ef0adeb0f708b0ea24fea366fdcf1ff56fa81e7cba352e4bf47`.
+- Package tag: `0x9E2A83C1`, reconocido.
+- Legacy file version: -7; legacy UE3: 0; UE4 file version: 0; licensee version: 0.
+- Alcance: únicamente prefijo fijo de 20 bytes. **No** se ha leído FPackageFileSummary completo, custom versions, imports, exports ni propiedades. No concluir versión exacta del motor ni modo unversioned solo con esos cuatro enteros.
+- No se ha modificado el asset.
+
+## 11. Inicio de fase de terreno — prioridad actual
+
+El usuario decidió pasar a mejoras del terreno. Reutilizar la investigación The Island ya hecha:
+- Inventario existente: `~/ark/01_INVENTARIO/original/pakchunk1-Android_lista.txt`; no regenerarlo.
+- ARK MAP LAB ya clasificó recursos y produjo 82 candidatos en categoría `terreno` según el resumen previamente comunicado. Extraer esos registros del informe existente; no volver a ejecutar la clasificación.
+- `M_PersistentGameplaySublevel_Biomes.umap` (14.972 bytes) y `M_PersistentGameplaySublevel_DinoSpawns.umap` (316.989 bytes) están identificados como subniveles funcionales, no como parcelas de geometría del terreno.
+- En la búsqueda anterior no se encontró `TheIsland.umap` ni se confirmó un paquete principal con Landscape/heightmap. No afirmar que se dispone de la geometría editable.
+- También se inspeccionó `DayCycleManager_TheIsland.uasset/.uexp`; propiedades relacionadas con hora, temperatura, iluminación, viento y sonidos aparecen en cadenas, pero los valores no están mapeados con certeza. No es un archivo de terreno.
+- Plan por zonas aprobado conceptualmente: relieve/landscape, biomas, agua, vegetación, geología/rocas/recursos, cuevas, fauna y POI; cada relación debe etiquetarse como confirmada, candidata o desconocida.
+- Próximo paso concreto: recuperar del informe ya existente la lista exacta de los 82 candidatos `terreno`, agrupar por extensión y nombre (Landscape, heightmap, terrain, static mesh, rock/cliff, spline, layer, foliage), y priorizar los archivos que sean geometría/altura real. Solo después decidir qué se puede modificar.
+- Restricción: no tocar PAK ni assets originales; no inventar coordenadas ni afirmar que se puede editar el mapa hasta identificar y leer un paquete de geometría compatible.
+
