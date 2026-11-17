@@ -186,3 +186,28 @@ El usuario decidió pasar a mejoras del terreno. Reutilizar la investigación Th
 - Próximo paso concreto: recuperar del informe ya existente la lista exacta de los 82 candidatos `terreno`, agrupar por extensión y nombre (Landscape, heightmap, terrain, static mesh, rock/cliff, spline, layer, foliage), y priorizar los archivos que sean geometría/altura real. Solo después decidir qué se puede modificar.
 - Restricción: no tocar PAK ni assets originales; no inventar coordenadas ni afirmar que se puede editar el mapa hasta identificar y leer un paquete de geometría compatible.
 
+
+
+## 12. Corrección de prioridad y trabajo REDWOOD 2.0 — 2026-11-16
+
+El usuario corrigió explícitamente el rumbo: **no trabajar ahora en mejoras generales de The Island**. La tarea activa es mejorar el bosque Redwood que ya se estaba investigando. No volver a abrir la fase genérica de terreno ni pedir comandos para repetir inventario/extracción.
+
+### Adaptación definida
+Se creó `docs/ARK/REDWOOD_ADAPTACION_V1.md` en el commit `601f6cf341224eccb31413684c6dcb5e70c695fd`.
+Define cinco intervenciones para el Redwood existente:
+1. Núcleo de secuoyas: conservar árboles gigantes y plataformas; enriquecer sotobosque.
+2. Claros pequeños y orgánicos: mejorar visibilidad sin abrir plazas artificiales.
+3. Corredores naturales: mejorar tránsito sin cortar árboles estructurales ni alterar colisiones a ciegas.
+4. Riberas: reforzar vegetación/rocas de transición, preservar agua y accesos a cuevas.
+5. Laderas/roquedos: dar variedad vertical sin tocar heightmaps/colisiones sin referencias.
+
+La fase posterior de fauna reutilizará el spawner Redwood extraído. No inventar pesos ni límites porque las 93 cadenas encontradas no reconstruyen las propiedades serializadas.
+
+### Estado honesto
+- **Hecho en repositorio:** especificación concreta de adaptación Redwood V1, commit `601f6cf`.
+- **No hecho todavía en el juego:** no se han modificado árboles, foliage, Landscape, transforms ni spawns del mapa.
+- **Bloqueo:** solo se ha inspeccionado el spawner (cadenas) y un prefijo fijo de 20 bytes; faltan paquete de nivel/foliage y referencias espaciales legibles, además de un serializador probado con este ARK móvil.
+- No se puede afirmar que el cambio visual esté aplicado solo por haber escrito la especificación. La escritura binaria sin parser/serializer compatible arriesga corromper el mapa.
+
+### Próximo paso único
+Conseguir/inspeccionar el paquete de nivel o foliage que contiene las instancias Redwood y sus transforms, reutilizando los archivos ya extraídos y el inventario existente. No repetir extracción completa del PAK ni clasificación ARK MAP LAB. Solo tras identificar esas referencias se hará la primera edición física sobre una copia.
