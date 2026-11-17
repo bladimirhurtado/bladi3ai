@@ -211,3 +211,27 @@ La fase posterior de fauna reutilizará el spawner Redwood extraído. No inventa
 
 ### Próximo paso único
 Conseguir/inspeccionar el paquete de nivel o foliage que contiene las instancias Redwood y sus transforms, reutilizando los archivos ya extraídos y el inventario existente. No repetir extracción completa del PAK ni clasificación ARK MAP LAB. Solo tras identificar esas referencias se hará la primera edición física sobre una copia.
+
+
+## 13. Decodificación de foliage/instancias Redwood — 2026-11-16
+
+El usuario pidió emplear herramientas de análisis para descodificar instancias de vegetación, posiciones y referencias dentro del mapa. Se añadió una herramienta de inspección reutilizando un parser UE existente, no otro analizador por cadenas:
+
+- Script: `scripts/ark_redwood_instance_decoder.py`
+- Commit del script: `c5ad52f385a492981626b84bad6b60a89d64bff6`
+- Guía de ejecución/compatibilidad: `docs/ARK/REDWOOD_DECODIFICACION_INSTANCIAS.md`
+- Commit de la guía: `dae88f25b2fc309dd2dc73256de2cad2bbb22989`
+- Parser elegido: `soatori/uasset_read`, Python sin dependencias de ejecución; API `parse_package_document(..., depth="decode")`. Puede exponer package summary, name/import/export tables, relaciones y propiedades cuando el build/formato es compatible.
+
+### Límite detectado antes de prometer resultados
+El spawner Redwood inspeccionado anteriormente tiene legacy version -7, FileVersionUE4=0 y licensee=0. Eso no determina la versión exacta ni demuestra por sí solo la codificación de propiedades. La documentación actual de uasset_read advierte que cooked/Zen unversioned properties quedan fuera del soporte del proyecto. Por tanto el script es un **compatibility probe + inspector**, no evidencia de que ya se han descodificado transforms.
+
+### Estado de ejecución
+- Herramienta y flujo guardados en GitHub.
+- **No ejecutado todavía sobre los archivos privados/locales de Termux**: el conector GitHub no tiene acceso a `~/ark/...`; solo el usuario puede ejecutar el comando local o adjuntar los binarios. No afirmar que se conocen ya posiciones.
+- Primer pase previsto sobre inventario existente y los assets ya extraídos bajo `~/ark/ARK_MAP_LAB`; no repetir extracción ni ARK MAP LAB.
+- Salida prevista: `REDWOOD-instancias-diagnostico.json`.
+- Si se confirma soporte, seguir con extracción selectiva de los pocos paquetes foliage candidatos; si falla por unversioned/version, usar el diagnóstico para elegir lector UE/mappings compatibles.
+
+### Próximo paso operativo
+Ejecutar literalmente los comandos de `docs/ARK/REDWOOD_DECODIFICACION_INSTANCIAS.md` en Termux. Compartir solo el JSON de diagnóstico o su resumen; no hace falta volver a enviar el inventario completo ni el spawner ya inspeccionado.
