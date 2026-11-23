@@ -235,3 +235,15 @@ El spawner Redwood inspeccionado anteriormente tiene legacy version -7, FileVers
 
 ### Próximo paso operativo
 Ejecutar literalmente los comandos de `docs/ARK/REDWOOD_DECODIFICACION_INSTANCIAS.md` en Termux. Compartir solo el JSON de diagnóstico o su resumen; no hace falta volver a enviar el inventario completo ni el spawner ya inspeccionado.
+
+
+## 12. Corrección y validación CI de ARK Zone Relationship Builder — 2026-11-23
+
+- Se investigó el fallo de CI de la rama `ark/zone-relations-redwood-prototype` (PR #38). En el commit anterior, la prueba escribía los tres paths del inventario en una sola línea porque usaba secuencias literales `\\n` en vez de separadores de línea reales. Por eso el builder encontraba una sola ruta Redwood.
+- Corrección del fixture: commit `4f53b2b17ac0be3fbbb4c549ccca08d1d8efb80f`.
+- Segundo fallo detectado tras la primera corrección: `summary.inventory_path_candidates` suma candidatos de todas las zonas (2 Redwood + 1 Swamp = 3), mientras que `zones.redwood.inventory_paths` cuenta solo las dos rutas Redwood. La expectativa global correcta es 3; se ajustó la prueba, no la lógica del builder.
+- Commit final de esta revisión: `60d2a580fadc9dc12c3ef788e17ada7f44551492`.
+- GitHub Actions en ese commit: `ARK zone relationship tests` **success** (11/11 pruebas), `REA tests` **success**, `Validate Bladi 3AI` **success**, `Validate reusable skills` **success**. Los cuatro jobs se completaron correctamente.
+- PR #38 permanece abierta y en borrador, base `main`, GitHub informa `mergeable=true`. No se fusionó.
+- Alcance: se validaron el CLI y sus fixtures sintéticos, la integración de informes, la preservación de fuentes y el probe de cabecera. Esto **no** demuestra que los candidatos sean referencias UObject reales ni que ya se haya recuperado geometría Landscape o transforms del mapa.
+- Siguiente paso: ejecutar una vez el pipeline documentado en `docs/ARK/REDWOOD_PIPELINE.md` con los inventarios y assets ya extraídos en Termux; no repetir extracción del PAK ni regenerar inventarios. Después revisar el JSON/CSV producido y separar candidatos de referencias verificadas.
