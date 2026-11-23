@@ -1,6 +1,6 @@
 # ARK — Estado maestro único del proyecto
 
-Última revisión: 2026-11-16
+Última revisión: 2026-11-23
 Repositorio: `bladimirhurtado/bladi3ai`
 Rama de trabajo: `ark/zone-relations-redwood-prototype`
 Último commit confirmado por el usuario en Termux: `0826c53` (sincronizado el 2026-11-16).
@@ -247,3 +247,15 @@ Ejecutar literalmente los comandos de `docs/ARK/REDWOOD_DECODIFICACION_INSTANCIA
 - PR #38 permanece abierta y en borrador, base `main`, GitHub informa `mergeable=true`. No se fusionó.
 - Alcance: se validaron el CLI y sus fixtures sintéticos, la integración de informes, la preservación de fuentes y el probe de cabecera. Esto **no** demuestra que los candidatos sean referencias UObject reales ni que ya se haya recuperado geometría Landscape o transforms del mapa.
 - Siguiente paso: ejecutar una vez el pipeline documentado en `docs/ARK/REDWOOD_PIPELINE.md` con los inventarios y assets ya extraídos en Termux; no repetir extracción del PAK ni regenerar inventarios. Después revisar el JSON/CSV producido y separar candidatos de referencias verificadas.
+
+
+## 13. Cierre de revisión CI — 2026-11-23
+
+- Rama: `ark/zone-relations-redwood-prototype`.
+- Commit de código revisado: `cf133c6b1fc46fd43966d806ca3991a2fa804205`.
+- PR #38: abierta, base `main`, `mergeable=true`, todavía en borrador; no fusionada.
+- GitHub Actions del commit: `ARK zone relationship tests` success (run 65), `REA tests` success (run 49), `Validate Bladi 3AI` success (run 240), `Validate reusable skills` success (run 309).
+- Las 11 pruebas del conjunto ARK están cubiertas por el workflow; la ejecución CI terminó correctamente.
+- Esta evidencia valida los scripts y fixtures sintéticos. No valida todavía el pipeline sobre los archivos privados ya extraídos en Termux, ni demuestra referencias UObject, transforms, pesos serializados o geometría editable.
+- Próximo paso local único: ejecutar una vez el comando de `docs/ARK/REDWOOD_PIPELINE.md` reutilizando el inventario, Biomes y DinoSpawns existentes; comparar hashes/fechas de salida antes de ejecutar para no duplicar trabajo. No reextraer el PAK ni regenerar inventarios.
+- Restricción vigente: mantener originales intactos y etiquetar las coincidencias como candidatas hasta que un parser compatible demuestre las referencias.
