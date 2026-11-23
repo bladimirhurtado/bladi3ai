@@ -55,7 +55,7 @@ class ZoneRelationBuilderTests(unittest.TestCase):
             redwood_paths = report["zones"]["redwood"]["inventory_paths"]
             self.assertEqual(len(redwood_paths), 2)
             self.assertTrue(any("DinoSpawnEntriesRedwoods.uasset" in x for x in redwood_paths))
-            self.assertEqual(report["summary"]["inventory_path_candidates"], 2)
+            self.assertEqual(report["summary"]["inventory_path_candidates"], 3)
             self.assertEqual(report["sources"]["inventory"]["sha256"], inventory_before)
             self.assertEqual(module.sha256(inventory), inventory_before)
             self.assertIn("inventory=2", stdout.getvalue())
