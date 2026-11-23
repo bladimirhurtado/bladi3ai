@@ -39,9 +39,9 @@ class ZoneRelationBuilderTests(unittest.TestCase):
             biomes.write_bytes(b"TheRedwoodForests")
             spawns.write_bytes(b"DinoSpawnEntriesRedwoods")
             inventory.write_text(
-                "CoreBlueprints/Spawners/DinoSpawnEntriesRedwoods.uasset\\n"
-                "CoreBlueprints/HarvestComponents/WoodHarvestComponent_RedWood.uasset\\n"
-                "CoreBlueprints/Spawners/DinoSpawnEntriesSwamp.uasset\\n",
+                "CoreBlueprints/Spawners/DinoSpawnEntriesRedwoods.uasset\n"
+                "CoreBlueprints/HarvestComponents/WoodHarvestComponent_RedWood.uasset\n"
+                "CoreBlueprints/Spawners/DinoSpawnEntriesSwamp.uasset\n",
                 encoding="utf-8",
             )
             inventory_before = module.sha256(inventory)
